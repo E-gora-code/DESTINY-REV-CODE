@@ -99,6 +99,20 @@ public class Control_Alt_binds extends LinearOpMode {
     double claw_poz = 0;
     double claw_grab_poz = 1;
     double claw_open_poz = 0.52;
+
+
+
+
+
+    double sbros_pos_open = 0.8;
+    // Открфтая позиция сброса яблок
+
+    // закрытая в упор
+
+
+
+
+
     double claw_trigger_mult = 1;
     boolean claw_alt_mode_bind = false;
 
@@ -178,13 +192,13 @@ public class Control_Alt_binds extends LinearOpMode {
             }
             if(hanging_state == false) {
                 if (gamepad1.right_trigger > 0) {
-                    sbros.setPosition((0.8 + gamepad1.right_trigger*0.2));
+                    sbros.setPosition((sbros_pos_open + gamepad1.right_trigger*(1-sbros_pos_open)));
                     continious_timer.reset();
                 } else {
                     if (continious_timer.seconds() < 0.5) {
-                        sbros.setPosition(0.8);
+                        sbros.setPosition(sbros_pos_open);
                     } else {
-                        sbros.setPosition(0.8);
+                        sbros.setPosition(sbros_pos_open);
                     }
                 }
 
@@ -661,7 +675,7 @@ public class Control_Alt_binds extends LinearOpMode {
                     } else {
                         targAngle = currentAngle;
 
-                        turnPower = -turnDrift * 0.6;
+                        turnPower = -turnDrift * 1;
                     }
                     double mult_on_press_L_stick = 1;
                     double mult_on_press_R_stick = 1;
