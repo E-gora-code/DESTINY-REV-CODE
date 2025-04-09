@@ -105,7 +105,7 @@ public class Control_Alt_binds extends LinearOpMode {
 
 
 
-    double sbros_pos_open = 0.8;
+    double sbros_pos_open = 0.6;
     // Открфтая позиция сброса яблок
 
     // закрытая в упор
