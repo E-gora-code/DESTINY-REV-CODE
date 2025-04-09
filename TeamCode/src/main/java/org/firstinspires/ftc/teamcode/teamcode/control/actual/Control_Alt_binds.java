@@ -671,7 +671,7 @@ public class Control_Alt_binds extends LinearOpMode {
 
                     if (turnDrift == 0) {
                         turnErr = targAngle - currentAngle;
-                        turnPower = (turnErr * pid_setting.turnKp + (turnErr - turnErrL) * pid_setting.turnKd) * 0.4;
+                        turnPower = (turnErr * pid_setting.turnKp + (turnErr - turnErrL) * pid_setting.turnKd) *  0.4;
                         turnErrL = turnErr;
                     } else {
                         targAngle = currentAngle;
