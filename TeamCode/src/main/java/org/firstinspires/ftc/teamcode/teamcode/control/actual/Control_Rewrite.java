@@ -61,6 +61,8 @@ public class Control_Rewrite extends LinearOpMode {
 
 
     double Multiply = 0;
+
+    double Multiply_turn = 0.8;
     double Multiply_defult = 0.6;
     double turnPower = 0;
     double forwardPower = 0;
@@ -661,7 +663,7 @@ public class Control_Rewrite extends LinearOpMode {
                     } else {
                         targAngle = currentAngle;
 
-                        turnPower = -turnDrift * 0.6;
+                        turnPower = -turnDrift * Multiply_turn;
                     }
                     double mult_on_press_L_stick = 1;
                     double mult_on_press_R_stick = 1;

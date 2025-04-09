@@ -62,6 +62,7 @@ public class Control_Alt_binds extends LinearOpMode {
 
     double Multiply = 0;
     double Multiply_defult = 0.6;
+    double Multiply_turn = 1;
     double turnPower = 0;
     double forwardPower = 0;
     double sidePower = 0;
@@ -670,12 +671,12 @@ public class Control_Alt_binds extends LinearOpMode {
 
                     if (turnDrift == 0) {
                         turnErr = targAngle - currentAngle;
-                        turnPower = (turnErr * pid_setting.turnKp + (turnErr - turnErrL) * pid_setting.turnKd) * 0.4;
+                        turnPower = (turnErr * pid_setting.turnKp + (turnErr - turnErrL) * pid_setting.turnKd) * 0.2;
                         turnErrL = turnErr;
                     } else {
                         targAngle = currentAngle;
 
-                        turnPower = -turnDrift * 1;
+                        turnPower = -turnDrift * Multiply_turn;
                     }
                     double mult_on_press_L_stick = 1;
                     double mult_on_press_R_stick = 1;
