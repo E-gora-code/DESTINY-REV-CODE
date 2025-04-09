@@ -40,7 +40,7 @@ public class Control_Alt_binds extends LinearOpMode {
     //end
     // Reset
     ElapsedTime presed_reset_ang_timer = new ElapsedTime();
-    boolean is_reseted_ever = false;
+    boolean is_reseted_ever = true;
     //end
 
 
