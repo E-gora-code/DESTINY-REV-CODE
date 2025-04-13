@@ -23,6 +23,8 @@ import org.firstinspires.ftc.teamcode.teamcode.PID_setting;
 @TeleOp
 public class Control_Rewrite extends LinearOpMode {
     Init_Utilites initUtilites = new Init_Utilites();
+
+    GamepadBinds gamepadBinds = new GamepadBinds();
     Drive_Base drive_base = new Drive_Base();
     Telemetry_manage telemetry_manage = new Telemetry_manage();
     Claw_controll claw_controll = new Claw_controll();
@@ -104,6 +106,9 @@ public class Control_Rewrite extends LinearOpMode {
     double claw_trigger_mult = 1;
     boolean claw_alt_mode_bind = false;
 
+    double sbros_pos_open = 0.6;
+    double sbros_bind = 0;
+
     ElapsedTime claw_need_reset = new ElapsedTime();
     ElapsedTime claw_last_alt = new ElapsedTime();
     ElapsedTime last_controlled_drive_base = new ElapsedTime();
@@ -147,6 +152,7 @@ public class Control_Rewrite extends LinearOpMode {
         initUtilites.start_init_instructions();
         waitForStart();
 
+        gamepadBinds.start();
         drive_base.start();
         telemetry_manage.start();
         claw_controll.start();
@@ -180,13 +186,13 @@ public class Control_Rewrite extends LinearOpMode {
             }
             if(hanging_state == false) {
                 if (gamepad1.right_trigger > 0) {
-                    sbros.setPosition((0.8 - gamepad1.right_trigger*0.2));
+                    sbros.setPosition((sbros_pos_open + sbros_bind*(1-sbros_pos_open)));
                     continious_timer.reset();
                 } else {
                     if (continious_timer.seconds() < 0.5) {
-                        sbros.setPosition(0.8);
+                        sbros.setPosition(sbros_pos_open);
                     } else {
-                        sbros.setPosition(0.8);
+                        sbros.setPosition(sbros_pos_open);
                     }
                 }
 
@@ -473,10 +479,22 @@ public class Control_Rewrite extends LinearOpMode {
         }
 
     }
+    public class GamepadBinds extends Thread{
+        public void run() {
+            while (opModeIsActive()) {
+                turn_stick_axis = gamepad1.right_stick_x;
+                forward_stick_axis = gamepad1.left_stick_y;
+                side_stick_axis = gamepad1.left_stick_x;
+                speed_controll_axis = gamepad1.left_trigger;
 
-    class Telemetry_manage extends Thread{
+                sbros_bind = gamepad1.right_trigger;
+            }
+        }
+    }
+    public class Telemetry_manage extends Thread{
         public void run() {
             while (opModeIsActive()){
+                doHoma();
 
                 if(ishoma) {
                     addToBothTelemetry("-------Homak-------", " ");
@@ -524,37 +542,39 @@ public class Control_Rewrite extends LinearOpMode {
             dash.update();
         }
 
-    }
-    public void doHoma(){
-        if(click<0){
-            click=0;
-        }
-        if (gamepad1.start) {
-            if (lastcl.milliseconds()>500||!iscl) {
-                click += 1 * clmult;
-                lastcl.reset();
-                iscl = true;
+        public void doHoma(){
+            if(click<0){
+                click=0;
             }
-            if(can_homa_wake_up&&hold_to_wake_homa.seconds()>=4) {
-                ishoma = true;
+            if (gamepad1.start) {
+                if (lastcl.milliseconds()>500||!iscl) {
+                    click += 1 * clmult;
+                    lastcl.reset();
+                    iscl = true;
+                }
+                if(can_homa_wake_up&&hold_to_wake_homa.seconds()>=4) {
+                    ishoma = true;
+                    hold_to_wake_homa.reset();
+                }
+            } else {
+                lastcl.reset();
+                iscl = false;
                 hold_to_wake_homa.reset();
             }
-        } else {
-            lastcl.reset();
-            iscl = false;
-            hold_to_wake_homa.reset();
-        }
-        if (gamepad1.back) {
-            if (!iscl1 && click >= (clmult * clmult * clmult * clmult)) {
-                click -= clmult * clmult * clmult * clmult;
-                clmult += 1;
-                iscl1 = true;
+            if (gamepad1.back) {
+                if (!iscl1 && click >= (clmult * clmult * clmult * clmult)) {
+                    click -= clmult * clmult * clmult * clmult;
+                    clmult += 1;
+                    iscl1 = true;
+                }
+            } else {
+                iscl1 = false;
             }
-        } else {
-            iscl1 = false;
         }
+
     }
-    class Claw_controll extends Thread{
+
+    public class Claw_controll extends Thread{
         public void run() {
             claw_alt_mode_bind = gamepad1.right_bumper;
             if(claw_alt_mode_bind==true){
@@ -593,16 +613,13 @@ public class Control_Rewrite extends LinearOpMode {
             }
         }
     }
-    class Drive_Base extends Thread {
+    public class Drive_Base extends Thread {
         public void run() {
             while (opModeIsActive()) {
                 // Gamepad binds
 
-                turn_stick_axis = gamepad1.right_stick_x;
-                forward_stick_axis = gamepad1.left_stick_y;
-                side_stick_axis = gamepad1.left_stick_x;
-                speed_controll_axis = gamepad1.left_trigger;
 
+                // Set wariables
                 // Set wariables
                 if (turn_stick_axis != 0 || forward_stick_axis != 0 || side_stick_axis != 0) {
                     if(last_controlled_drive_base.seconds()>1) {
