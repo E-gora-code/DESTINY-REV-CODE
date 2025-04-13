@@ -173,34 +173,30 @@ public class Auto_red extends LinearOpMode {
             sleep(1000);
 
         }
-        Move(0, 70, 0);
+        else {
+            Move(0, 70, 0);
 
 
-        if (detector.fillValue > 0.02 && nottaken) {
-            Move(50,70,0);
-            nottaken = false;
-            grabr.setPosition(0.1);
-            grabl.setPosition(0.9);
+            if (detector.fillValue > 0.02 && nottaken) {
+                Move(50, 70, 0);
+                nottaken = false;
+                grabr.setPosition(0.1);
+                grabl.setPosition(0.9);
 
 
+                sleep(1000);
 
-            sleep(1000);
-
-        }
-        Move(0, 130, 0);
-
-
-        if (detector.fillValue > 0.02 && nottaken) {
-            Move(50,130,0);
-            nottaken = false;
-            grabr.setPosition(0.1);
-            grabl.setPosition(0.9);
-            sleep(1000);
-
-
-
-
-
+            }
+            else{
+                Move(0, 130, 0);
+                if (detector.fillValue > 0.02 && nottaken) {
+                    Move(50, 130, 0);
+                    nottaken = false;
+                    grabr.setPosition(0.1);
+                    grabl.setPosition(0.9);
+                    sleep(1000);
+            }
+            }
         }
         webcam.stopStreaming();
 

@@ -173,34 +173,30 @@ public class Auto_blu extends LinearOpMode {
             sleep(1000);
 
         }
-        Move(0, 70, 0);
+        else {
+            Move(0, 70, 0);
 
 
-        if (detector.fillValue > 0.02 && nottaken) {
-            Move(50,70,0);
-            nottaken = false;
-            grabr.setPosition(0.1);
-            grabl.setPosition(0.9);
+            if (detector.fillValue > 0.02 && nottaken) {
+                Move(50, 70, 0);
+                nottaken = false;
+                grabr.setPosition(0.1);
+                grabl.setPosition(0.9);
 
 
+                sleep(1000);
 
-            sleep(1000);
-
-        }
-        Move(0, 130, 0);
-
-
-        if (detector.fillValue > 0.02 && nottaken) {
-            Move(50,130,0);
-            nottaken = false;
-            grabr.setPosition(0.1);
-            grabl.setPosition(0.9);
-            sleep(1000);
-
-
-
-
-
+            }
+            else{
+                Move(0, 130, 0);
+                if (detector.fillValue > 0.02 && nottaken) {
+                    Move(50, 130, 0);
+                    nottaken = false;
+                    grabr.setPosition(0.1);
+                    grabl.setPosition(0.9);
+                    sleep(1000);
+                }
+            }
         }
         webcam.stopStreaming();
 
@@ -214,19 +210,19 @@ public class Auto_blu extends LinearOpMode {
         extr.setPower(0);
         extl.setPower(0);
 
-        Move(-70,66.5,90);
+        Move(-72,66.5,90);
 
 
 
 
 
         flag = true;
-        Move(-85,66.5,90);
+        Move(-88,66.5,90);
 
         flag = false;
 
 
-        Move(-72,50,0);
+        Move(-85,50,0);
         while (FR.getCurrentPosition()<0){
             extr.setPower(0.5);
             extl.setPower(0.5);
@@ -499,3 +495,5 @@ public class Auto_blu extends LinearOpMode {
         }
     }
 }
+
+
