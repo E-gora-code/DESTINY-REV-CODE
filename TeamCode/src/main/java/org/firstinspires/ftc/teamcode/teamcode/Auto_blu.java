@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.teamcode;
 
+
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -202,31 +204,35 @@ public class Auto_blu extends LinearOpMode {
 
 
         Move(0,45,0);
-        Move(-95,45,0);
-        while (FR.getCurrentPosition()>-2200){
-            extr.setPower(-0.8);
-            extl.setPower(-0.8);
+        Move(-68,45,0);
+        while (FR.getCurrentPosition()>-2800){
+            dash.addData("posu",FR.getCurrentPosition());
+            dash.update();
+            extr.setPower(-1);
+            extl.setPower(-1);
         }
         extr.setPower(0);
         extl.setPower(0);
 
-        Move(-72,66.5,90);
+        Move(-60,64,90);
 
 
 
 
 
         flag = true;
-        Move(-88,66.5,90);
+        Move(-77,64,90);
 
         flag = false;
 
 
         Move(-85,50,0);
-        while (FR.getCurrentPosition()<0){
+        while (FR.getCurrentPosition()<200){
             extr.setPower(0.5);
             extl.setPower(0.5);
         }
+        extr.setPower(0);
+        extl.setPower(0);
 
         Move(0,45,0);
         Move(0, 130, 0);
@@ -234,10 +240,10 @@ public class Auto_blu extends LinearOpMode {
 
 
 
-        Mve(-220,130,0);
+        Mve(-220,125,0);
 
 
-        Move(-220,127,90);
+        Move(-220,120,90);
 
         grabr.setPosition(0.9);
         grabl.setPosition(0);
@@ -250,7 +256,7 @@ public class Auto_blu extends LinearOpMode {
 
 
         sleep(1000);
-        Move(-70,130,0);
+        Move(-70,110,-90);
 
 
 
@@ -263,13 +269,13 @@ public class Auto_blu extends LinearOpMode {
         targDisty = disty * 699;
         targDistx = -distx * 699;
         moveTimer.reset();
-        while (Math.abs(targDisty-y)>400 || Math.abs(targDistx-x)>400 || Math.abs(targAngle-currentAngle)>10) {
+        while (Math.abs(targDisty-y)>400 || Math.abs(targDistx-x)>400 || Math.abs(targAngle-currentAngle)>5) {
             dash.addData("ignorey",Math.abs(targDisty-y));
             dash.addData("ignorex",Math.abs(targDistx-x));
             dash.addData("ignorea",Math.abs(targAngle-currentAngle));
             dash.update();
         }
-        sleep(600);
+        sleep(300);
         dash.addData("ignorey",Math.abs(targDisty-y)>500);
         dash.addData("ignorex",Math.abs(targDistx-x)>500);
         dash.addData("ignorea",Math.abs(targAngle-currentAngle)>5);
@@ -355,17 +361,17 @@ public class Auto_blu extends LinearOpMode {
                 drivePowery = driveErry * pid_setting.driveKp + (driveErry - driveErrLy) * pid_setting.driveKd;
                 driveErrx = targDistx - x;
                 drivePowerx = driveErrx * pid_setting.drivexKp + (driveErrx - driveErrLx) * pid_setting.drivexKd;
-                if (drivePowerx > 0.5) {
-                    drivePowerx = 0.5;
+                if (drivePowerx > 0.7) {
+                    drivePowerx = 0.7;
                 }
-                if (drivePowerx < -0.5) {
-                    drivePowerx = -0.5;
+                if (drivePowerx < -0.7) {
+                    drivePowerx = -0.7;
                 }
-                if (drivePowery > 0.5) {
-                    drivePowery = 0.5;
+                if (drivePowery > 0.7) {
+                    drivePowery = 0.7;
                 }
-                if (drivePowery < -0.5) {
-                    drivePowery = -0.5;
+                if (drivePowery < -0.7) {
+                    drivePowery = -0.7;
                 }
                 if (turnPower > 0.5) {
                     turnPower = 0.5;
@@ -421,7 +427,7 @@ public class Auto_blu extends LinearOpMode {
                     }
                     else{
                         if (moveTimer.milliseconds() <500){
-                            sbros.setPosition(0.8);
+                            sbros.setPosition(1);
                         }
                         else {
                             pos = 2;
@@ -430,7 +436,7 @@ public class Auto_blu extends LinearOpMode {
 
                 }
                 else{
-                    sbros.setPosition(0.8);
+                    sbros.setPosition(0);
 
                 }
 
@@ -452,7 +458,7 @@ public class Auto_blu extends LinearOpMode {
                     mover.reset();
                     mover_timer_reseted = true;
                 }
-                if (flag && mover.milliseconds()<4000 && count <2){
+                if (flag && mover.milliseconds()<4000){
                     Multiply = 0.45;
 
                     int redsbros = colorSensorSbros.red();
@@ -469,7 +475,7 @@ public class Auto_blu extends LinearOpMode {
                     telemetry.update();
 
                     if (sbros){
-                        count += 1;
+                        count += 0.5;
                         sbros = false;
                         while (((colorSensordown.red()<colorSensordown.green()) || (colorSensordown.red()<colorSensordown.blue()))&& mover.milliseconds()<4000 && count <2){
                             Multiply = 0;
@@ -484,7 +490,7 @@ public class Auto_blu extends LinearOpMode {
 
                 }
                 else if(flag){
-                    Multiply =1.2;
+                    Multiply =1.7;
 
                     et = false;
                 }
@@ -495,5 +501,3 @@ public class Auto_blu extends LinearOpMode {
         }
     }
 }
-
-
