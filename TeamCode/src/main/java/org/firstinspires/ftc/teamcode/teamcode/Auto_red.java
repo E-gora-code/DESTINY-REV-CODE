@@ -225,7 +225,7 @@ public class Auto_red extends LinearOpMode {
 
 
         Move(-85,50,0);
-        while (FR.getCurrentPosition()<200){
+        while (FR.getCurrentPosition()<800){
             extr.setPower(0.5);
             extl.setPower(0.5);
         }

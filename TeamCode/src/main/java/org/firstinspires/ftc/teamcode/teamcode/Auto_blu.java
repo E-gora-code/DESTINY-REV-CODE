@@ -214,20 +214,20 @@ public class Auto_blu extends LinearOpMode {
         extr.setPower(0);
         extl.setPower(0);
 
-        Move(-60,64,90);
+        Move(-60,73,90);
 
 
 
 
 
         flag = true;
-        Move(-77,64,90);
+        Move(-74,73,90);
 
         flag = false;
 
 
         Move(-85,50,0);
-        while (FR.getCurrentPosition()<200){
+        while (FR.getCurrentPosition()<800){
             extr.setPower(0.5);
             extl.setPower(0.5);
         }
