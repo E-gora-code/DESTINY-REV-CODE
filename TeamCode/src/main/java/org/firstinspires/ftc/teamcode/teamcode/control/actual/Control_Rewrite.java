@@ -46,9 +46,9 @@ public class Control_Rewrite extends LinearOpMode {
     //end
 
 
+    boolean grab_toggle_bind = false;
 
-
-
+    boolean dual_rumble_bind = false;
 
     double extr_zero = 0, extl_zero = 0;
     double extr_max = 5672, extl_max = 3639;
@@ -60,6 +60,14 @@ public class Control_Rewrite extends LinearOpMode {
     double exterR,exterL,extpowerR,extpowerL,extrlR,extrlL;
     double extr_pos, extl_pos;
     double extr_raw_pos, extl_raw_pos;
+
+    double ext_pos_change_bind = 0;
+    boolean ext_up_gm1_button_bind = false;
+    boolean ext_down_gm1_button_bind = false;
+
+
+
+    boolean pos_reset_bind = false;
 
 
     double Multiply = 0;
@@ -96,7 +104,7 @@ public class Control_Rewrite extends LinearOpMode {
     boolean presed_reset_ang = false;
     boolean ext_press=false;
     boolean is_homed_ever = false;
-    boolean b_press = false;
+    boolean is_grab_pressed = false;
     boolean grab_toggle = false;
     boolean claw_toggle = false;
     boolean claw_press = false;
@@ -105,6 +113,8 @@ public class Control_Rewrite extends LinearOpMode {
     double claw_open_poz = 0.52;
     double claw_trigger_mult = 1;
     boolean claw_alt_mode_bind = false;
+
+    boolean claw_toggle_bind = false;
 
     double sbros_pos_open = 0.6;
     double sbros_bind = 0;
@@ -209,7 +219,7 @@ public class Control_Rewrite extends LinearOpMode {
             }
 
 
-            if(gamepad1.left_bumper||gamepad2.left_bumper){
+            if(dual_rumble_bind){
                 gamepad1.rumble(3000);
                 gamepad2.rumble(3000);
 
@@ -258,34 +268,19 @@ public class Control_Rewrite extends LinearOpMode {
 
 
 
-            if (gamepad1.a||gamepad2.right_bumper) {
-                if(!claw_press){
-                    claw_press = true;
-                    claw_need_reset.reset();
-                    if(!(gamepad1.start)) {
-                        claw_toggle = !claw_toggle;
-                    }
-                }
-                if(claw_toggle) {
-                    claw_poz = claw_grab_poz;
-                }else {
-                    claw_poz = claw_open_poz;
-                }
-            }else {
-                claw_press = false;
-            }
 
 
 
 
-            if (gamepad1.b) {
-                if (!b_press) {
+
+            if (grab_toggle_bind) {
+                if (!is_grab_pressed) {
                     grab_toggle = !grab_toggle;
                     claw_toggle = false;
                 }
-                b_press = true;
+                is_grab_pressed = true;
             } else {
-                b_press = false;
+                is_grab_pressed = false;
             }
             if (grab_toggle) {
                 grabr.setPosition(0.05);
@@ -294,18 +289,6 @@ public class Control_Rewrite extends LinearOpMode {
                 grabr.setPosition(0.5);
                 grabl.setPosition(0.2);
             }
-
-//            if(gamepad2.left_bumper||gamepad1.left_bumper){
-//                while (true){
-//                    extl.setPower(0);
-//                    extr.setPower(0);
-//                }
-//            }
-
-//            if ((pos_last - pos)!=0){
-//                sbkr_toggle = false;
-//            }
-
 
 
 
@@ -349,10 +332,10 @@ public class Control_Rewrite extends LinearOpMode {
                     }
                 }
 
-                if ((gamepad2.left_stick_y+gamepad2.right_stick_y) != 0) {
+                if (ext_pos_change_bind != 0) {
                     if (extention_time.milliseconds() > extention_time_interval) {
                         extention_time.reset();
-                        pos -= ((gamepad2.left_stick_y+gamepad2.right_stick_y) * extention_speed_multiply) * (1 + (gamepad2.left_trigger * 2));
+                        pos -= ((ext_pos_change_bind) * extention_speed_multiply) * (1 + (gamepad2.left_trigger * 2));
                     }
                 }
 
@@ -423,12 +406,12 @@ public class Control_Rewrite extends LinearOpMode {
                 }
             }
             else{
-                if (gamepad1.dpad_down){
+                if (ext_down_gm1_button_bind){
                     extr.setPower(0.9);
                     extl.setPower(0.9);
                     claw_toggle = false;
                 }
-                else if(gamepad1.dpad_up){
+                else if(ext_up_gm1_button_bind){
 
                     extr.setPower(-0.9);
                     extl.setPower(-0.9);
@@ -437,9 +420,9 @@ public class Control_Rewrite extends LinearOpMode {
 
                 }
                 else{
-                    extr.setPower(gamepad2.left_stick_y+gamepad2.right_stick_y);
-                    extl.setPower(gamepad2.left_stick_y+gamepad2.right_stick_y);
-                    if ((gamepad2.left_stick_y+gamepad2.right_stick_y)!=0){
+                    extr.setPower(ext_pos_change_bind);
+                    extl.setPower(ext_pos_change_bind);
+                    if (ext_pos_change_bind!=0){
                         claw_toggle = false;
                     }
 
@@ -453,12 +436,12 @@ public class Control_Rewrite extends LinearOpMode {
 //        }
 
 
-            gamepad_summ = gamepad1.left_stick_x+gamepad1.left_stick_y+gamepad1.right_stick_x+gamepad1.left_stick_y;
 
 
 
 
-            if(gamepad1.dpad_left){
+
+            if(pos_reset_bind){
                 presed_reset_ang =true;
                 if((presed_reset_ang_timer.seconds() >1) || !is_reseted_ever) {
                     gamepad1.rumble(100);
@@ -488,6 +471,22 @@ public class Control_Rewrite extends LinearOpMode {
                 speed_controll_axis = gamepad1.left_trigger;
 
                 sbros_bind = gamepad1.right_trigger;
+
+                ext_pos_change_bind = gamepad2.left_stick_y+gamepad2.right_stick_y;
+                ext_up_gm1_button_bind = gamepad1.dpad_up;
+                ext_down_gm1_button_bind = gamepad1.dpad_down;
+
+                claw_toggle_bind = gamepad1.a||gamepad2.right_bumper;
+
+                pos_reset_bind = gamepad1.dpad_left;
+
+                gamepad_summ = gamepad1.left_stick_x+gamepad1.left_stick_y+gamepad1.right_stick_x+gamepad1.left_stick_y;
+
+                dual_rumble_bind = gamepad1.left_bumper||gamepad2.left_bumper;
+
+                grab_toggle_bind = gamepad1.b;
+
+                claw_alt_mode_bind = gamepad1.right_bumper;
             }
         }
     }
@@ -576,7 +575,24 @@ public class Control_Rewrite extends LinearOpMode {
 
     public class Claw_controll extends Thread{
         public void run() {
-            claw_alt_mode_bind = gamepad1.right_bumper;
+
+            if (claw_toggle_bind) {
+                if(!claw_press){
+                    claw_press = true;
+                    claw_need_reset.reset();
+                    if(!(gamepad1.start)) {
+                        claw_toggle = !claw_toggle;
+                    }
+                }
+                if(claw_toggle) {
+                    claw_poz = claw_grab_poz;
+                }else {
+                    claw_poz = claw_open_poz;
+                }
+            }else {
+                claw_press = false;
+            }
+
             if(claw_alt_mode_bind==true){
                 claw_last_alt.reset();
             }
