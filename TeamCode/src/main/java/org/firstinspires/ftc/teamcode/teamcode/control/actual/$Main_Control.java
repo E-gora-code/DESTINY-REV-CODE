@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.teamcode.PID_setting;
 
 
 @TeleOp
-public class Control_Rewrite extends LinearOpMode {
+public class $Main_Control extends LinearOpMode {
     Init_Utilites initUtilites = new Init_Utilites();
 
     GamepadBinds gamepadBinds = new GamepadBinds();

@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.teamcode.PID_setting;
 
 
 @TeleOp
-public class manual extends LinearOpMode {
+public class Manual extends LinearOpMode {
     boolean xkfi = false;
     PID_setting pid_setting = new PID_setting();
     double extr_zero = 0, extl_zero = 0;

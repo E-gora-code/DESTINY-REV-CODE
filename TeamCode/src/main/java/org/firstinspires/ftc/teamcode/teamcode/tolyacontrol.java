@@ -19,7 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
-@TeleOp
+//@TeleOp
 public class tolyacontrol extends LinearOpMode {
     boolean xkfi = false;
     PID_setting pid_setting = new PID_setting();
