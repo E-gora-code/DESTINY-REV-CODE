@@ -39,6 +39,10 @@ public class Control_Rewrite extends LinearOpMode {
         double forward_stick_axis = 0;
         double side_stick_axis = 0;
         double speed_controll_axis = 0;
+        boolean pos_reset_bind = false;
+
+        boolean drive_base_accel_move_bind = false;
+        boolean drive_base_accel_turn_bind = false;
     // Extention binds
         double ext_pos_change_bind = 0;
         boolean ext_up_button_bind = false;
@@ -48,6 +52,16 @@ public class Control_Rewrite extends LinearOpMode {
         boolean top_extention_pos_bind = false;
         boolean preset_extention_pos_bind = false;
         double extention_speed_mult_bind = 0;
+    //Claw binds
+        boolean claw_alt_key_bind = false;
+        boolean claw_toggle_bind = false;
+        double claw_pos_controll_bind = 0;
+    //Container grabber binds
+        boolean grab_toggle_bind = false;
+    //Sbros_binds
+        double sbros_bind = 0;
+    //Silly binds
+        boolean dual_rumble_bind = false;
     //end
     // Reset
         ElapsedTime presed_reset_ang_timer = new ElapsedTime();
@@ -55,9 +69,6 @@ public class Control_Rewrite extends LinearOpMode {
     //end
 
 
-    boolean grab_toggle_bind = false;
-
-    boolean dual_rumble_bind = false;
 
     double extr_zero = 0, extl_zero = 0;
     double extr_max = 5672, extl_max = 3639;
@@ -70,11 +81,6 @@ public class Control_Rewrite extends LinearOpMode {
     double extr_pos, extl_pos;
     double extr_raw_pos, extl_raw_pos;
 
-
-
-
-
-    boolean pos_reset_bind = false;
 
 
     double Multiply = 0;
@@ -118,12 +124,9 @@ public class Control_Rewrite extends LinearOpMode {
     double claw_grab_poz = 1;
     double claw_open_poz = 0.52;
     double claw_trigger_mult = 1;
-    boolean claw_alt_mode_bind = false;
 
-    boolean claw_toggle_bind = false;
 
     double sbros_pos_open = 0.6;
-    double sbros_bind = 0;
 
     ElapsedTime claw_need_reset = new ElapsedTime();
     ElapsedTime claw_last_alt = new ElapsedTime();
@@ -146,7 +149,6 @@ public class Control_Rewrite extends LinearOpMode {
 
     double color_pulse = 1;
     ElapsedTime color_pulse_timer = new ElapsedTime();
-    ElapsedTime drive = new ElapsedTime();
 
 
 
@@ -454,6 +456,8 @@ public class Control_Rewrite extends LinearOpMode {
             forward_stick_axis = gamepad1.left_stick_y;
             side_stick_axis = gamepad1.left_stick_x;
             speed_controll_axis = gamepad1.left_trigger;
+            drive_base_accel_move_bind = gamepad1.left_stick_button;
+            drive_base_accel_turn_bind = gamepad1.right_stick_button;
 
             sbros_bind = gamepad1.right_trigger;
 
@@ -467,7 +471,7 @@ public class Control_Rewrite extends LinearOpMode {
                 extention_speed_mult_bind = Math.max(gamepad1.left_trigger, gamepad2.left_trigger);
             //end
 
-            claw_toggle_bind = gamepad1.a||gamepad2.right_bumper;
+            claw_toggle_bind = (gamepad1.a||gamepad2.right_bumper)&&(!gamepad1.start);
 
             pos_reset_bind = gamepad1.dpad_left;
 
@@ -477,7 +481,9 @@ public class Control_Rewrite extends LinearOpMode {
 
             grab_toggle_bind = gamepad1.b;
 
-            claw_alt_mode_bind = gamepad1.right_bumper;
+            claw_alt_key_bind = gamepad1.right_bumper;
+
+            claw_pos_controll_bind = gamepad1.right_trigger;
         }
     }
     public class Telemetry_manage extends Thread{
@@ -570,9 +576,8 @@ public class Control_Rewrite extends LinearOpMode {
                 if(!claw_press){
                     claw_press = true;
                     claw_need_reset.reset();
-                    if(!(gamepad1.start)) {
-                        claw_toggle = !claw_toggle;
-                    }
+                    claw_toggle = !claw_toggle;
+
                 }
                 if(claw_toggle) {
                     claw_poz = claw_grab_poz;
@@ -583,7 +588,7 @@ public class Control_Rewrite extends LinearOpMode {
                 claw_press = false;
             }
 
-            if(claw_alt_mode_bind==true){
+            if(claw_alt_key_bind ==true){
                 claw_last_alt.reset();
             }
 
@@ -592,13 +597,13 @@ public class Control_Rewrite extends LinearOpMode {
                 claw_toggle = false;
             }
             if(claw_last_alt.seconds()>1) {
-                if(gamepad1.right_trigger>0) {
+                if(claw_pos_controll_bind>0) {
                     claw_need_reset.reset();
                     if(claw_toggle ==false) {
-                        claw_poz = (((gamepad1.right_trigger * claw_trigger_mult) * (1 - claw_open_poz)) + claw_open_poz) * claw_grab_poz;
+                        claw_poz = (((claw_pos_controll_bind * claw_trigger_mult) * (1 - claw_open_poz)) + claw_open_poz) * claw_grab_poz;
                     }
                     else {
-                        claw_poz = (((1-(gamepad1.right_trigger*gamepad1.right_trigger)) * (1 - claw_open_poz)) + claw_open_poz) * claw_grab_poz;
+                        claw_poz = (((1-(claw_pos_controll_bind*claw_pos_controll_bind)) * (1 - claw_open_poz)) + claw_open_poz) * claw_grab_poz;
                     }
                 }
                 else{
@@ -622,11 +627,8 @@ public class Control_Rewrite extends LinearOpMode {
     public class Drive_Base extends Thread {
         public void run() {
             while (opModeIsActive()) {
-                // Gamepad binds
 
 
-                // Set wariables
-                // Set wariables
                 if (turn_stick_axis != 0 || forward_stick_axis != 0 || side_stick_axis != 0) {
                     if(last_controlled_drive_base.seconds()>1) {
                         last_controlled_drive_base.reset();
@@ -690,10 +692,10 @@ public class Control_Rewrite extends LinearOpMode {
                     }
                     double mult_on_press_L_stick = 1;
                     double mult_on_press_R_stick = 1;
-                    if(gamepad1.left_stick_button){
+                    if(drive_base_accel_move_bind){
                         mult_on_press_L_stick = 1/Multiply;
                     }
-                    if(gamepad1.right_stick_button){
+                    if(drive_base_accel_turn_bind){
                         mult_on_press_R_stick = 1/Multiply;
                     }
 
