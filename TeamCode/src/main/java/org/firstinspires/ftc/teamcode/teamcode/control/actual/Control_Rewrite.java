@@ -60,6 +60,7 @@ public class Control_Rewrite extends LinearOpMode {
         boolean grab_toggle_bind = false;
     //Sbros_binds
         double sbros_bind = 0;
+        double sbros_with_alt_pos_bind = 0;
     //Silly binds
         boolean dual_rumble_bind = false;
     //end
@@ -459,7 +460,13 @@ public class Control_Rewrite extends LinearOpMode {
             drive_base_accel_move_bind = gamepad1.left_stick_button;
             drive_base_accel_turn_bind = gamepad1.right_stick_button;
 
-            sbros_bind = gamepad1.right_trigger;
+            claw_alt_key_bind = gamepad1.right_bumper;
+
+            claw_pos_controll_bind = statement_double(gamepad1.right_trigger,!claw_alt_key_bind);
+
+            sbros_with_alt_pos_bind= gamepad1.right_trigger;
+
+            sbros_bind = Math.max(gamepad2.right_trigger,statement_double(sbros_with_alt_pos_bind,claw_alt_key_bind));
 
             ext_pos_change_bind = gamepad2.left_stick_y+gamepad2.right_stick_y;
             ext_up_button_bind = gamepad1.dpad_up || gamepad2.dpad_up;
@@ -473,7 +480,7 @@ public class Control_Rewrite extends LinearOpMode {
 
             claw_toggle_bind = (gamepad1.a||gamepad2.right_bumper)&&(!gamepad1.start);
 
-            pos_reset_bind = gamepad1.dpad_left;
+            pos_reset_bind = gamepad1.dpad_left||gamepad1.ps;
 
             gamepad_summ = gamepad1.left_stick_x+gamepad1.left_stick_y+gamepad1.right_stick_x+gamepad1.left_stick_y;
 
@@ -481,9 +488,14 @@ public class Control_Rewrite extends LinearOpMode {
 
             grab_toggle_bind = gamepad1.b;
 
-            claw_alt_key_bind = gamepad1.right_bumper;
-
-            claw_pos_controll_bind = gamepad1.right_trigger;
+        }
+        public double statement_double(double value, boolean condition){
+            if(condition) {
+                return value;
+            }
+            else {
+                return 0;
+            }
         }
     }
     public class Telemetry_manage extends Thread{
@@ -514,6 +526,9 @@ public class Control_Rewrite extends LinearOpMode {
                 addToBothTelemetry("BL Encoder",BL.getCurrentPosition());
                 addToBothTelemetry("BR Encoder",BR.getCurrentPosition());
                 addToBothTelemetry("Drift Calculation",(1/(1000/driftRate))/((3)));
+                addToBothTelemetry("-----------------------------"," ");
+                addToBothTelemetry("-----|Binds|-----"," ");
+                addToBothTelemetry("Alt_claw", claw_alt_key_bind);
                 addToBothTelemetry("-----------------------------"," ");
 
                 telemetry.addData("tog", claw_toggle);
@@ -571,50 +586,49 @@ public class Control_Rewrite extends LinearOpMode {
 
     public class Claw_controll extends Thread{
         public void run() {
+            while (opModeIsActive()) {
 
-            if (claw_toggle_bind) {
-                if(!claw_press){
-                    claw_press = true;
-                    claw_need_reset.reset();
-                    claw_toggle = !claw_toggle;
+                if (claw_toggle_bind) {
+                    if (!claw_press) {
+                        claw_press = true;
+                        claw_need_reset.reset();
+                        claw_toggle = !claw_toggle;
 
-                }
-                if(claw_toggle) {
-                    claw_poz = claw_grab_poz;
-                }else {
-                    claw_poz = claw_open_poz;
-                }
-            }else {
-                claw_press = false;
-            }
-
-            if(claw_alt_key_bind ==true){
-                claw_last_alt.reset();
-            }
-
-
-            if((last_controlled_drive_base.seconds() > 20)&&(claw_need_reset.seconds()>30)){
-                claw_toggle = false;
-            }
-            if(claw_last_alt.seconds()>1) {
-                if(claw_pos_controll_bind>0) {
-                    claw_need_reset.reset();
-                    if(claw_toggle ==false) {
-                        claw_poz = (((claw_pos_controll_bind * claw_trigger_mult) * (1 - claw_open_poz)) + claw_open_poz) * claw_grab_poz;
                     }
-                    else {
-                        claw_poz = (((1-(claw_pos_controll_bind*claw_pos_controll_bind)) * (1 - claw_open_poz)) + claw_open_poz) * claw_grab_poz;
+                    if (claw_toggle) {
+                        claw_poz = claw_grab_poz;
+                    } else {
+                        claw_poz = claw_open_poz;
                     }
+                } else {
+                    claw_press = false;
                 }
-                else{
+
+                if (claw_alt_key_bind == true) {
+                    claw_last_alt.reset();
+                }
+
+
+                if ((last_controlled_drive_base.seconds() > 20) && (claw_need_reset.seconds() > 30)) {
+                    claw_toggle = false;
+                }
+                if (claw_last_alt.seconds() > 1) {
+                    if (claw_pos_controll_bind > 0) {
+                        claw_need_reset.reset();
+                        if (claw_toggle == false) {
+                            claw_poz = (((claw_pos_controll_bind * claw_trigger_mult) * (1 - claw_open_poz)) + claw_open_poz) * claw_grab_poz;
+                        } else {
+                            claw_poz = (((1 - (claw_pos_controll_bind * claw_pos_controll_bind)) * (1 - claw_open_poz)) + claw_open_poz) * claw_grab_poz;
+                        }
+                    } else {
+                        set_claw_pos_state();
+                    }
+                } else {
                     set_claw_pos_state();
                 }
-            }
-            else{
-                set_claw_pos_state();
-            }
-            claw.setPosition(claw_poz);
+                claw.setPosition(claw_poz);
 
+            }
         }
         public void set_claw_pos_state(){
             if(claw_toggle) {
