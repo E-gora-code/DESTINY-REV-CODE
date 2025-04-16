@@ -477,7 +477,6 @@ public class Control_Rewrite extends LinearOpMode {
                 preset_extention_pos_bind = gamepad2.x;
                 extention_speed_mult_bind = Math.max(gamepad1.left_trigger, gamepad2.left_trigger);
             //end
-
             claw_toggle_bind = (gamepad1.a||gamepad2.right_bumper)&&(!gamepad1.start);
 
             pos_reset_bind = gamepad1.dpad_left||gamepad1.ps;
