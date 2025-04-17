@@ -72,7 +72,7 @@ public class $Main_Control extends LinearOpMode {
 
 
     double extr_zero = 0, extl_zero = 0;
-    double extr_max = 5672, extl_max = 3639;
+    double extr_max = 5681, extl_max = 4055;
     double ext_range = 5000;
     DcMotor FL, BL, FR, BR;
     Servo claw, grabr, grabl,sbros;
@@ -147,6 +147,10 @@ public class $Main_Control extends LinearOpMode {
     ElapsedTime extention_time = new ElapsedTime();
     double extention_time_interval = 10;
     double extention_speed_multiply = 20;
+
+    double ext_button_miltyply = 100;
+
+    double ext_button_sleep_time_ms = 100;
 
     double color_pulse = 1;
     ElapsedTime color_pulse_timer = new ElapsedTime();
@@ -300,14 +304,12 @@ public class $Main_Control extends LinearOpMode {
                     presed_reset_extencion_timer.reset();
                 }
 
-
-                if (ext_up_button_bind && (!ext_press || ext_timer.milliseconds() >= 1000)) {
-                    ext_pos_calk = 100 + 1000 * extention_speed_mult_bind;
+                ext_pos_calk = ext_button_miltyply + 1000 * extention_speed_mult_bind;
+                if (ext_up_button_bind && (!ext_press || ext_timer.milliseconds() >= ext_button_sleep_time_ms)) {
                     ext_timer.reset();
                     pos += ext_pos_calk;
                     ext_press = true;
-                } else if (ext_down_button_bind && (!ext_press || ext_timer.milliseconds() >= 1000)) {
-                    ext_pos_calk = 100 + 1000 * extention_speed_mult_bind;
+                } else if (ext_down_button_bind && (!ext_press || ext_timer.milliseconds() >= ext_button_sleep_time_ms)) {
                     ext_timer.reset();
                     pos -= ext_pos_calk;
                     ext_press = true;
@@ -320,7 +322,7 @@ public class $Main_Control extends LinearOpMode {
                 if (ext_pos_change_bind != 0) {
                     if (extention_time.milliseconds() > extention_time_interval) {
                         extention_time.reset();
-                        pos -= ((ext_pos_change_bind) * extention_speed_multiply) * (1 + (ext_pos_change_bind * 2));
+                        pos -= ((ext_pos_change_bind) * extention_speed_multiply);
                     }
                 }
 
@@ -486,6 +488,8 @@ public class $Main_Control extends LinearOpMode {
             dual_rumble_bind = gamepad1.left_bumper||gamepad2.left_bumper;
 
             grab_toggle_bind = gamepad1.b;
+
+            simple_ext = false;
 
         }
         public double statement_double(double value, boolean condition){
