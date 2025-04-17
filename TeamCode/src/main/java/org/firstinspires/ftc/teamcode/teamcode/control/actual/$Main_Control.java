@@ -152,6 +152,8 @@ public class $Main_Control extends LinearOpMode {
 
     double ext_button_sleep_time_ms = 100;
 
+    double ext_mult_speed_up = 100;
+
     double color_pulse = 1;
     ElapsedTime color_pulse_timer = new ElapsedTime();
 
@@ -304,7 +306,7 @@ public class $Main_Control extends LinearOpMode {
                     presed_reset_extencion_timer.reset();
                 }
 
-                ext_pos_calk = ext_button_miltyply + 1000 * extention_speed_mult_bind;
+                ext_pos_calk = ext_button_miltyply + ext_mult_speed_up * extention_speed_mult_bind;
                 if (ext_up_button_bind && (!ext_press || ext_timer.milliseconds() >= ext_button_sleep_time_ms)) {
                     ext_timer.reset();
                     pos += ext_pos_calk;
