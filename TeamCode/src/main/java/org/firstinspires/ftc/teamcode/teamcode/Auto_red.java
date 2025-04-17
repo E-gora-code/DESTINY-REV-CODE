@@ -212,23 +212,24 @@ public class Auto_red extends LinearOpMode {
         extr.setPower(0);
         extl.setPower(0);
 
-        Move(-79,64,90);
+        Move(-80,61.58,90);
 
 
 
 
 
         flag = true;
-        Move(-90,64,90);
+        Move(-90,61.58,90);
 
         flag = false;
 
 
         Move(-85,50,0);
-        while (FR.getCurrentPosition()<800){
-            extr.setPower(0.5);
-            extl.setPower(0.5);
-        }
+
+        extr.setPower(1);
+        extl.setPower(1);
+        sleep(1500);
+
         extr.setPower(0);
         extl.setPower(0);
 
@@ -372,10 +373,10 @@ public class Auto_red extends LinearOpMode {
                     drivePowery = -0.7;
                 }
                 if (turnPower > 0.5) {
-                    turnPower = 0.5;
+                    turnPower = 0.8;
                 }
                 if (turnPower < -0.5) {
-                    turnPower = -0.5;
+                    turnPower = -0.8;
                 }
 
 
@@ -456,7 +457,7 @@ public class Auto_red extends LinearOpMode {
                     mover.reset();
                     mover_timer_reseted = true;
                 }
-                if (flag && mover.milliseconds()<4000){
+                if (flag && mover.milliseconds()<3000){
                     Multiply = 0.45;
 
                     int redsbros = colorSensorSbros.red();
