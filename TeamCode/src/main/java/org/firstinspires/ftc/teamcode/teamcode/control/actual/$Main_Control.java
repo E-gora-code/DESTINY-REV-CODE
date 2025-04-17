@@ -292,7 +292,7 @@ public class $Main_Control extends LinearOpMode {
                     if (top_extention_pos_bind) {
                         pos = 5080;
                     } else if (preset_extention_pos_bind) {
-                        pos = 4032;
+                        pos = 3600;
                     }
                 }
                 if (home_extention_bind) {
