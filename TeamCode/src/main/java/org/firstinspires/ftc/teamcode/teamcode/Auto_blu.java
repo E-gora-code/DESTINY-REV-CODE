@@ -212,14 +212,14 @@ public class Auto_blu extends LinearOpMode {
         extr.setPower(0);
         extl.setPower(0);
 
-        Move(-58,75,90);
+        Move(-56,73.7,90);
 
 
 
 
 
         flag = true;
-        Move(-67,75,90);
+        Move(-72,73.7,90);
 
         flag = false;
 
@@ -239,7 +239,7 @@ public class Auto_blu extends LinearOpMode {
 
 
 
-        Mve(-220,125,0);
+        Mve(-220,130,0);
 
 
         Move(-220,120,90);
