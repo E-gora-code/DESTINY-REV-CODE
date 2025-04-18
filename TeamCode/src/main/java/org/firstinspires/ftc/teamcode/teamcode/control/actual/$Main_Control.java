@@ -41,6 +41,8 @@ public class $Main_Control extends LinearOpMode {
         double speed_controll_axis = 0;
         boolean pos_reset_bind = false;
 
+        boolean angle_snap_bind = false;
+
         boolean drive_base_accel_move_bind = false;
         boolean drive_base_accel_turn_bind = false;
     // Extention binds
@@ -138,6 +140,8 @@ public class $Main_Control extends LinearOpMode {
     ElapsedTime presed_reset_extencion_timer = new ElapsedTime();
     ElapsedTime continious_timer = new ElapsedTime();
 
+    ElapsedTime snap_angle_timer = new ElapsedTime();
+
     double x = 0;
     int click = 0;
     int clmult = 1;
@@ -192,6 +196,7 @@ public class $Main_Control extends LinearOpMode {
         claw_last_alt.reset();
         targAngle = Angle();
         driftCore.reset();
+        snap_angle_timer.reset();
         while (opModeIsActive()) {
             // varing
             extr_pos =  -Normolaze_Enc(FL.getCurrentPosition(),extr_zero,extr_max,ext_range);
@@ -464,6 +469,8 @@ public class $Main_Control extends LinearOpMode {
             drive_base_accel_move_bind = gamepad1.left_stick_button;
             drive_base_accel_turn_bind = gamepad1.right_stick_button;
 
+            angle_snap_bind = is_greater(Math.abs(gamepad1.right_stick_y),0.9);
+
             claw_alt_key_bind = !gamepad1.right_bumper;
 
             claw_pos_controll_bind = statement_double(gamepad1.right_trigger,!claw_alt_key_bind);
@@ -502,6 +509,14 @@ public class $Main_Control extends LinearOpMode {
                 return 0;
             }
         }
+        public boolean is_greater(double value, double max){
+            if(value<=max) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
     }
     public class Telemetry_manage extends Thread{
         public void run() {
@@ -531,6 +546,10 @@ public class $Main_Control extends LinearOpMode {
                 addToBothTelemetry("BL Encoder",BL.getCurrentPosition());
                 addToBothTelemetry("BR Encoder",BR.getCurrentPosition());
                 addToBothTelemetry("Drift Calculation",(1/(1000/driftRate))/((3)));
+                addToBothTelemetry("-----------------------------"," ");
+                addToBothTelemetry("-----|Rotation|-----"," ");
+                addToBothTelemetry("Current Angle", currentAngle);
+                addToBothTelemetry("Target Angle", targAngle);
                 addToBothTelemetry("-----------------------------"," ");
                 addToBothTelemetry("-----|Binds|-----"," ");
                 addToBothTelemetry("Alt_claw", claw_alt_key_bind);
@@ -700,7 +719,12 @@ public class $Main_Control extends LinearOpMode {
                     }
                     currentAngle += deltaHed;
 
-                    if (turnDrift == 0) {
+                    if(angle_snap_bind){
+                        snap_angle_timer.reset();
+                        targAngle = Math.round(targAngle/90)*90;
+                    }
+
+                    if ((turnDrift == 0)||(snap_angle_timer.seconds()<1)) {
                         turnErr = targAngle - currentAngle;
                         turnPower = (turnErr * pid_setting.turnKp + (turnErr - turnErrL) * pid_setting.turnKd) * 0.4;
                         turnErrL = turnErr;
