@@ -148,7 +148,7 @@ public class $Main_Control extends LinearOpMode {
     double extention_time_interval = 10;
     double extention_speed_multiply = 20;
 
-    double ext_button_miltyply = 100;
+    double ext_button_miltyply = 150;
 
     double ext_button_sleep_time_ms = 100;
 
@@ -464,7 +464,7 @@ public class $Main_Control extends LinearOpMode {
             drive_base_accel_move_bind = gamepad1.left_stick_button;
             drive_base_accel_turn_bind = gamepad1.right_stick_button;
 
-            claw_alt_key_bind = gamepad1.right_bumper;
+            claw_alt_key_bind = !gamepad1.right_bumper;
 
             claw_pos_controll_bind = statement_double(gamepad1.right_trigger,!claw_alt_key_bind);
 
