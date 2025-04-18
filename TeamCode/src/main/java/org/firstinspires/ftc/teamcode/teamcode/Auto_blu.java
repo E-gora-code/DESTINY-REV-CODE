@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.teamcode;
 
-
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -204,7 +202,7 @@ public class Auto_blu extends LinearOpMode {
 
 
         Move(0,45,0);
-        Move(-68,45,0);
+        Move(-65,45,0);
         while (FR.getCurrentPosition()>-2800){
             dash.addData("posu",FR.getCurrentPosition());
             dash.update();
@@ -214,23 +212,24 @@ public class Auto_blu extends LinearOpMode {
         extr.setPower(0);
         extl.setPower(0);
 
-        Move(-60,73,90);
+        Move(-56,73.7,90);
 
 
 
 
 
         flag = true;
-        Move(-74,73,90);
+        Move(-72,73.7,90);
 
         flag = false;
 
 
-        Move(-85,50,0);
-        while (FR.getCurrentPosition()<800){
-            extr.setPower(0.5);
-            extl.setPower(0.5);
-        }
+        Move(-60,50,0);
+
+        extr.setPower(1);
+        extl.setPower(1);
+        sleep(1500);
+
         extr.setPower(0);
         extl.setPower(0);
 
@@ -240,7 +239,7 @@ public class Auto_blu extends LinearOpMode {
 
 
 
-        Mve(-220,125,0);
+        Mve(-220,130,0);
 
 
         Move(-220,120,90);
@@ -256,7 +255,7 @@ public class Auto_blu extends LinearOpMode {
 
 
         sleep(1000);
-        Move(-70,110,-90);
+        Move(-70,130,-90);
 
 
 
@@ -362,22 +361,22 @@ public class Auto_blu extends LinearOpMode {
                 driveErrx = targDistx - x;
                 drivePowerx = driveErrx * pid_setting.drivexKp + (driveErrx - driveErrLx) * pid_setting.drivexKd;
                 if (drivePowerx > 0.7) {
-                    drivePowerx = 0.7;
+                    drivePowerx = 0.8;
                 }
                 if (drivePowerx < -0.7) {
-                    drivePowerx = -0.7;
+                    drivePowerx = -0.8;
                 }
                 if (drivePowery > 0.7) {
-                    drivePowery = 0.7;
+                    drivePowery = 0.8;
                 }
                 if (drivePowery < -0.7) {
-                    drivePowery = -0.7;
+                    drivePowery = -0.8;
                 }
                 if (turnPower > 0.5) {
-                    turnPower = 0.5;
+                    turnPower = 0.8;
                 }
                 if (turnPower < -0.5) {
-                    turnPower = -0.5;
+                    turnPower = -0.8;
                 }
 
 
@@ -458,7 +457,7 @@ public class Auto_blu extends LinearOpMode {
                     mover.reset();
                     mover_timer_reseted = true;
                 }
-                if (flag && mover.milliseconds()<4000){
+                if (flag && mover.milliseconds()<3000){
                     Multiply = 0.45;
 
                     int redsbros = colorSensorSbros.red();
@@ -501,3 +500,5 @@ public class Auto_blu extends LinearOpMode {
         }
     }
 }
+
+
