@@ -68,7 +68,7 @@ public class Auto_blu extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         FL = hardwareMap.dcMotor.get("FL");
         FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         FR = hardwareMap.dcMotor.get("FR");
         FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -203,8 +203,8 @@ public class Auto_blu extends LinearOpMode {
 
         Move(0,45,0);
         Move(-65,45,0);
-        while (FR.getCurrentPosition()>-2800){
-            dash.addData("posu",FR.getCurrentPosition());
+        while (FL.getCurrentPosition()<3900){
+            dash.addData("posu",FL.getCurrentPosition());
             dash.update();
             extr.setPower(-1);
             extl.setPower(-1);

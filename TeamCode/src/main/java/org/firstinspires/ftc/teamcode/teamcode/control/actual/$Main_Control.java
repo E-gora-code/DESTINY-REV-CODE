@@ -149,6 +149,7 @@ public class $Main_Control extends LinearOpMode {
     ElapsedTime snap_angle_timer = new ElapsedTime();
 
     ElapsedTime simple_ext_top_shortcut_timer = new ElapsedTime();
+    ElapsedTime simple_ext_homing_timer = new ElapsedTime();
 
     double x = 0;
     int click = 0;
@@ -206,6 +207,7 @@ public class $Main_Control extends LinearOpMode {
         driftCore.reset();
         snap_angle_timer.reset();
         simple_ext_top_shortcut_timer.reset();
+        simple_ext_homing_timer.reset();
         while (opModeIsActive()) {
             // varing
             extr_pos =  -Normolaze_Enc(FL.getCurrentPosition(),extr_zero,extr_max,ext_range);
@@ -414,6 +416,7 @@ public class $Main_Control extends LinearOpMode {
 
                     claw_toggle = false;
                     simple_ext_homing_state = false;
+                    simple_ext_homing_timer.reset();
                     simple_ext_top_shortcut_timer.reset();
                     simple_ext_top_condition = false;
                 }
@@ -424,6 +427,7 @@ public class $Main_Control extends LinearOpMode {
 
                     claw_toggle = false;
                     simple_ext_homing_state = false;
+                    simple_ext_homing_timer.reset();
                     simple_ext_top_shortcut_timer.reset();
                     simple_ext_top_condition = false;
 
@@ -436,10 +440,11 @@ public class $Main_Control extends LinearOpMode {
                             claw_toggle = false;
                         }
                         simple_ext_homing_state = false;
+                        simple_ext_homing_timer.reset();
                         simple_ext_top_shortcut_timer.reset();
                         simple_ext_top_condition = false;
                     }
-                    else if(simple_ext_homing_state){
+                    else if(simple_ext_homing_state&&(simple_ext_homing_timer.seconds()<4)){
                         setExtRightPower(0.9);
                         setExtLeftPower(0.9);
                     }
@@ -448,10 +453,12 @@ public class $Main_Control extends LinearOpMode {
                         setExtLeftPower(-0.9);
                     }
                     else {
-                        setExtRightPower(0);
-                        setExtLeftPower(0);
+                        setExtRightPower(-0.1);
+                        setExtLeftPower(-0.1);
 //                        simple_ext_top_shortcut_timer.reset();
                         simple_ext_top_condition = false;
+                        simple_ext_homing_state = false;
+                        simple_ext_homing_timer.reset();
                     }
 
                 }
@@ -529,6 +536,7 @@ public class $Main_Control extends LinearOpMode {
             else {
                 if(gamepad1.x){
                     simple_ext_homing_state = true;
+                    simple_ext_homing_timer.reset();
                 }
                 if(gamepad1.y){
                     simple_ext_top_shortcut_timer.reset();
@@ -595,6 +603,7 @@ public class $Main_Control extends LinearOpMode {
                     addToBothTelemetry("Top timer",simple_ext_top_shortcut_timer.seconds());
                     addToBothTelemetry("Top condition",simple_ext_top_condition);
                     addToBothTelemetry("Is going Down",simple_ext_homing_state);
+                    addToBothTelemetry("Is Down timer",simple_ext_homing_timer.seconds());
                 }
                 addToBothTelemetry("-----------------------------"," ");
 
