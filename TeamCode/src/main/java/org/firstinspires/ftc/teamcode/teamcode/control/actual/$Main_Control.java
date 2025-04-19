@@ -439,13 +439,13 @@ public class $Main_Control extends LinearOpMode {
                         simple_ext_top_shortcut_timer.reset();
                         simple_ext_top_condition = false;
                     }
-                    else if ((simple_ext_top_shortcut_timer.seconds()<4)&&simple_ext_top_condition){
-                        setExtRightPower(-0.9);
-                        setExtLeftPower(-0.9);
-                    }
                     else if(simple_ext_homing_state){
                         setExtRightPower(0.9);
                         setExtLeftPower(0.9);
+                    }
+                    else if ((simple_ext_top_shortcut_timer.seconds()<4)&&simple_ext_top_condition){
+                        setExtRightPower(-0.9);
+                        setExtLeftPower(-0.9);
                     }
                     else {
                         setExtRightPower(0);
@@ -527,10 +527,13 @@ public class $Main_Control extends LinearOpMode {
                 extention_speed_mult_bind = Math.max(gamepad1.left_trigger, gamepad2.left_trigger);
             }
             else {
-                if(gamepad1.x){simple_ext_homing_state = true;}
+                if(gamepad1.x){
+                    simple_ext_homing_state = true;
+                }
                 if(gamepad1.y){
                     simple_ext_top_shortcut_timer.reset();
                     simple_ext_top_condition = true;
+                    simple_ext_homing_state = false;
                 }
             }
             claw_toggle_bind = (gamepad1.a||gamepad2.right_bumper)&&(!gamepad1.start);
@@ -591,6 +594,7 @@ public class $Main_Control extends LinearOpMode {
                 if(simple_ext) {
                     addToBothTelemetry("Top timer",simple_ext_top_shortcut_timer.seconds());
                     addToBothTelemetry("Top condition",simple_ext_top_condition);
+                    addToBothTelemetry("Is going Down",simple_ext_homing_state);
                 }
                 addToBothTelemetry("-----------------------------"," ");
 
@@ -777,7 +781,6 @@ public class $Main_Control extends LinearOpMode {
                     if(angle_snap_bind){
                         snap_angle_timer.reset();
                         targAngle = Math.round(targAngle/90)*90;
-                        is_snap_turned_recent = false;
                     }
 
                     if ((turnDrift == 0)||(snap_angle_timer.seconds()<1)) {
@@ -805,6 +808,9 @@ public class $Main_Control extends LinearOpMode {
                             }
                         }
 
+                    }
+                    else if(snap_angle_timer.seconds()>=seconds_to_snap_turn){
+                        is_snap_turned_recent = false;
                     }
                     if(snap_angle_timer.seconds()>seconds_to_snap_turn){
                         is_snap_turned_recent = false;
