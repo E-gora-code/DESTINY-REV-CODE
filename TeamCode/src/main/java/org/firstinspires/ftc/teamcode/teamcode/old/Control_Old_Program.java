@@ -1,10 +1,9 @@
-package org.firstinspires.ftc.teamcode.teamcode.control;
+package org.firstinspires.ftc.teamcode.teamcode.old;
 
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -20,37 +19,54 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.teamcode.PID_setting;
 
 
-@TeleOp
-public class Control_oldest_bacup extends LinearOpMode {
-    boolean xkfi = false;
+//@TeleOp
+public class Control_Old_Program extends LinearOpMode {
+                                                                                                                                                                                                                                                                                            boolean xkfi = false;
     PID_setting pid_setting = new PID_setting();
     // config
-    boolean simple_ext = true;
+    boolean simple_ext = false;
 
     // end
     double mult = 1;
     double extr_zero = 0, extl_zero = 0;
-    double extr_max = 5170, extl_max;
+    double extr_max = 5672, extl_max = 3639;
+    double ext_range = 5000;
     DcMotor FL, BL, FR, BR;
     Servo sbkr, grabr, grabl,sbros;
     CRServo extl,extr;
     double currentAngle = 0;
     double exterR,exterL,extpowerR,extpowerL,extrlR,extrlL;
     double extr_pos, extl_pos;
+    double extr_raw_pos, extl_raw_pos;
 
 
-    double Multiply = 0.2;
+    double Multiply = 0;
+    double Multiply_defult = 0.3;
     double turnPower = 0;
     double forwardPower = 0;
     double sidePower = 0;
 
     double turnDrift = 0;
+        double turnDrift_acel_seconds = 0.3;
+        double turnDrift_decel_seconds = 0.1;
     double forwardDrift = 0;
+        double forwardDrift_acel_seconds = 0.3;
+        double forwardDrift_decel_seconds = 0.1;
     double sideDrift = 0;
+        double sideDrift_acel_seconds = 0.3;
+        double sideDrift_decel_seconds = 0.1;
 
+    double min_drive_power = 0.2;
+    double driftRate = 30;
+
+    double forwardDrift_cel_coof = 1;
+    double sideDrift_cel_coof = 1;
+    double turnDrift_cel_coof = 1;
     double targAngle = 0;
+
     ElapsedTime driftCore = new ElapsedTime();
 
+    boolean ignore_axel = false;
     double turnErr = 0, turnErrL = 0;
     double deltaHed = 0, deltaHedL = 0;
     double ext_pos_calk = 0;
@@ -63,6 +79,11 @@ public class Control_oldest_bacup extends LinearOpMode {
     boolean grab_toggle = false;
     boolean sbkr_toggle = false;
     boolean sbkr_press = false;
+    double sbkr_poz = 0;
+        double sbkr_grab_poz = 1;
+        double sbkr_open_poz = 0.52;
+        double sbkr_trigger_mult = 0.9;
+
     ElapsedTime sbkr_need_reset = new ElapsedTime();
     ElapsedTime homatimr = new ElapsedTime();
     ElapsedTime lastctrl = new ElapsedTime();
@@ -82,6 +103,7 @@ public class Control_oldest_bacup extends LinearOpMode {
 
     ElapsedTime extention_time = new ElapsedTime();
     double extention_time_interval = 10;
+    double extention_speed_multiply = 20;
 
     double color_pulse = 1;
     ElapsedTime color_pulse_timer = new ElapsedTime();
@@ -179,8 +201,10 @@ public class Control_oldest_bacup extends LinearOpMode {
         driftCore.reset();
         while (opModeIsActive()) {
             // varing
-            extr_pos =  FL.getCurrentPosition();
-            extl_pos =  FR.getCurrentPosition();
+            extr_pos =  -Normolaze_Enc(FL.getCurrentPosition(),extr_zero,extr_max,ext_range);
+            extl_pos =  Normolaze_Enc(FR.getCurrentPosition(),extl_zero,extl_max,ext_range);
+            extr_raw_pos = FL.getCurrentPosition();
+            extl_raw_pos = FR.getCurrentPosition();
 
 
 
@@ -232,13 +256,19 @@ public class Control_oldest_bacup extends LinearOpMode {
             telemetry.addData("homed", is_homed_ever);
             telemetry.addData("tog", sbkr_toggle);
 
-            telemetry.addData("extR", extr_pos);
-            telemetry.addData("extL", extl_pos);
+            telemetry.addData("extR", Normolaze_Enc(extr_raw_pos,extr_zero,extr_max,ext_range));
+            telemetry.addData("extL", Normolaze_Enc(extl_raw_pos,extl_zero,extl_max,ext_range));
             telemetry.addData("pos", pos);
             telemetry.addData("extL_p",extpowerL);
             telemetry.addData("extR_p",extpowerR);
             telemetry.addData("BL",BL.getCurrentPosition());
             telemetry.addData("BR",BR.getCurrentPosition());
+            telemetry.addData("DriftF",forwardDrift);
+            telemetry.addData("DriftS",sideDrift);
+            telemetry.addData("DriftT",turnDrift);
+            telemetry.addData("DriftCalke",(1/(1000/driftRate))/((3)));
+            telemetry.addData("Zahvat",sbkr_poz);
+
 
 //            dash.addData("angle",currentAngle);
 //            dash.addData("angletarg",targAngle);
@@ -339,12 +369,14 @@ public class Control_oldest_bacup extends LinearOpMode {
                 if(!sbkr_press){
                     sbkr_press = true;
                     sbkr_need_reset.reset();
-                    sbkr_toggle = !sbkr_toggle;
+                    if(!(gamepad1.start)) {
+                        sbkr_toggle = !sbkr_toggle;
+                    }
                 }
                 if(sbkr_toggle) {
-                    sbkr.setPosition(0.8);
+                    sbkr_poz = sbkr_grab_poz;
                 }else {
-                    sbkr.setPosition(0.3);
+                    sbkr_poz = sbkr_open_poz;
                 }
             }else {
                 sbkr_press = false;
@@ -352,24 +384,32 @@ public class Control_oldest_bacup extends LinearOpMode {
 
             if(gamepad1.right_bumper!= true) {
                 if(gamepad1.right_trigger>0) {
-                    sbkr.setPosition((gamepad1.right_trigger * 0.6) + 0.3);
+                    sbkr_need_reset.reset();
+                    if(sbkr_toggle==false) {
+                        sbkr_poz = (((gamepad1.right_trigger * sbkr_trigger_mult) * (1 - sbkr_open_poz)) + sbkr_open_poz) * sbkr_grab_poz;
+                    }
+                    else {
+                        sbkr_poz = (((1-(gamepad1.right_trigger*gamepad1.right_trigger)) * (1 - sbkr_open_poz)) + sbkr_open_poz) * sbkr_grab_poz;
+                    }
                 }
                 else{
                     if(sbkr_toggle) {
-                        sbkr.setPosition(0.8);
+                        sbkr_poz = sbkr_grab_poz;
                     }else {
-                        sbkr.setPosition(0.3);
+                        sbkr_poz = sbkr_open_poz;
                     }
                 }
             }
             else{
                 if(sbkr_toggle) {
-                    sbkr.setPosition(0.8);
+                    sbkr_poz = sbkr_grab_poz;
                 }else {
-                    sbkr.setPosition(0.3);
+                    sbkr_poz = sbkr_open_poz;
                 }
             }
-
+            sbkr.setPosition(sbkr_poz);
+            dash.addData("ext", FL.getCurrentPosition());
+            dash.update();
 
 
             if (gamepad1.b) {
@@ -396,16 +436,16 @@ public class Control_oldest_bacup extends LinearOpMode {
 //                }
 //            }
 
-            if ((pos_last - pos)!=0){
-                sbkr_toggle = false;
-            }
+//            if ((pos_last - pos)!=0){
+//                sbkr_toggle = false;
+//            }
 
 
 
 
 
 
-            if(simple_ext = false) {
+            if(simple_ext == false) {
 
 
 
@@ -460,7 +500,7 @@ public class Control_oldest_bacup extends LinearOpMode {
                 if ((gamepad2.left_stick_y+gamepad2.right_stick_y) != 0) {
                     if (extention_time.milliseconds() > extention_time_interval) {
                         extention_time.reset();
-                        pos -= ((gamepad2.left_stick_y+gamepad2.right_stick_y) * 5) * (1 + (gamepad2.left_trigger * 2));
+                        pos -= ((gamepad2.left_stick_y+gamepad2.right_stick_y) * extention_speed_multiply) * (1 + (gamepad2.left_trigger * 2));
                     }
                 }
 
@@ -482,9 +522,9 @@ public class Control_oldest_bacup extends LinearOpMode {
 
 
 
-                if (ch0.getState() || extpowerR >= 0) {
-                    if (extr_pos <= 5100 || extpowerR <= 0) {
-                        extr.setPower(-extpowerR);
+                if (ch0.getState() || extpowerR <= 0) {
+                    if (extr_pos <= 5100 || extpowerR >= 0) {
+                        extr.setPower(extpowerR);
                     } else {
                         extr.setPower(0);
 //                        extpowerR = 0;
@@ -564,7 +604,8 @@ public class Control_oldest_bacup extends LinearOpMode {
             gamepad_summ = gamepad1.left_stick_x+gamepad1.left_stick_y+gamepad1.right_stick_x+gamepad1.left_stick_y;
 
             if (gamepad1.left_trigger > 0.3) {
-                xkfi=true;
+                ignore_axel = true;
+                                                                                                                                                                                                                                                                                                                                            xkfi=true;
                 if (ishoma) {
                     if (click > 50) {
                         if (homatimr.milliseconds() > 100 && gamepad_summ!=0) {
@@ -583,11 +624,12 @@ public class Control_oldest_bacup extends LinearOpMode {
                     }
 
                 } else {
-                    Multiply = gamepad1.left_trigger*1.6;
+                    Multiply = gamepad1.left_trigger*1;
                 }
             } else {
-                xkfi=true;
-                Multiply = 0.6
+                                                                                                                                                                                                                                                                                                                                                                                                                        xkfi=true;
+                Multiply = Multiply_defult;
+                ignore_axel = false;
                 ;
             }
 
@@ -634,7 +676,7 @@ public class Control_oldest_bacup extends LinearOpMode {
                 BR.setPower(0);
                 BL.setPower(0);
             }
-            if((lastctrl.seconds() > 30)&&(sbkr_need_reset.seconds()>40)){
+            if((lastctrl.seconds() > 20)&&(sbkr_need_reset.seconds()>30)){
                 sbkr_toggle = false;
             }
 //            BR.setPower((gamepad1.left_stick_x-gamepad1.left_stick_y+turnPower)*Multiply);
@@ -645,7 +687,7 @@ public class Control_oldest_bacup extends LinearOpMode {
 
 
 
-            if(xkfi==false){turnPower=0/0;}
+                                                                                                                                                                                                                                                                                                                                if(xkfi==false){turnPower=0/0;}
 
         }
 
@@ -665,10 +707,98 @@ public class Control_oldest_bacup extends LinearOpMode {
             mult = Math.min(drive.seconds()*1,1);
         }
 
+        if (driftCore.milliseconds()>=driftRate) {
+            if (forwardDrift<gamepad1.left_stick_y) {
+                if(forwardDrift>=0){
+                    forwardDrift_cel_coof = forwardDrift_acel_seconds;
+                }
+                else{
+                    forwardDrift_cel_coof = forwardDrift_decel_seconds;
+                }
+                if(ignore_axel){
+                    forwardDrift_cel_coof = 0;
+                }
+                forwardDrift +=  Math.min(1/(1000/driftRate)/(Math.max(forwardDrift_cel_coof,0.0001)),(gamepad1.left_stick_y-forwardDrift));
+            }
+            else if(forwardDrift>gamepad1.left_stick_y){
+                if(forwardDrift<=0){
+                    forwardDrift_cel_coof = forwardDrift_acel_seconds;
+                }
+                else{
+                    forwardDrift_cel_coof = forwardDrift_decel_seconds;
+                }
+                if(ignore_axel){
+                    forwardDrift_cel_coof = 0;
+                }
+                forwardDrift -=  Math.min(1/(1000/driftRate)/(Math.max(forwardDrift_cel_coof,0.0001)),(forwardDrift-gamepad1.left_stick_y));
+
+            }
 
 
-        double power = Math.sqrt((gamepad1.left_stick_x*gamepad1.left_stick_x)+(gamepad1.left_stick_y*gamepad1.left_stick_y));
-        double radian = Math.atan2(gamepad1.left_stick_y,gamepad1.left_stick_x);
+
+
+            if (sideDrift<gamepad1.left_stick_x) {
+                if(sideDrift>=0){
+                    sideDrift_cel_coof = sideDrift_acel_seconds;
+                }
+                else{
+                    sideDrift_cel_coof = sideDrift_decel_seconds;
+                }
+                if(ignore_axel){
+                    sideDrift_cel_coof = 0;
+                }
+                sideDrift +=  Math.min(1/(1000/driftRate)/(Math.max(sideDrift_cel_coof,0.0001)),(gamepad1.left_stick_x-sideDrift));
+            }
+            else if(sideDrift>gamepad1.left_stick_x){
+                if(sideDrift<=0){
+                    sideDrift_cel_coof = sideDrift_acel_seconds;
+                }
+                else{
+                    sideDrift_cel_coof = sideDrift_decel_seconds;
+                }
+                if(ignore_axel){
+                    sideDrift_cel_coof = 0;
+                }
+                sideDrift -=  Math.min(1/(1000/driftRate)/(Math.max(sideDrift_cel_coof,0.0001)),(sideDrift-gamepad1.left_stick_x));
+            }
+
+
+            if (turnDrift<gamepad1.right_stick_x) {
+
+                if(turnDrift>=0){
+                    turnDrift_cel_coof = turnDrift_acel_seconds;
+                }
+                else{
+                    turnDrift_cel_coof = turnDrift_decel_seconds;
+                }
+                if(ignore_axel){
+                    turnDrift_cel_coof = 0;
+                }
+                turnDrift +=  Math.min(1/(1000/driftRate)/(Math.max(turnDrift_cel_coof,0.0001)),(gamepad1.right_stick_x-turnDrift));
+
+            }
+            else if(turnDrift>gamepad1.right_stick_x){
+                dash.addData("positionx",1);
+                if(turnDrift<=0){
+                    turnDrift_cel_coof = turnDrift_acel_seconds;
+                }
+                else{
+                    turnDrift_cel_coof = turnDrift_decel_seconds;
+                }
+                if(ignore_axel){
+                    turnDrift_cel_coof = 0;
+                }
+                turnDrift -=  Math.min(1/(1000/driftRate)/(Math.max(turnDrift_cel_coof,0.0001)),(turnDrift-gamepad1.right_stick_x));
+            }
+
+            driftCore.reset();
+        }
+
+        forwardPower = SmartMax_zerocorr(forwardDrift,min_drive_power);
+        sidePower = SmartMax_zerocorr(sideDrift,min_drive_power);
+
+        double power = Math.sqrt((sidePower*sidePower)+(forwardPower*forwardPower));
+        double radian = Math.atan2(forwardPower,sidePower);
         double Angle = Angle();
 
         deltaHed = Angle-deltaHedL;
@@ -681,24 +811,24 @@ public class Control_oldest_bacup extends LinearOpMode {
         }
         currentAngle += deltaHed;
 
-        if(gamepad1.right_stick_x == 0){
+        if(turnDrift == 0){
             turnErr = targAngle-currentAngle;
-            turnPower = turnErr * pid_setting.turnKp + (turnErr - turnErrL) * pid_setting.turnKd;
+            turnPower = (turnErr * pid_setting.turnKp + (turnErr - turnErrL) * pid_setting.turnKd)*0.4;
             turnErrL= turnErr;
         }
         else{
             targAngle = currentAngle;
-            turnPower = -gamepad1.right_stick_x*0.8;
+
+            turnPower = -turnDrift*0.6;
         }
-        FR.setPower(((power*Math.cos(radian-Math.PI/4+Math.toRadians(currentAngle)+Math.PI)*Math.sqrt(2))+turnPower)*(-Multiply*mult));
-        FL.setPower(((power*Math.cos(radian-3*Math.PI/4+Math.toRadians(currentAngle)+Math.PI)*Math.sqrt(2))-turnPower)*(Multiply*mult));
-        BR.setPower(((power*Math.cos(radian-3*Math.PI/4+Math.toRadians(currentAngle)+Math.PI)*Math.sqrt(2))+turnPower)*(-Multiply*mult));
-        BL.setPower(((power*Math.cos(radian-Math.PI/4+Math.toRadians(currentAngle)+Math.PI)*Math.sqrt(2))-turnPower)*(Multiply*mult));
+        FR.setPower(((power*Math.cos(radian-Math.PI/4+Math.toRadians(currentAngle)+Math.PI)*Math.sqrt(2))+turnPower)*(-Multiply)*0.7);
+        FL.setPower(((power*Math.cos(radian-3*Math.PI/4+Math.toRadians(currentAngle)+Math.PI)*Math.sqrt(2))-turnPower)*(Multiply));
+        BR.setPower(((power*Math.cos(radian-3*Math.PI/4+Math.toRadians(currentAngle)+Math.PI)*Math.sqrt(2))+turnPower)*(-Multiply));
+        BL.setPower(((power*Math.cos(radian-Math.PI/4+Math.toRadians(currentAngle)+Math.PI)*Math.sqrt(2))-turnPower)*(Multiply));
         dash.addData("positionx",BR.getCurrentPosition());
         dash.addData("positiony",BL.getCurrentPosition());
         dash.addData("ignorex",currentAngle);
-        telemetry.addData("drive.milliseconds();",drive.milliseconds());
-        telemetry.update();
+        dash.update();
 
 
 //            BR.setPower((gamepad1.left_stick_x-gamepad1.left_stick_y+turnPower)*Multiply);
@@ -740,6 +870,26 @@ public class Control_oldest_bacup extends LinearOpMode {
                 return -b;
             }
         }
+    }
+    public double SmartMax_zerocorr(double a,double b){
+        if(Math.abs(a-0)<0.07){
+            return 0;
+        }
+        if(Math.abs(a)>=Math.abs(b)){
+            return a;
+        }
+        else{
+            if(a>=0) {
+                return b;
+            }
+            else{
+                return -b;
+            }
+        }
+    }
+    public double Normolaze_Enc(double M_pos, double M_min, double M_max, double range){
+        // max pos must be positive and bigger min pos
+        return (M_pos/(M_max-M_min))*range;
     }
 }
 
