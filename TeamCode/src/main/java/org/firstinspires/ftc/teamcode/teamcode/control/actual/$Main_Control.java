@@ -983,6 +983,9 @@ public class $Main_Control extends LinearOpMode {
         }else if(power<0){
             extr.setPower(power);
         }
+        else {
+            extr.setPower(-0.1);
+        }
     }
     public void setExtLeftPower(double power){
         if(ch1.getState()){
@@ -990,6 +993,10 @@ public class $Main_Control extends LinearOpMode {
         }else if(power<0){
             extl.setPower(power);
         }
+        else {
+            extl.setPower(-0.1);
+        }
+
     }
     public double getZnak(double a){
         if(a > 0){
