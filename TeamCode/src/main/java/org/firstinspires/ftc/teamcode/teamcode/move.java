@@ -11,7 +11,7 @@ public class move extends LinearOpMode {
     @Override
     public void runOpMode() {
         // Инициализация колор-сканера
-        colorSensor = hardwareMap.get(ColorSensor.class, "color_sensor1");
+        colorSensor = hardwareMap.get(ColorSensor.class, "color_sensor");
 
         // Ждем, пока оператор не нажмет кнопку старт
         waitForStart();

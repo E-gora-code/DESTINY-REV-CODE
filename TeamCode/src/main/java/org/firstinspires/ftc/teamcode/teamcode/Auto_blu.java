@@ -121,7 +121,7 @@ public class Auto_blu extends LinearOpMode {
             }
         });
         FtcDashboard.getInstance().startCameraStream(webcam, 24);
-        while (!opModeIsActive()) {
+        while (!opModeIsActive()&&!isStopRequested()) {
             telemetry.addData("Base", Base);
             dash.addData("fill", detector.fillValue);
             dash.addData("center", detector.center);
@@ -203,7 +203,7 @@ public class Auto_blu extends LinearOpMode {
 
         Move(0,45,0);
         Move(-65,45,0);
-        while (FL.getCurrentPosition()<3900){
+        while (FL.getCurrentPosition()<3900&&!isStopRequested()){
             dash.addData("posu",FL.getCurrentPosition());
             dash.update();
             extr.setPower(-1);
@@ -268,18 +268,20 @@ public class Auto_blu extends LinearOpMode {
         targDisty = disty * 699;
         targDistx = -distx * 699;
         moveTimer.reset();
-        while (Math.abs(targDisty-y)>400 || Math.abs(targDistx-x)>400 || Math.abs(targAngle-currentAngle)>5) {
+        while ((Math.abs(targDisty-y)>400 || Math.abs(targDistx-x)>400 || Math.abs(targAngle-currentAngle)>5)&&!isStopRequested()) {
             dash.addData("ignorey",Math.abs(targDisty-y));
             dash.addData("ignorex",Math.abs(targDistx-x));
             dash.addData("ignorea",Math.abs(targAngle-currentAngle));
             dash.update();
         }
-        sleep(300);
-        dash.addData("ignorey",Math.abs(targDisty-y)>500);
-        dash.addData("ignorex",Math.abs(targDistx-x)>500);
-        dash.addData("ignorea",Math.abs(targAngle-currentAngle)>5);
+        if (!isStopRequested()){
+            sleep(300);
+            dash.addData("ignorey", Math.abs(targDisty - y) > 500);
+            dash.addData("ignorex", Math.abs(targDistx - x) > 500);
+            dash.addData("ignorea", Math.abs(targAngle - currentAngle) > 5);
 
-        dash.update();
+            dash.update();
+        }
     }
     public void Mve(double disty,double distx,double turn) {
 
@@ -300,7 +302,7 @@ public class Auto_blu extends LinearOpMode {
 
     class Driving extends Thread {
         public void run() {
-            while (opModeIsActive()) {
+            while (opModeIsActive()&&!isStopRequested()) {
                 double Angle = Angle();
                 double BLs = BL.getCurrentPosition();
                 double BRs = BR.getCurrentPosition();
@@ -452,7 +454,7 @@ public class Auto_blu extends LinearOpMode {
 
             boolean mover_timer_reseted = false;
 
-            while (opModeIsActive()) {
+            while (opModeIsActive()&&!isStopRequested()) {
                 if (flag && !(mover_timer_reseted)){
                     mover.reset();
                     mover_timer_reseted = true;
