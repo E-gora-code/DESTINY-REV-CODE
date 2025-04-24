@@ -19,7 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
-@TeleOp
+//@TeleOp
 public class
 tredtest extends LinearOpMode {
     tred_1 tred__1 = new tred_1();

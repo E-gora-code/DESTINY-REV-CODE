@@ -90,8 +90,8 @@ public class Auto_blu extends LinearOpMode {
 
         extl = hardwareMap.crservo.get("extl");
         extr = hardwareMap.crservo.get("extr");
-        colorSensorSbros = hardwareMap.get(ColorSensor.class, "color_sensor1");
-        colorSensordown = hardwareMap.get(ColorSensor.class, "color_sensor");
+        colorSensorSbros = hardwareMap.get(ColorSensor.class, "color_sensor");
+        colorSensordown = hardwareMap.get(ColorSensor.class, "color_sensor1");
 
 
 

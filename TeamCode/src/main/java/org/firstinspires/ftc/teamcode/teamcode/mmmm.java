@@ -18,7 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
-@TeleOp
+//@TeleOp
 public class mmmm extends LinearOpMode {
     Telemetry dash = FtcDashboard.getInstance().getTelemetry();
     boolean is_mmmm = true;

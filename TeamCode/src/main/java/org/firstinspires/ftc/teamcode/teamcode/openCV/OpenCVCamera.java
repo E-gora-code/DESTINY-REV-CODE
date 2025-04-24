@@ -10,7 +10,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous
+//@Autonomous
 public class OpenCVCamera extends LinearOpMode {
     OpenCvCamera webcam;
     HSV hsv = new HSV();

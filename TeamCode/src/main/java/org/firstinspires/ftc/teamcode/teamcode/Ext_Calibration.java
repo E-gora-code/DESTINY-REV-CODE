@@ -21,7 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import java.util.TreeMap;
 
 
-@Autonomous
+//@Autonomous
 public class Ext_Calibration extends LinearOpMode {
                                                                                                                                                                                                                                                                                             boolean xkfi = false;
     PID_setting pid_setting = new PID_setting();
