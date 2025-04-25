@@ -211,8 +211,8 @@ public class Auto_blu extends LinearOpMode {
 
 
         Move(0,45,0);
-        Move(-75,45,0);
-        while (FL.getCurrentPosition()<3900&&!isStopRequested()){
+        Move(-95,45,0);
+        while (FL.getCurrentPosition()<3850&&!isStopRequested()){
             dash.addData("posu",FL.getCurrentPosition());
             dash.update();
             extr.setPower(-1);
@@ -221,19 +221,19 @@ public class Auto_blu extends LinearOpMode {
         extr.setPower(0);
         extl.setPower(0);
 
-        Move(-60,70.7,90);
+        Move(-86,70.7,90);
 
 
 
 
 
         flag = true;
-        Move(-70,70.7,90);
+        Move(-96,70.7,90);
 
         flag = false;
 
 
-        Move(-60,50,0);
+        Move(-70,50,180);
 
         extr.setPower(1);
         extl.setPower(1);
@@ -242,29 +242,22 @@ public class Auto_blu extends LinearOpMode {
         extr.setPower(0);
         extl.setPower(0);
 
-        Move(0,45,0);
-        Move(0, 130, 0);
+        Move(-200,50,180);
 
-
-
-
-        Mve(-220,130,0);
-
-
-        Move(-220,120,90);
 
         grabr.setPosition(0.9);
         grabl.setPosition(0);
-
-
-
-
-
-
-
-
         sleep(1000);
-        Move(-70,130,-90);
+        Move(-190,50,270);
+
+
+
+
+
+
+
+
+
 
 
 
@@ -371,17 +364,17 @@ public class Auto_blu extends LinearOpMode {
                 drivePowery = driveErry * pid_setting.driveKp + (driveErry - driveErrLy) * pid_setting.driveKd;
                 driveErrx = targDistx - x;
                 drivePowerx = driveErrx * pid_setting.drivexKp + (driveErrx - driveErrLx) * pid_setting.drivexKd;
-                if (drivePowerx > 0.7) {
-                    drivePowerx = 0.6;
+                if (drivePowerx > 0.8) {
+                    drivePowerx = 0.8;
                 }
-                if (drivePowerx < -0.7) {
-                    drivePowerx = -0.6;
+                if (drivePowerx < -0.8) {
+                    drivePowerx = -0.8;
                 }
-                if (drivePowery > 0.7) {
-                    drivePowery = 0.6;
+                if (drivePowery > 0.8) {
+                    drivePowery = 0.8;
                 }
-                if (drivePowery < -0.7) {
-                    drivePowery = -0.6;
+                if (drivePowery < -0.8) {
+                    drivePowery = -0.8;
                 }
                 if (turnPower > 0.5) {
                     turnPower = 0.8;
@@ -469,7 +462,7 @@ public class Auto_blu extends LinearOpMode {
                     mover_timer_reseted = true;
                 }
                 if (flag && mover.milliseconds()<3000){
-                    Multiply = 0.45;
+                    Multiply = 0.8  ;
 
                     int redsbros = colorSensorSbros.red();
                     int greensbros = colorSensorSbros.green();

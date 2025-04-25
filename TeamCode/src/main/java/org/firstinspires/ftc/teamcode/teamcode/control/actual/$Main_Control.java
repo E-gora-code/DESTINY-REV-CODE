@@ -461,8 +461,8 @@ public class $Main_Control extends LinearOpMode {
                         setExtLeftPower(-0.9);
                     }
                     else {
-                        setExtRightPower(-0.1);
-                        setExtLeftPower(-0.1);
+                        setExtRightPower(0);
+                        setExtLeftPower(0);
 //                        simple_ext_top_shortcut_timer.reset();
                         simple_ext_top_condition = false;
                         simple_ext_homing_state = false;
@@ -936,7 +936,7 @@ public class $Main_Control extends LinearOpMode {
             public void onOpened() {
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
 
-                FtcDashboard.getInstance().startCameraStream(webcam, 4);
+                FtcDashboard.getInstance().startCameraStream(webcam, 16);
             }
 
             @Override

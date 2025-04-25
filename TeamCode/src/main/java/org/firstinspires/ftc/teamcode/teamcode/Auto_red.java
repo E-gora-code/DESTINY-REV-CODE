@@ -211,7 +211,7 @@ public class Auto_red extends LinearOpMode {
 
 
         Move(0,45,0);
-        Move(-40,45,0);
+        Move(-60,45,0);
         while (FL.getCurrentPosition()<3900&&!isStopRequested()){
             dash.addData("posu",FL.getCurrentPosition());
             dash.update();
@@ -221,19 +221,19 @@ public class Auto_red extends LinearOpMode {
         extr.setPower(0);
         extl.setPower(0);
 
-        Move(-36,59.58,90);
+        Move(-56,59.58,90);
 
 
 
         //git
 
         flag = true;
-        Move(-52,59.58,90);
+        Move(-72,59.58,90);
 
         flag = false;
 
 
-        Move(-85,50,0);
+        Move(-65,50,180);
 
         extr.setPower(1);
         extl.setPower(1);
@@ -242,16 +242,11 @@ public class Auto_red extends LinearOpMode {
         extr.setPower(0);
         extl.setPower(0);
 
-        Move(0,45,0);
-        Move(0, 130, 0);
+        Move(-200,46,180);
 
 
 
 
-        Mve(-220,125,0);
-
-
-        Move(-220,120,90);
 
         grabr.setPosition(0.9);
         grabl.setPosition(0);
@@ -264,7 +259,7 @@ public class Auto_red extends LinearOpMode {
 
 
         sleep(1000);
-        Move(-70,110,-90);
+        Move(-190,46,270);
 
 
 
@@ -371,17 +366,17 @@ public class Auto_red extends LinearOpMode {
                 drivePowery = driveErry * pid_setting.driveKp + (driveErry - driveErrLy) * pid_setting.driveKd;
                 driveErrx = targDistx - x;
                 drivePowerx = driveErrx * pid_setting.drivexKp + (driveErrx - driveErrLx) * pid_setting.drivexKd;
-                if (drivePowerx > 0.7) {
-                    drivePowerx = 0.6;
+                if (drivePowerx > 0.5) {
+                    drivePowerx = 0.8;
                 }
-                if (drivePowerx < -0.7) {
-                    drivePowerx = -0.6;
+                if (drivePowerx < -0.5) {
+                    drivePowerx = -0.8;
                 }
-                if (drivePowery > 0.7) {
-                    drivePowery = 0.6;
+                if (drivePowery > 0.5) {
+                    drivePowery = 0.8;
                 }
-                if (drivePowery < -0.7) {
-                    drivePowery = -0.6;
+                if (drivePowery < -0.5) {
+                    drivePowery = -0.8;
                 }
                 if (turnPower > 0.5) {
                     turnPower = 0.8;
@@ -469,7 +464,7 @@ public class Auto_red extends LinearOpMode {
                     mover_timer_reseted = true;
                 }
                 if (flag && mover.milliseconds()<3000){
-                    Multiply = 0.45;
+                    Multiply = 0.8;
 
                     int redsbros = colorSensorSbros.red();
                     int greensbros = colorSensorSbros.green();
