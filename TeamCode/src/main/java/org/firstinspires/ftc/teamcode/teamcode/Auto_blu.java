@@ -159,6 +159,9 @@ public class Auto_blu extends LinearOpMode {
 
 
         Move(0, 13, 0);
+        if(!isStopRequested()){
+            sleep(500);
+        }
 
 
 
@@ -175,6 +178,9 @@ public class Auto_blu extends LinearOpMode {
         }
         else {
             Move(0, 70, 0);
+            if(!isStopRequested()){
+                sleep(500);
+            }
 
 
             if (detector.fillValue > 0.02 && nottaken) {
@@ -189,6 +195,9 @@ public class Auto_blu extends LinearOpMode {
             }
             else{
                 Move(0, 130, 0);
+                if(!isStopRequested()){
+                    sleep(500);
+                }
                 if (detector.fillValue > 0.02 && nottaken) {
                     Move(50, 130, 0);
                     nottaken = false;
@@ -202,7 +211,7 @@ public class Auto_blu extends LinearOpMode {
 
 
         Move(0,45,0);
-        Move(-65,45,0);
+        Move(-75,45,0);
         while (FL.getCurrentPosition()<3900&&!isStopRequested()){
             dash.addData("posu",FL.getCurrentPosition());
             dash.update();
@@ -212,14 +221,14 @@ public class Auto_blu extends LinearOpMode {
         extr.setPower(0);
         extl.setPower(0);
 
-        Move(-56,73.7,90);
+        Move(-60,70.7,90);
 
 
 
 
 
         flag = true;
-        Move(-72,73.7,90);
+        Move(-70,70.7,90);
 
         flag = false;
 
@@ -363,16 +372,16 @@ public class Auto_blu extends LinearOpMode {
                 driveErrx = targDistx - x;
                 drivePowerx = driveErrx * pid_setting.drivexKp + (driveErrx - driveErrLx) * pid_setting.drivexKd;
                 if (drivePowerx > 0.7) {
-                    drivePowerx = 0.8;
+                    drivePowerx = 0.6;
                 }
                 if (drivePowerx < -0.7) {
-                    drivePowerx = -0.8;
+                    drivePowerx = -0.6;
                 }
                 if (drivePowery > 0.7) {
-                    drivePowery = 0.8;
+                    drivePowery = 0.6;
                 }
                 if (drivePowery < -0.7) {
-                    drivePowery = -0.8;
+                    drivePowery = -0.6;
                 }
                 if (turnPower > 0.5) {
                     turnPower = 0.8;

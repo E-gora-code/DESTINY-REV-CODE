@@ -13,15 +13,23 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.teamcode.PID_setting;
+import org.firstinspires.ftc.teamcode.teamcode.openCV.CameraOverlay;
+import org.firstinspires.ftc.teamcode.teamcode.openCV.Detector;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 
 @TeleOp
 public class $Main_Control extends LinearOpMode {
+
+    OpenCvCamera webcam;
     Init_Utilites initUtilites = new Init_Utilites();
 
     GamepadBinds gamepadBinds = new GamepadBinds();
@@ -918,21 +926,23 @@ public class $Main_Control extends LinearOpMode {
 
 
             Gyro.initialize(parameters);
-//        OpenCvCamera webcam;
-//        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-//        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-////        webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-//        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-//            @Override
-//            public void onOpened() {
-//                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-//                FtcDashboard.getInstance().startCameraStream(webcam, 24);
-//            }
-//
-//            @Override
-//            public void onError(int errorCode) {
-//            }
-//        });f
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+//        webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+        CameraOverlay detector = new CameraOverlay();
+        webcam.setPipeline(detector);
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
+
+                FtcDashboard.getInstance().startCameraStream(webcam, 4);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+            }
+        });
             String[] passord = new String[4];
             passord[0]="a";
 
