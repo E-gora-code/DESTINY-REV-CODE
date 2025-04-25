@@ -510,7 +510,7 @@ public class $Main_Control extends LinearOpMode {
     public class GamepadBinds extends Thread{
         public void run() {
             while (opModeIsActive()) {
-                default_profile();
+                alt_profile();
             }
         }
         public void default_profile(){
@@ -561,6 +561,65 @@ public class $Main_Control extends LinearOpMode {
             gamepad_summ = gamepad1.left_stick_x+gamepad1.left_stick_y+gamepad1.right_stick_x+gamepad1.left_stick_y;
 
             dual_rumble_bind = gamepad1.left_bumper||gamepad2.left_bumper;
+
+            grab_toggle_bind = gamepad1.b;
+
+            simple_ext = true;
+
+        }
+        public void alt_profile(){
+            if(!gamepad1.left_bumper) {
+                turn_stick_axis = gamepad1.right_stick_x;
+                forward_stick_axis = gamepad1.left_stick_y;
+            }else {
+                turn_stick_axis = 0;
+                forward_stick_axis = 0;
+            }
+            side_stick_axis = gamepad1.left_stick_x;
+            speed_controll_axis = gamepad1.left_trigger;
+            drive_base_accel_move_bind = gamepad1.left_stick_button;
+            drive_base_accel_turn_bind = gamepad1.right_stick_button;
+
+            angle_snap_bind = is_greater(Math.abs(gamepad1.right_stick_y),0.9);
+            if(angle_snap_bind) {
+                snap_180_mode = isAwayFronZero(gamepad1.right_stick_y, 0.5);
+            }
+
+            claw_alt_key_bind = !gamepad1.right_bumper;
+
+            claw_pos_controll_bind = statement_double(gamepad1.right_trigger,!claw_alt_key_bind);
+
+            sbros_with_alt_pos_bind= gamepad1.right_trigger;
+
+            sbros_bind = Math.max(gamepad2.right_trigger,statement_double(sbros_with_alt_pos_bind,claw_alt_key_bind));
+
+            ext_pos_change_bind = gamepad2.left_stick_y+gamepad2.right_stick_y;
+            ext_up_button_bind = gamepad1.dpad_up || gamepad2.dpad_up;
+            ext_down_button_bind = gamepad1.dpad_down || gamepad2.dpad_down;
+            if(!simple_ext) {
+                home_extention_bind = gamepad1.x || gamepad2.a;
+                top_extention_pos_bind = gamepad1.y || gamepad2.y;
+                preset_extention_pos_bind = gamepad2.x;
+                extention_speed_mult_bind = Math.max(gamepad1.left_trigger, gamepad2.left_trigger);
+            }
+            else {
+                if(gamepad1.x){
+                    simple_ext_homing_state = true;
+                    simple_ext_homing_timer.reset();
+                }
+                if(gamepad1.y){
+                    simple_ext_top_shortcut_timer.reset();
+                    simple_ext_top_condition = true;
+                    simple_ext_homing_state = false;
+                }
+            }
+            claw_toggle_bind = (gamepad1.a||gamepad2.right_bumper)&&(!gamepad1.start);
+
+            pos_reset_bind = gamepad1.dpad_left||gamepad1.ps;
+
+            gamepad_summ = gamepad1.left_stick_x+gamepad1.left_stick_y+gamepad1.right_stick_x+gamepad1.left_stick_y;
+
+            dual_rumble_bind = gamepad2.left_bumper;
 
             grab_toggle_bind = gamepad1.b;
 
