@@ -215,8 +215,8 @@ public class Auto_red extends LinearOpMode {
         while (FL.getCurrentPosition()<3900&&!isStopRequested()){
             dash.addData("posu",FL.getCurrentPosition());
             dash.update();
-            extr.setPower(-1);
-            extl.setPower(-1);
+            extr.setPower(1);
+            extl.setPower(1);
         }
         extr.setPower(0);
         extl.setPower(0);
@@ -235,8 +235,8 @@ public class Auto_red extends LinearOpMode {
 
         Move(-65,50,180);
 
-        extr.setPower(1);
-        extl.setPower(1);
+        extr.setPower(-1);
+        extl.setPower(-1);
         sleep(1500);
 
         extr.setPower(0);

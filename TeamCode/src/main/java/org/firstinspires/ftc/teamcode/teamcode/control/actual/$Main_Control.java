@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -30,6 +31,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 public class $Main_Control extends LinearOpMode {
 
     OpenCvCamera webcam;
+    private Acceleration acceleration;
     Init_Utilites initUtilites = new Init_Utilites();
 
     GamepadBinds gamepadBinds = new GamepadBinds();
@@ -600,6 +602,13 @@ public class $Main_Control extends LinearOpMode {
                     addToBothTelemetry("Upgrade", (clmult * clmult * clmult * clmult));
                     addToBothTelemetry("-------------------------", " ");
                 }
+                if (acceleration != null) {
+                    addToBothTelemetry("Accel X", acceleration.xAccel);
+                    addToBothTelemetry("Accel Y", acceleration.yAccel);
+                    addToBothTelemetry("Accel Z", acceleration.zAccel);
+                } else {
+                    addToBothTelemetry("Accel", "No data!");
+                }
                 addToBothTelemetry("-----|Extention|-----"," ");
                 addToBothTelemetry("Target position", pos);
                 addToBothTelemetry("extR position", Normolaze_Enc(extr_raw_pos,extr_zero,extr_max,ext_range));
@@ -741,6 +750,7 @@ public class $Main_Control extends LinearOpMode {
     public class Drive_Base extends Thread {
         public void run() {
             while (opModeIsActive()) {
+                acceleration = Gyro.getLinearAcceleration();
 
 
                 if (turn_stick_axis != 0 || forward_stick_axis != 0 || side_stick_axis != 0) {
@@ -920,12 +930,16 @@ public class $Main_Control extends LinearOpMode {
 
 
             BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//        parameters.mode = BNO055IMU.SensorMode.IMU;
+            parameters.mode = BNO055IMU.SensorMode.NDOF;
             parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+            parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            parameters.loggingEnabled = true;
 
             Gyro = hardwareMap.get(BNO055IMU.class, "imu");
-
-
             Gyro.initialize(parameters);
+
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 //        webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
@@ -988,23 +1002,25 @@ public class $Main_Control extends LinearOpMode {
         return (M_pos/(M_max-M_min))*range;
     }
     public void setExtRightPower(double power){
+        power = -power;
         if(ch0.getState()){
             extr.setPower(power);
-        }else if(power<0){
+        }else if(power>0){
             extr.setPower(power);
         }
         else {
-            extr.setPower(-0.1);
+            extr.setPower(0.1);
         }
     }
     public void setExtLeftPower(double power){
+        power = -power;
         if(ch1.getState()){
             extl.setPower(power);
-        }else if(power<0){
+        }else if(power>0){
             extl.setPower(power);
         }
         else {
-            extl.setPower(-0.1);
+            extl.setPower(0.1);
         }
 
     }

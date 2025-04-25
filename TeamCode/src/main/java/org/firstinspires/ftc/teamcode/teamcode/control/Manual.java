@@ -210,11 +210,11 @@ public class Manual extends LinearOpMode {
             }
 
             if((gamepad2.left_stick_y!=0)&&(gamepad2.right_stick_x!=0)){
-                extl.setPower(gamepad2.right_stick_y);
-                extr.setPower(gamepad2.right_stick_y);
+                extl.setPower(-gamepad2.right_stick_y);
+                extr.setPower(-gamepad2.right_stick_y);
             }else {
-                extl.setPower(gamepad2.left_stick_y);
-                extr.setPower(gamepad2.right_stick_y);
+                extl.setPower(-gamepad2.left_stick_y);
+                extr.setPower(-gamepad2.right_stick_y);
             }
 
 
