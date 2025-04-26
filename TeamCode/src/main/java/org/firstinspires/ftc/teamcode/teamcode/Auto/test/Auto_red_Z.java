@@ -1,11 +1,10 @@
-package org.firstinspires.ftc.teamcode.teamcode.Auto;
+package org.firstinspires.ftc.teamcode.teamcode.Auto.test;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -17,16 +16,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.teamcode.PID_setting;
-import org.firstinspires.ftc.teamcode.teamcode.openCV.Detector;
 import org.firstinspires.ftc.teamcode.teamcode.openCV.ReducedDetector;
 import org.firstinspires.ftc.teamcode.teamcode.openCV.ZID;
 import org.openftc.easyopencv.OpenCvCamera;
-
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(group = "Full auto")
-public class Auto_blu extends LinearOpMode {
+public class Auto_red_Z extends LinearOpMode {
+
+
     ZID z = new ZID();
 
     ElapsedTime moveTimer = new ElapsedTime();
@@ -125,7 +124,7 @@ public class Auto_blu extends LinearOpMode {
             }
         });
         FtcDashboard.getInstance().startCameraStream(webcam, 24);
-        while (!opModeIsActive()&&!isStopRequested()) {
+        while (!opModeIsActive()) {
             telemetry.addData("Base", Base);
             dash.addData("fill", detector.fillValue);
             dash.addData("center", detector.center);
@@ -163,17 +162,16 @@ public class Auto_blu extends LinearOpMode {
 
 
         Move(0, 13, 0);
-        if(!isStopRequested()){
-            sleep(1000);
-        }
+        sleep(1000);
+
 
 
 
         int park = z.N;
-        double fill_needed = 0.02;
         if((park==1)||(park==2)||(park==3)){
             detector.setHSV(0,0,0,0,0,0);
         }
+        double fill_needed = 0.02;
         if ((detector.fillValue > fill_needed && nottaken)||park==1) {
             Move(50,13,0);
             nottaken = false;
@@ -186,10 +184,7 @@ public class Auto_blu extends LinearOpMode {
         }
         else {
             Move(0, 70, 0);
-            if(!isStopRequested()){
-                sleep(1000);
-            }
-
+            sleep(1000);
 
 
             if ((detector.fillValue > fill_needed && nottaken)||park==2) {
@@ -204,24 +199,22 @@ public class Auto_blu extends LinearOpMode {
             }
             else{
                 Move(0, 130, 0);
-                if(!isStopRequested()){
-                    sleep(1000);
-                }
+                sleep(1000);
                 if ((detector.fillValue > fill_needed && nottaken)||park==3) {
                     Move(50, 130, 0);
                     nottaken = false;
                     grabr.setPosition(0.1);
                     grabl.setPosition(0.9);
                     sleep(1000);
-                }
+            }
             }
         }
         webcam.stopStreaming();
 
 
         Move(0,45,0);
-        Move(-95,45,0);
-        while (FL.getCurrentPosition()<3850&&!isStopRequested()){
+        Move(-60,45,0);
+        while (FL.getCurrentPosition()<3900){
             dash.addData("posu",FL.getCurrentPosition());
             dash.update();
             extr.setPower(1);
@@ -230,20 +223,20 @@ public class Auto_blu extends LinearOpMode {
         extr.setPower(0);
         extl.setPower(0);
 
-        Mve(-86,70.7,90);
+        Mve(-56,59.58,90);
 
 
 
-
+        //git
 
         flag = true;
-        Mve(-103,70.7,90);
+        Mve(-72,59.58,90);
         sleep(1000);
 
         flag = false;
 
 
-        Move(-70,50,180);
+        Move(-65,40,180);
 
         extr.setPower(-1);
         extl.setPower(-1);
@@ -252,21 +245,24 @@ public class Auto_blu extends LinearOpMode {
         extr.setPower(0);
         extl.setPower(0);
 
-        Mve(-200,50,180);
+        Mve(-200,40,180);
+
+
+
 
 
         grabr.setPosition(0.9);
         grabl.setPosition(0);
+
+
+
+
+
+
+
+
         sleep(1000);
-        Move(-190,50,270);
-
-
-
-
-
-
-
-
+        Move(-190,46,270);
 
 
 
@@ -276,30 +272,28 @@ public class Auto_blu extends LinearOpMode {
 
     public void Move(double disty,double distx,double turn) {
 
-        targAngle = -turn;
+        targAngle = turn;
         targDisty = disty * 699;
-        targDistx = -distx * 699;
+        targDistx = distx * 699;
         moveTimer.reset();
-        while ((Math.abs(targDisty-y)>400 || Math.abs(targDistx-x)>400 || Math.abs(targAngle-currentAngle)>5)&&!isStopRequested()) {
+        while ((Math.abs(targDisty-y)>400 || Math.abs(targDistx-x)>400 || Math.abs(targAngle-currentAngle)>5)) {
             dash.addData("ignorey",Math.abs(targDisty-y));
             dash.addData("ignorex",Math.abs(targDistx-x));
             dash.addData("ignorea",Math.abs(targAngle-currentAngle));
             dash.update();
         }
-        if (!isStopRequested()){
             sleep(300);
             dash.addData("ignorey", Math.abs(targDisty - y) > 500);
             dash.addData("ignorex", Math.abs(targDistx - x) > 500);
             dash.addData("ignorea", Math.abs(targAngle - currentAngle) > 5);
 
             dash.update();
-        }
     }
     public void Mve(double disty,double distx,double turn) {
 
-        targAngle = -turn;
+        targAngle = turn;
         targDisty = disty * 699;
-        targDistx = -distx * 699;
+        targDistx = distx * 699;
         moveTimer.reset();
 
         sleep(2500);
@@ -314,7 +308,7 @@ public class Auto_blu extends LinearOpMode {
 
     class Driving extends Thread {
         public void run() {
-            while (opModeIsActive()&&!isStopRequested()) {
+            while (opModeIsActive()) {
                 double Angle = Angle();
                 double BLs = BL.getCurrentPosition();
                 double BRs = BR.getCurrentPosition();
@@ -374,16 +368,16 @@ public class Auto_blu extends LinearOpMode {
                 drivePowery = driveErry * pid_setting.driveKp + (driveErry - driveErrLy) * pid_setting.driveKd;
                 driveErrx = targDistx - x;
                 drivePowerx = driveErrx * pid_setting.drivexKp + (driveErrx - driveErrLx) * pid_setting.drivexKd;
-                if (drivePowerx > 0.8) {
+                if (drivePowerx > 0.5) {
                     drivePowerx = 0.6;
                 }
-                if (drivePowerx < -0.8) {
+                if (drivePowerx < -0.5) {
                     drivePowerx = -0.6;
                 }
-                if (drivePowery > 0.8) {
+                if (drivePowery > 0.5) {
                     drivePowery = 0.6;
                 }
-                if (drivePowery < -0.8) {
+                if (drivePowery < -0.5) {
                     drivePowery = -0.6;
                 }
                 if (turnPower > 0.5) {
@@ -455,6 +449,7 @@ public class Auto_blu extends LinearOpMode {
 
 
 
+
             }
         }
     }
@@ -466,13 +461,13 @@ public class Auto_blu extends LinearOpMode {
 
             boolean mover_timer_reseted = false;
 
-            while (opModeIsActive()&&!isStopRequested()) {
+            while (opModeIsActive()) {
                 if (flag && !(mover_timer_reseted)){
                     mover.reset();
                     mover_timer_reseted = true;
                 }
                 if (flag && mover.milliseconds()<3000){
-                    Multiply = 0.4  ;
+                    Multiply = 0.4;
 
                     int redsbros = colorSensorSbros.red();
                     int greensbros = colorSensorSbros.green();
@@ -490,7 +485,7 @@ public class Auto_blu extends LinearOpMode {
                     if (sbros){
                         count += 0.5;
                         sbros = false;
-                        while (((colorSensordown.red()<colorSensordown.green()) || (colorSensordown.red()<colorSensordown.blue()))&& mover.milliseconds()<4000 && count <2){
+                        while (((colorSensordown.red()< colorSensordown.green()) || (colorSensordown.red()< colorSensordown.blue()))&& mover.milliseconds()<4000 && count <2){
                             Multiply = 0;
                             et = false;
 

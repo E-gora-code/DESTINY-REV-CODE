@@ -18,6 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.teamcode.PID_setting;
 import org.firstinspires.ftc.teamcode.teamcode.openCV.Detector;
+import org.firstinspires.ftc.teamcode.teamcode.openCV.ReducedDetector;
 import org.firstinspires.ftc.teamcode.teamcode.openCV.ZID;
 import org.openftc.easyopencv.OpenCvCamera;
 
@@ -35,7 +36,7 @@ public class Auto_red extends LinearOpMode {
     Count count = new Count();
 
     DcMotor FL, BL, FR, BR;
-    ColorSensor colorSensorSbros,colorSensordown;
+//    ColorSensor colorSensorSbros,colorSensordown;
     Servo sbkr, grabr, grabl,sbros;
     double positiony,positionx;
     double Angleosui;
@@ -93,8 +94,8 @@ public class Auto_red extends LinearOpMode {
 
         extl = hardwareMap.crservo.get("extl");
         extr = hardwareMap.crservo.get("extr");
-        colorSensorSbros = hardwareMap.get(ColorSensor.class, "color_sensor");
-        colorSensordown = hardwareMap.get(ColorSensor.class, "color_sensor1");
+//        colorSensorSbros = hardwareMap.get(ColorSensor.class, "color_sensor");
+//        colorSensordown = hardwareMap.get(ColorSensor.class, "color_sensor1");
 
 
 
@@ -111,7 +112,7 @@ public class Auto_red extends LinearOpMode {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        Detector detector = new Detector();
+        ReducedDetector detector = new ReducedDetector();
         webcam.setPipeline(detector);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -511,6 +512,28 @@ public class Auto_red extends LinearOpMode {
                     Multiply = 1;
                 }
             }
+        }
+    }
+    private static class colorSensorSbros{
+        static int red(){
+            return 0;
+        }
+        static int green(){
+            return 0;
+        }
+        static int blue(){
+            return 0;
+        }
+    }
+    private static class colorSensordown{
+        static int red(){
+            return 0;
+        }
+        static int green(){
+            return 0;
+        }
+        static int blue(){
+            return 0;
         }
     }
 }
