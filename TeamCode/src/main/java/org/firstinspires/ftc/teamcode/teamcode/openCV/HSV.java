@@ -4,6 +4,6 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class HSV {
-        public static int lh = 2,ls = 140, lv = 200;   // 50 60 10
-        public static int hh = 20, hs = 160, hv = 255; // 80 255 230
+        public static int lh = 4,ls = 100, lv = 225;   // 50 60 10
+        public static int hh = 20, hs = 200, hv = 255; // 80 255 230
 }

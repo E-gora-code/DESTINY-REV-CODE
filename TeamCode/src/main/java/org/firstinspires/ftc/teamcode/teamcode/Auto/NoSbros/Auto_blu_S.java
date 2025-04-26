@@ -171,7 +171,8 @@ public class Auto_blu_S extends LinearOpMode {
         if((park==1)||(park==2)||(park==3)){
             detector.setHSV(0,0,0,0,0,0);
         }
-        if ((detector.fillValue > 0.05 && nottaken)||park==1) {
+        double fill_needed = 0.02;
+        if ((detector.fillValue > fill_needed && nottaken)||park==1) {
             Move(50,13,0);
             nottaken = false;
             grabr.setPosition(0.1);
@@ -189,7 +190,7 @@ public class Auto_blu_S extends LinearOpMode {
 
 
 
-            if ((detector.fillValue > 0.05 && nottaken)||park==2) {
+            if ((detector.fillValue > fill_needed && nottaken)||park==2) {
                 Move(50, 70, 0);
                 nottaken = false;
                 grabr.setPosition(0.1);
@@ -204,7 +205,7 @@ public class Auto_blu_S extends LinearOpMode {
                 if(!isStopRequested()){
                     sleep(1000);
                 }
-                if ((detector.fillValue > 0.05 && nottaken)||park==3) {
+                if ((detector.fillValue > fill_needed && nottaken)||park==3) {
                     Move(50, 130, 0);
                     nottaken = false;
                     grabr.setPosition(0.1);
