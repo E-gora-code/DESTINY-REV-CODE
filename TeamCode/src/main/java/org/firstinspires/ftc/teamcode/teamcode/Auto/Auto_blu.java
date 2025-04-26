@@ -24,7 +24,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous
+@Autonomous(group = "Full auto")
 public class Auto_blu extends LinearOpMode {
     ZID z = new ZID();
 
