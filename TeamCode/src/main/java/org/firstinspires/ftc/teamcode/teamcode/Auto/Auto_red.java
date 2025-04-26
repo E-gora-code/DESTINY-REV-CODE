@@ -169,6 +169,9 @@ public class Auto_red extends LinearOpMode {
 
 
         int park = z.N;
+        if((park==1)||(park==2)||(park==3)){
+            detector.setHSV(0,0,0,0,0,0);
+        }
         if ((detector.fillValue > 0.05 && nottaken)||park==1) {
             Move(50,13,0);
             nottaken = false;
@@ -224,7 +227,7 @@ public class Auto_red extends LinearOpMode {
         extr.setPower(0);
         extl.setPower(0);
 
-        Move(-56,59.58,90);
+        Mve(-56,59.58,90);
 
 
 

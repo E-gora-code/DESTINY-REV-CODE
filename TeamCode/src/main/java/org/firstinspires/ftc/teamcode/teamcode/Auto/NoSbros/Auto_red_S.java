@@ -23,7 +23,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(group = "Simple")
+//@Autonomous(group = "Simple")
 public class Auto_red_S extends LinearOpMode {
     ZID z = new ZID();
 
@@ -168,6 +168,9 @@ public class Auto_red_S extends LinearOpMode {
 
 
         int park = z.N;
+        if((park==1)||(park==2)||(park==3)){
+            detector.setHSV(0,0,0,0,0,0);
+        }
         if ((detector.fillValue > 0.05 && nottaken)||park==1) {
             Move(50,13,0);
             nottaken = false;

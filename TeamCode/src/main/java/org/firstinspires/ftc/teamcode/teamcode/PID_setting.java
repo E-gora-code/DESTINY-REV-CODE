@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 
-@Config
+//@Config
 public class PID_setting {
     public static double turnKp = 0.06, turnKd = 0.3, driveKp = 0.00025, driveKd = 0.0032,drivexKp = 0.00029, drivexKd = 0.00042;
     public static int targDist = 0;

@@ -168,6 +168,9 @@ public class Auto_blu_S extends LinearOpMode {
 
 
         int park = z.N;
+        if((park==1)||(park==2)||(park==3)){
+            detector.setHSV(0,0,0,0,0,0);
+        }
         if ((detector.fillValue > 0.05 && nottaken)||park==1) {
             Move(50,13,0);
             nottaken = false;
@@ -211,10 +214,6 @@ public class Auto_blu_S extends LinearOpMode {
             }
         }
         webcam.stopStreaming();
-
-
-        Move(0,45,0);
-        Move(-95,45,0);
         while (FL.getCurrentPosition()<3850&&!isStopRequested()){
             dash.addData("posu",FL.getCurrentPosition());
             dash.update();
@@ -223,22 +222,6 @@ public class Auto_blu_S extends LinearOpMode {
         }
         extr.setPower(0);
         extl.setPower(0);
-
-        Move(-86,70.7,90);
-
-
-
-
-
-        flag = true;
-        Mve(-96,70.7,90);
-        sleep(1000);
-
-        flag = false;
-
-
-        Move(-70,50,180);
-
         extr.setPower(-1);
         extl.setPower(-1);
         sleep(1500);
@@ -246,13 +229,16 @@ public class Auto_blu_S extends LinearOpMode {
         extr.setPower(0);
         extl.setPower(0);
 
-        Mve(-200,50,180);
 
+        Move(0,130,0);
+        Move(-200,130,0);
+
+        Mve(-230,130,90);
 
         grabr.setPosition(0.9);
         grabl.setPosition(0);
         sleep(1000);
-        Move(-190,50,270);
+        Move(-70,125,-90);
 
 
 
