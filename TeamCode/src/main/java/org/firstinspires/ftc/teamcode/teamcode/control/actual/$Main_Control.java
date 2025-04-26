@@ -544,11 +544,11 @@ public class $Main_Control extends LinearOpMode {
                 extention_speed_mult_bind = Math.max(gamepad1.left_trigger, gamepad2.left_trigger);
             }
             else {
-                if(gamepad1.x){
+                if(gamepad1.x||gamepad2.x){
                     simple_ext_homing_state = true;
                     simple_ext_homing_timer.reset();
                 }
-                if(gamepad1.y){
+                if(gamepad1.y||gamepad2.y){
                     simple_ext_top_shortcut_timer.reset();
                     simple_ext_top_condition = true;
                     simple_ext_homing_state = false;
@@ -603,11 +603,11 @@ public class $Main_Control extends LinearOpMode {
                 extention_speed_mult_bind = Math.max(gamepad1.left_trigger, gamepad2.left_trigger);
             }
             else {
-                if(gamepad1.x){
+                if(gamepad1.x||gamepad2.x){
                     simple_ext_homing_state = true;
                     simple_ext_homing_timer.reset();
                 }
-                if(gamepad1.y){
+                if(gamepad1.y||gamepad2.y){
                     simple_ext_top_shortcut_timer.reset();
                     simple_ext_top_condition = true;
                     simple_ext_homing_state = false;

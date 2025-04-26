@@ -17,11 +17,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.teamcode.openCV.HSV;
+import org.firstinspires.ftc.teamcode.teamcode.openCV.ZID;
 
 
-//@TeleOp
+@TeleOp
 public class
 tredtest extends LinearOpMode {
+    ZID z = new ZID();
     tred_1 tred__1 = new tred_1();
     DcMotor FL, BL, FR, BR;
     Servo sbkr, grabr, grabl, sbros;
@@ -104,8 +107,10 @@ tredtest extends LinearOpMode {
 
     }
     public void Tel(){
-        telemetry.addData("var1",var1);
+        telemetry.addData("var1",z.N);
+        dash.addData("var1",z.N);
         telemetry.update();
+        dash.update();
     }
     public Orientation Angle() {
         Orientation = Gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);

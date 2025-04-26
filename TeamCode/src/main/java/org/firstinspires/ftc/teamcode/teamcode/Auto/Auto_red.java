@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teamcode;
+package org.firstinspires.ftc.teamcode.teamcode.Auto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -16,7 +16,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.teamcode.PID_setting;
 import org.firstinspires.ftc.teamcode.teamcode.openCV.Detector;
+import org.firstinspires.ftc.teamcode.teamcode.openCV.ZID;
 import org.openftc.easyopencv.OpenCvCamera;
 
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -24,6 +26,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous
 public class Auto_red extends LinearOpMode {
+    ZID z = new ZID();
 
     ElapsedTime moveTimer = new ElapsedTime();
     ElapsedTime mover = new ElapsedTime();
@@ -160,13 +163,13 @@ public class Auto_red extends LinearOpMode {
 
         Move(0, 13, 0);
         if(!isStopRequested()){
-            sleep(500);
+            sleep(1000);
         }
 
 
 
-
-        if (detector.fillValue > 0.02 && nottaken) {
+        int park = z.N;
+        if ((detector.fillValue > 0.05 && nottaken)||park==1) {
             Move(50,13,0);
             nottaken = false;
             grabr.setPosition(0.1);
@@ -179,11 +182,11 @@ public class Auto_red extends LinearOpMode {
         else {
             Move(0, 70, 0);
             if(!isStopRequested()){
-                sleep(500);
+                sleep(1000);
             }
 
 
-            if (detector.fillValue > 0.02 && nottaken) {
+            if ((detector.fillValue > 0.05 && nottaken)||park==2) {
                 Move(50, 70, 0);
                 nottaken = false;
                 grabr.setPosition(0.1);
@@ -196,9 +199,9 @@ public class Auto_red extends LinearOpMode {
             else{
                 Move(0, 130, 0);
                 if(!isStopRequested()){
-                    sleep(500);
+                    sleep(1000);
                 }
-                if (detector.fillValue > 0.02 && nottaken) {
+                if ((detector.fillValue > 0.05 && nottaken)||park==3) {
                     Move(50, 130, 0);
                     nottaken = false;
                     grabr.setPosition(0.1);
@@ -228,7 +231,8 @@ public class Auto_red extends LinearOpMode {
         //git
 
         flag = true;
-        Move(-72,59.58,90);
+        Mve(-72,59.58,90);
+        sleep(1000);
 
         flag = false;
 
@@ -242,7 +246,7 @@ public class Auto_red extends LinearOpMode {
         extr.setPower(0);
         extl.setPower(0);
 
-        Move(-200,46,180);
+        Mve(-200,46,180);
 
 
 
@@ -367,16 +371,16 @@ public class Auto_red extends LinearOpMode {
                 driveErrx = targDistx - x;
                 drivePowerx = driveErrx * pid_setting.drivexKp + (driveErrx - driveErrLx) * pid_setting.drivexKd;
                 if (drivePowerx > 0.5) {
-                    drivePowerx = 0.8;
+                    drivePowerx = 0.6;
                 }
                 if (drivePowerx < -0.5) {
-                    drivePowerx = -0.8;
+                    drivePowerx = -0.6;
                 }
                 if (drivePowery > 0.5) {
-                    drivePowery = 0.8;
+                    drivePowery = 0.6;
                 }
                 if (drivePowery < -0.5) {
-                    drivePowery = -0.8;
+                    drivePowery = -0.6;
                 }
                 if (turnPower > 0.5) {
                     turnPower = 0.8;
@@ -464,7 +468,7 @@ public class Auto_red extends LinearOpMode {
                     mover_timer_reseted = true;
                 }
                 if (flag && mover.milliseconds()<3000){
-                    Multiply = 0.8;
+                    Multiply = 0.4;
 
                     int redsbros = colorSensorSbros.red();
                     int greensbros = colorSensorSbros.green();
@@ -495,7 +499,7 @@ public class Auto_red extends LinearOpMode {
 
                 }
                 else if(flag){
-                    Multiply =1.7;
+                    Multiply =1.5;
 
                     et = false;
                 }
