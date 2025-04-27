@@ -19,13 +19,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.teamcode.PID_setting;
 import org.firstinspires.ftc.teamcode.teamcode.openCV.Detector;
 import org.firstinspires.ftc.teamcode.teamcode.openCV.ZID;
-import org.opencv.core.Mat;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(group = "Simple")
-public class Auto_blu_S extends LinearOpMode {
+public class Auto_red_S extends LinearOpMode {
     ZID z = new ZID();
 
     ElapsedTime moveTimer = new ElapsedTime();
@@ -206,8 +205,6 @@ public class Auto_blu_S extends LinearOpMode {
             }
         }
         webcam.stopStreaming();
-
-
         while (FL.getCurrentPosition()<3850&&!isStopRequested()){
             dash.addData("posu",FL.getCurrentPosition());
             dash.update();
@@ -222,9 +219,8 @@ public class Auto_blu_S extends LinearOpMode {
 
         extr.setPower(0);
         extl.setPower(0);
-
-
         Move(0,130,0);
+
 
         Move(-70,120,-90);
 
@@ -244,9 +240,9 @@ public class Auto_blu_S extends LinearOpMode {
 
     public void Move(double disty,double distx,double turn) {
 
-        targAngle = -turn;
+        targAngle = turn;
         targDisty = disty * 699;
-        targDistx = -distx * 699;
+        targDistx = distx * 699;
         moveTimer.reset();
         while ((Math.abs(targDisty-y)>400 || Math.abs(targDistx-x)>400 || Math.abs(targAngle-currentAngle)>5)&&!isStopRequested()) {
             dash.addData("ignorey",Math.abs(targDisty-y));
@@ -265,9 +261,9 @@ public class Auto_blu_S extends LinearOpMode {
     }
     public void Mve(double disty,double distx,double turn) {
 
-        targAngle = -turn;
+        targAngle = turn;
         targDisty = disty * 699;
-        targDistx = -distx * 699;
+        targDistx = distx * 699;
         moveTimer.reset();
 
         sleep(3000);

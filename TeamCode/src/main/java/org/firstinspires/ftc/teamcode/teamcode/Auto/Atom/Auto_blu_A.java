@@ -1,11 +1,10 @@
-package org.firstinspires.ftc.teamcode.teamcode.Auto.NoSbros;
+package org.firstinspires.ftc.teamcode.teamcode.Auto.Atom;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -19,13 +18,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.teamcode.PID_setting;
 import org.firstinspires.ftc.teamcode.teamcode.openCV.Detector;
 import org.firstinspires.ftc.teamcode.teamcode.openCV.ZID;
-import org.opencv.core.Mat;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(group = "Simple")
-public class Auto_blu_S extends LinearOpMode {
+public class Auto_blu_A extends LinearOpMode {
     ZID z = new ZID();
 
     ElapsedTime moveTimer = new ElapsedTime();
@@ -176,7 +174,11 @@ public class Auto_blu_S extends LinearOpMode {
         if ((detector.fillValue > fill_needed && nottaken)||park==1) {
             Move(50,13,0);
             nottaken = false;
+            grabr.setPosition(0.1);
+            grabl.setPosition(0.9);
 
+
+            sleep(1000);
 
         }
         else {
@@ -190,7 +192,11 @@ public class Auto_blu_S extends LinearOpMode {
             if ((detector.fillValue > fill_needed && nottaken)||park==2) {
                 Move(50, 70, 0);
                 nottaken = false;
+                grabr.setPosition(0.1);
+                grabl.setPosition(0.9);
 
+
+                sleep(1000);
 
             }
             else{
@@ -201,13 +207,13 @@ public class Auto_blu_S extends LinearOpMode {
                 if ((detector.fillValue > fill_needed && nottaken)||park==3) {
                     Move(50, 130, 0);
                     nottaken = false;
-
+                    grabr.setPosition(0.1);
+                    grabl.setPosition(0.9);
+                    sleep(1000);
                 }
             }
         }
         webcam.stopStreaming();
-
-
         while (FL.getCurrentPosition()<3850&&!isStopRequested()){
             dash.addData("posu",FL.getCurrentPosition());
             dash.update();
@@ -225,8 +231,14 @@ public class Auto_blu_S extends LinearOpMode {
 
 
         Move(0,130,0);
+        Move(-200,130,0);
 
-        Move(-70,120,-90);
+        Mve(-230,130,90);
+
+        grabr.setPosition(0.9);
+        grabl.setPosition(0);
+        sleep(1000);
+        Move(-70,125,-90);
 
 
 

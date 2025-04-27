@@ -536,6 +536,14 @@ public class Auto_red extends LinearOpMode {
             return 0;
         }
     }
+//    private static class detector{
+//        public static double fillValue = 0;
+//        public static double center = 0;
+//        static  void  setHSV(int a,int b,int c,int d,int e,int z){
+//        }
+//
+//
+//    }
 }
 
 

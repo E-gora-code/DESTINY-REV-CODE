@@ -1,11 +1,10 @@
-package org.firstinspires.ftc.teamcode.teamcode.Auto.NoSbros;
+package org.firstinspires.ftc.teamcode.teamcode.Auto.Atom;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -19,13 +18,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.teamcode.PID_setting;
 import org.firstinspires.ftc.teamcode.teamcode.openCV.Detector;
 import org.firstinspires.ftc.teamcode.teamcode.openCV.ZID;
-import org.opencv.core.Mat;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(group = "Simple")
-public class Auto_blu_S extends LinearOpMode {
+public class Auto_red_A extends LinearOpMode {
     ZID z = new ZID();
 
     ElapsedTime moveTimer = new ElapsedTime();
@@ -159,94 +157,16 @@ public class Auto_blu_S extends LinearOpMode {
         x=0;
         y=0;
 
-
-
-        Move(0, 13, 0);
-        if(!isStopRequested()){
-            sleep(1000);
-        }
-
-
-
-        int park = z.N;
-        if((park==1)||(park==2)||(park==3)){
-            detector.setHSV(0,0,0,0,0,0);
-        }
-        double fill_needed = 0.02;
-        if ((detector.fillValue > fill_needed && nottaken)||park==1) {
-            Move(50,13,0);
-            nottaken = false;
-
-
-        }
-        else {
-            Move(0, 70, 0);
-            if(!isStopRequested()){
-                sleep(1000);
-            }
-
-
-
-            if ((detector.fillValue > fill_needed && nottaken)||park==2) {
-                Move(50, 70, 0);
-                nottaken = false;
-
-
-            }
-            else{
-                Move(0, 130, 0);
-                if(!isStopRequested()){
-                    sleep(1000);
-                }
-                if ((detector.fillValue > fill_needed && nottaken)||park==3) {
-                    Move(50, 130, 0);
-                    nottaken = false;
-
-                }
-            }
-        }
-        webcam.stopStreaming();
-
-
-        while (FL.getCurrentPosition()<3850&&!isStopRequested()){
-            dash.addData("posu",FL.getCurrentPosition());
-            dash.update();
-            extr.setPower(1);
-            extl.setPower(1);
-        }
-        extr.setPower(0);
-        extl.setPower(0);
-        extr.setPower(-1);
-        extl.setPower(-1);
-        sleep(1500);
-
-        extr.setPower(0);
-        extl.setPower(0);
-
-
-        Move(0,130,0);
-
-        Move(-70,120,-90);
-
-
-
-
-
-
-
-
-
-
-
+        Move(40,0,0);
 
 
     }
 
     public void Move(double disty,double distx,double turn) {
 
-        targAngle = -turn;
+        targAngle = turn;
         targDisty = disty * 699;
-        targDistx = -distx * 699;
+        targDistx = distx * 699;
         moveTimer.reset();
         while ((Math.abs(targDisty-y)>400 || Math.abs(targDistx-x)>400 || Math.abs(targAngle-currentAngle)>5)&&!isStopRequested()) {
             dash.addData("ignorey",Math.abs(targDisty-y));
@@ -265,9 +185,9 @@ public class Auto_blu_S extends LinearOpMode {
     }
     public void Mve(double disty,double distx,double turn) {
 
-        targAngle = -turn;
+        targAngle = turn;
         targDisty = disty * 699;
-        targDistx = -distx * 699;
+        targDistx = distx * 699;
         moveTimer.reset();
 
         sleep(3000);

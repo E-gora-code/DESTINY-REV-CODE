@@ -14,6 +14,8 @@ public class ReducedDetector extends OpenCvPipeline {
     Mat mat = new Mat();
     Mat mask = new Mat();
     Mat submat = new Mat();
+
+    Mat output = new Mat();
     public double fillValue = 0;
     public int center = 0;
     Point centroid;
@@ -45,7 +47,7 @@ public class ReducedDetector extends OpenCvPipeline {
         Core.inRange(mat, lhsv, hhsv, mask);
 
         // Создаём чёрно-белое выходное изображение
-        Mat output = new Mat();
+
         // Конвертируем маску в 3-канальное изображение (чтобы было совместимо с RGB)
         Imgproc.cvtColor(mask, output, Imgproc.COLOR_GRAY2RGB);
 

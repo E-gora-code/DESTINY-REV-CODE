@@ -13,6 +13,8 @@ public class Detector extends OpenCvPipeline {
     HSV hsv = new HSV();
     Mat mat = new Mat();
     Mat mask = new Mat();
+    Mat output = new Mat();
+    Mat inverted = new Mat();
     Mat submat = new Mat();
     public double fillValue = 0;
     public int center = 0;
@@ -45,11 +47,10 @@ public class Detector extends OpenCvPipeline {
         Core.inRange(mat, lhsv, hhsv, mask);
 
         // Создаём выходное изображение (копируем исходное)
-        Mat output = new Mat();
+
         input.copyTo(output);
 
         // Инвертируем цвет только для пикселей, попавших в маску
-        Mat inverted = new Mat();
         Core.bitwise_not(input, inverted); // Инвертируем всё изображение
         inverted.copyTo(output, mask); // Применяем инверсию только там, где маска = 255
 

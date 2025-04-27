@@ -216,7 +216,7 @@ public class Auto_blu extends LinearOpMode {
                 }
             }
         }
-        webcam.stopStreaming();
+//        webcam.stopStreaming();
 
 
         Move(0,45,0);
