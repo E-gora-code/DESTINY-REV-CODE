@@ -128,7 +128,6 @@ tredtest extends LinearOpMode {
             }
         }
     }
-    // 8===========D
 }
 
 
