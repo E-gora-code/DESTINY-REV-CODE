@@ -12,8 +12,9 @@ No more copy-paste of initializations!
 Instructions:
 
 -- Firstly create objects:
-    RobotHardware robotHardvare = new RobotHardware();
-    RobotHardware.DriveBase driveBase = robotHardvare.new DriveBase();
+    public void runOpMode() throws InterruptedException {
+        RobotHardware robotHardvare = new RobotHardware();
+        RobotHardware.DriveBase driveBase = robotHardvare.new DriveBase();
 
 -- Then you can interact with motors:
     driveBase.FR = 1;             <-- sets motor power var in class
@@ -30,12 +31,17 @@ IMPORTANT: THE SYSTEM IS EXPERIMENTAL, so don`t implement it in main files yet
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 //experemental
 
-public class RobotHardware extends LinearOpMode {
+public class RobotHardware{
+    HardwareMap hardware;
+    public RobotHardware(HardwareMap programmRobotHardwareMap){
+        this.hardware = programmRobotHardwareMap;
+    }
 
     public class DriveBase{
         public double FL=0, BL=0, FR=0, BR=0;
@@ -49,22 +55,22 @@ public class RobotHardware extends LinearOpMode {
             init_all(true);
         }
         public void init_all(boolean do_enable){
-            hrd_FL = hardwareMap.dcMotor.get("FL");
+            hrd_FL = hardware.dcMotor.get("FL");
             hrd_FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             hrd_FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             hrd_FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            hrd_FR = hardwareMap.dcMotor.get("FR");
+            hrd_FR = hardware.dcMotor.get("FR");
             hrd_FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             hrd_FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             hrd_FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            hrd_BL = hardwareMap.dcMotor.get("BL");
+            hrd_BL = hardware.dcMotor.get("BL");
             hrd_BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             hrd_BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             hrd_BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            hrd_BR = hardwareMap.dcMotor.get("BR");
+            hrd_BR = hardware.dcMotor.get("BR");
             hrd_BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             hrd_BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             hrd_BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -77,7 +83,7 @@ public class RobotHardware extends LinearOpMode {
             parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
             parameters.loggingEnabled = true;
 
-            Gyro = hardwareMap.get(BNO055IMU.class, "imu");
+            Gyro = hardware.get(BNO055IMU.class, "imu");
             Gyro.initialize(parameters);
 
 
@@ -110,8 +116,4 @@ public class RobotHardware extends LinearOpMode {
     }
 
 
-    @Override
-    public final void runOpMode() throws InterruptedException {
-        //leave blank
-    }
 }
