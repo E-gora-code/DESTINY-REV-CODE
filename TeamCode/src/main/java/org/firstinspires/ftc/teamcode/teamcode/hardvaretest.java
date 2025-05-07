@@ -18,8 +18,7 @@ import org.firstinspires.ftc.teamcode.teamcode.generic_classes.RobotHardware;
 @TeleOp
 public class
 hardvaretest extends LinearOpMode {
-    RobotHardware robotHardvare = new RobotHardware();
-    RobotHardware.DriveBase driveBase = robotHardvare.new DriveBase();
+
 
     tred_1 tred__1 = new tred_1();
     Servo sbkr, grabr, grabl, sbros;
@@ -34,6 +33,8 @@ hardvaretest extends LinearOpMode {
 
 //    @Override
     public void runOpMode() throws InterruptedException {
+        RobotHardware robotHardvare = new RobotHardware(hardwareMap);
+        RobotHardware.DriveBase driveBase = robotHardvare.new DriveBase();
 
         ch0 = hardwareMap.digitalChannel.get("0");
         ch1 = hardwareMap.digitalChannel.get("1");
