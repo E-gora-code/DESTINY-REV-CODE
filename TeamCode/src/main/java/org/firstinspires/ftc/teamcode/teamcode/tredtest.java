@@ -38,7 +38,7 @@ tredtest extends LinearOpMode {
     double var1 = 0;
     Telemetry dash = FtcDashboard.getInstance().getTelemetry();
 
-//    @Override
+    @Override
     public void runOpMode() throws InterruptedException {
         FL = hardwareMap.dcMotor.get("FL");
         FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
