@@ -7,17 +7,26 @@ package org.firstinspires.ftc.teamcode.teamcode.generic_classes;
  \                  /
 
 This is the new system for interacting with motors and sensors!
+System includes simple implementation in "classic" programs,
+It is solution to problem of each program having own initialization code identical to other programs.
 No more copy-paste of initializations!
 
 Instructions:
 
 -- Firstly create objects:
     public void runOpMode() throws InterruptedException {
-        RobotHardware robotHardvare = new RobotHardware();
-        RobotHardware.DriveBase driveBase = robotHardvare.new DriveBase();
+        RobotHardware robotHardware = new RobotHardware(hardwareMap);
+        RobotHardware.DriveBase driveBase = robotHardware.new DriveBase();
+        RobotHardware.DriveBase.motor_classes motor_classes = driveBase.new motor_classes();
+
+        RobotHardware.DriveBase.motor_classes.FrontLeft FL = motor_classes.new FrontLeft(driveBase);
+        RobotHardware.DriveBase.motor_classes.FrontRight FR = motor_classes.new FrontRight(driveBase);
+        RobotHardware.DriveBase.motor_classes.BackLeft BL = motor_classes.new BackLeft(driveBase);
+        RobotHardware.DriveBase.motor_classes.BackRight BR = motor_classes.new BackRight(driveBase);
 
 -- Then you can interact with motors:
     driveBase.FR = 1;             <-- sets motor power var in class
+    FL.setPower(0);               <-- sets var in class trough motor class
     driveBase.send_to_motors();   <-- sets powers to actual motors
 
 
@@ -45,6 +54,7 @@ public class RobotHardware{
 
     public class DriveBase{
         public double FL=0, BL=0, FR=0, BR=0;
+        public int FL_enc=0, BL_enc=0, FR_enc=0, BR_enc=0;// FIXME: 07.05.2025 implement encoder reading from robot
         public DcMotor hrd_FL, hrd_BL, hrd_FR, hrd_BR; // please avoid calling these
         public BNO055IMU Gyro;// FIXME: 06.05.2025 move into own class
         private Orientation Orientation = new Orientation();
@@ -102,6 +112,69 @@ public class RobotHardware{
             hrd_BR.setPower(_normolaize_DC(BR));
 
 
+        }
+
+        public class motor_classes{
+            public class FrontLeft{
+                DriveBase driveBaseClassObject;
+                public FrontLeft(DriveBase driveBaseClassObject){
+                    this.driveBaseClassObject = driveBaseClassObject;
+                }
+                public void setPower(double power){
+                    driveBaseClassObject.FL = power;
+                }
+                public double getPower(){
+                    return driveBaseClassObject.FL;
+                }
+                public int getCurrentPosition(){
+                    return driveBaseClassObject.FL_enc;
+                }
+            }
+            public class FrontRight{
+                DriveBase driveBaseClassObject;
+                public FrontRight(DriveBase driveBaseClassObject){
+                    this.driveBaseClassObject = driveBaseClassObject;
+                }
+                public void setPower(double power){
+                    driveBaseClassObject.FR = power;
+                }
+                public double getPower(){
+                    return driveBaseClassObject.FR;
+                }
+                public int getCurrentPosition(){
+                    return driveBaseClassObject.FR_enc;
+                }
+            }
+            public class BackLeft{
+                DriveBase driveBaseClassObject;
+                public BackLeft(DriveBase driveBaseClassObject){
+                    this.driveBaseClassObject = driveBaseClassObject;
+                }
+                public void setPower(double power){
+                    driveBaseClassObject.BL = power;
+                }
+                public double getPower(){
+                    return driveBaseClassObject.BL;
+                }
+                public int getCurrentPosition(){
+                    return driveBaseClassObject.BL_enc;
+                }
+            }
+            public class BackRight{
+                DriveBase driveBaseClassObject;
+                public BackRight(DriveBase driveBaseClassObject){
+                    this.driveBaseClassObject = driveBaseClassObject;
+                }
+                public void setPower(double power){
+                    driveBaseClassObject.BR = power;
+                }
+                public double getPower(){
+                    return driveBaseClassObject.BR;
+                }
+                public int getCurrentPosition(){
+                    return driveBaseClassObject.BR_enc;
+                }
+            }
         }
         private double _normolaize_DC(double input_power){
             final double max = 1;
