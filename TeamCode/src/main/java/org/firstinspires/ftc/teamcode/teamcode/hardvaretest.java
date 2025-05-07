@@ -33,8 +33,14 @@ hardvaretest extends LinearOpMode {
 
 //    @Override
     public void runOpMode() throws InterruptedException {
-        RobotHardware robotHardvare = new RobotHardware(hardwareMap);
-        RobotHardware.DriveBase driveBase = robotHardvare.new DriveBase();
+        RobotHardware robotHardware = new RobotHardware(hardwareMap);
+        RobotHardware.DriveBase driveBase = robotHardware.new DriveBase();
+        RobotHardware.DriveBase.motor_classes motor_classes = driveBase.new motor_classes();
+
+        RobotHardware.DriveBase.motor_classes.FrontLeft FL = motor_classes.new FrontLeft(driveBase);
+        RobotHardware.DriveBase.motor_classes.FrontRight FR = motor_classes.new FrontRight(driveBase);
+        RobotHardware.DriveBase.motor_classes.BackLeft BL = motor_classes.new BackLeft(driveBase);
+        RobotHardware.DriveBase.motor_classes.BackRight BR = motor_classes.new BackRight(driveBase);
 
         ch0 = hardwareMap.digitalChannel.get("0");
         ch1 = hardwareMap.digitalChannel.get("1");
@@ -73,7 +79,8 @@ hardvaretest extends LinearOpMode {
         waitForStart();
         tred__1.start();
         while (opModeIsActive()) {
-            driveBase.FR = 1;
+//            driveBase.FR = 1;
+            FL.setPower(0);
             driveBase.send_to_motors();
 
         }
