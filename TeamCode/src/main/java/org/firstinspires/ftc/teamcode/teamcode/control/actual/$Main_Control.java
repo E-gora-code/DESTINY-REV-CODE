@@ -871,7 +871,7 @@ public class $Main_Control extends LinearOpMode {
 
                     if ((turnDrift == 0)||(snap_angle_timer.seconds()<1)) {
                         turnErr = targAngle - currentAngle;
-                        turnPower = (turnErr * pid_setting.turnKp + (turnErr - turnErrL) * pid_setting.turnKd) * 0.4;
+                        turnPower = (turnErr * pid_setting.turnKp + (turnErr - turnErrL) * pid_setting.turnKd) * 0.2;
                         turnErrL = turnErr;
                     }
                     else {
@@ -912,10 +912,10 @@ public class $Main_Control extends LinearOpMode {
                         mult_on_press_R_stick = 1/Multiply;
                     }
 
-                    FR.setPower(((power * Math.cos(radian - Math.PI / 4 + Math.toRadians(currentAngle) + Math.PI) * Math.sqrt(2))*mult_on_press_L_stick + turnPower*mult_on_press_R_stick) * (-Multiply)*0.7);
-                    FL.setPower(((power * Math.cos(radian - 3 * Math.PI / 4 + Math.toRadians(currentAngle) + Math.PI) * Math.sqrt(2))*mult_on_press_L_stick - turnPower*mult_on_press_R_stick) * (Multiply));
-                    BR.setPower(((power * Math.cos(radian - 3 * Math.PI / 4 + Math.toRadians(currentAngle) + Math.PI) * Math.sqrt(2))*mult_on_press_L_stick + turnPower*mult_on_press_R_stick) * (-Multiply));
-                    BL.setPower(((power * Math.cos(radian - Math.PI / 4 + Math.toRadians(currentAngle) + Math.PI) * Math.sqrt(2))*mult_on_press_L_stick - turnPower*mult_on_press_R_stick) * (Multiply));
+                    FR.setPower(((power * Math.cos(radian - Math.PI / 4 + Math.toRadians(currentAngle) + Math.PI) * Math.sqrt(2))*mult_on_press_L_stick) * (-Multiply)*0.7 - turnPower*mult_on_press_R_stick);
+                    FL.setPower(((power * Math.cos(radian - 3 * Math.PI / 4 + Math.toRadians(currentAngle) + Math.PI) * Math.sqrt(2))*mult_on_press_L_stick) * (Multiply) - turnPower*mult_on_press_R_stick);
+                    BR.setPower(((power * Math.cos(radian - 3 * Math.PI / 4 + Math.toRadians(currentAngle) + Math.PI) * Math.sqrt(2))*mult_on_press_L_stick) * (-Multiply) - turnPower*mult_on_press_R_stick);
+                    BL.setPower(((power * Math.cos(radian - Math.PI / 4 + Math.toRadians(currentAngle) + Math.PI) * Math.sqrt(2))*mult_on_press_L_stick) * (Multiply) - turnPower*mult_on_press_R_stick);
 
                     deltaHedL = Angle;
 

@@ -375,23 +375,23 @@ public class Auto_red extends LinearOpMode {
                 drivePowery = driveErry * pid_setting.driveKp + (driveErry - driveErrLy) * pid_setting.driveKd;
                 driveErrx = targDistx - x;
                 drivePowerx = driveErrx * pid_setting.drivexKp + (driveErrx - driveErrLx) * pid_setting.drivexKd;
-                if (drivePowerx > 0.5) {
-                    drivePowerx = 0.6;
+                if (drivePowerx > 1) {
+                    drivePowerx = 1;
                 }
-                if (drivePowerx < -0.5) {
-                    drivePowerx = -0.6;
+                if (drivePowerx < -1) {
+                    drivePowerx = -1;
                 }
-                if (drivePowery > 0.5) {
-                    drivePowery = 0.6;
+                if (drivePowery > 1) {
+                    drivePowery = 1;
                 }
-                if (drivePowery < -0.5) {
-                    drivePowery = -0.6;
+                if (drivePowery < -1) {
+                    drivePowery = -1;
                 }
-                if (turnPower > 0.5) {
-                    turnPower = 0.8;
+                if (turnPower > 1) {
+                    turnPower = 1;
                 }
-                if (turnPower < -0.5) {
-                    turnPower = -0.8;
+                if (turnPower < -1) {
+                    turnPower = -1;
                 }
 
 
