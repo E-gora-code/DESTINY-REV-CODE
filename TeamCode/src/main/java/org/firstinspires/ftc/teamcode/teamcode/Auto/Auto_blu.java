@@ -330,35 +330,17 @@ public class Auto_blu extends LinearOpMode {
                 currentAngle += deltaHed;
 
 
-                if (currentAngle < 0) {
-                    Angleosui = 360 + currentAngle % 360;
-                } else if (currentAngle > 0) {
-                    Angleosui = currentAngle % 360;
-                } else {
-                    Angleosui = 0;
-                }
+
                 double deltaAngle = (currentAngle - lastAngle);
 
                 double deltaY = (BLs - lastposy - (deltaAngle * pid_setting.ignorey));
                 double deltaX = (BRs - lastposx - (deltaAngle * pid_setting.ignorex));
 
-                double angleRadians = Math.toRadians(Angleosui % 90);
+                double angleRadians = Math.toRadians(currentAngle);
                 double cosAngle = Math.cos(angleRadians);
                 double sinAngle = Math.sin(angleRadians);
-
-                if (Angleosui >= 270) {
-                    y += sinAngle * -deltaY + cosAngle * deltaX;
-                    x += -cosAngle * deltaY + sinAngle * -deltaX;
-                } else if (Angleosui >= 180) {
-                    y += -cosAngle * -deltaY + sinAngle * deltaX;
-                    x += -sinAngle * deltaY - cosAngle * -deltaX;
-                } else if (Angleosui >= 90) {
-                    y -= sinAngle * -deltaY + cosAngle * deltaX;
-                    x -= -cosAngle * deltaY + sinAngle * -deltaX;
-                } else {
-                    y -= -cosAngle * -deltaY + sinAngle * deltaX;
-                    x -= -sinAngle * deltaY - cosAngle * -deltaX;
-                }
+                y += -cosAngle * deltaY - sinAngle * deltaX;
+                x += sinAngle * deltaY - cosAngle * deltaX;
 
 // Обновление последних позиций
                 lastposx = BRs;
