@@ -18,7 +18,10 @@ import org.firstinspires.ftc.teamcode.teamcode.generic_classes.RobotHardware;
 @TeleOp
 public class
 hardvaretest extends LinearOpMode {
-
+    RobotHardware.DriveBase.motor_classes.FrontLeft FL;
+    RobotHardware.DriveBase.motor_classes.FrontRight FR;
+    RobotHardware.DriveBase.motor_classes.BackLeft BL;
+    RobotHardware.DriveBase.motor_classes.BackRight BR;
 
     tred_1 tred__1 = new tred_1();
     Servo sbkr, grabr, grabl, sbros;
@@ -37,10 +40,10 @@ hardvaretest extends LinearOpMode {
         RobotHardware.DriveBase driveBase = robotHardware.new DriveBase();
         RobotHardware.DriveBase.motor_classes motor_classes = driveBase.new motor_classes();
 
-        RobotHardware.DriveBase.motor_classes.FrontLeft FL = motor_classes.new FrontLeft(driveBase);
-        RobotHardware.DriveBase.motor_classes.FrontRight FR = motor_classes.new FrontRight(driveBase);
-        RobotHardware.DriveBase.motor_classes.BackLeft BL = motor_classes.new BackLeft(driveBase);
-        RobotHardware.DriveBase.motor_classes.BackRight BR = motor_classes.new BackRight(driveBase);
+        FL = motor_classes.new FrontLeft(driveBase);
+        FR = motor_classes.new FrontRight(driveBase);
+        BL = motor_classes.new BackLeft(driveBase);
+        BR = motor_classes.new BackRight(driveBase);
 
         ch0 = hardwareMap.digitalChannel.get("0");
         ch1 = hardwareMap.digitalChannel.get("1");
