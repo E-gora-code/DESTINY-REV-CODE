@@ -14,15 +14,20 @@ No more copy-paste of initializations!
 Instructions:
 
 -- Firstly create objects:
+    RobotHardware.DriveBase.motor_classes.FrontLeft FL;
+    RobotHardware.DriveBase.motor_classes.FrontRight FR;
+    RobotHardware.DriveBase.motor_classes.BackLeft BL;
+    RobotHardware.DriveBase.motor_classes.BackRight BR;
+
     public void runOpMode() throws InterruptedException {
         RobotHardware robotHardware = new RobotHardware(hardwareMap);
         RobotHardware.DriveBase driveBase = robotHardware.new DriveBase();
         RobotHardware.DriveBase.motor_classes motor_classes = driveBase.new motor_classes();
 
-        RobotHardware.DriveBase.motor_classes.FrontLeft FL = motor_classes.new FrontLeft(driveBase);
-        RobotHardware.DriveBase.motor_classes.FrontRight FR = motor_classes.new FrontRight(driveBase);
-        RobotHardware.DriveBase.motor_classes.BackLeft BL = motor_classes.new BackLeft(driveBase);
-        RobotHardware.DriveBase.motor_classes.BackRight BR = motor_classes.new BackRight(driveBase);
+        FL = motor_classes.new FrontLeft(driveBase);
+        FR = motor_classes.new FrontRight(driveBase);
+        BL = motor_classes.new BackLeft(driveBase);
+        BR = motor_classes.new BackRight(driveBase);
 
 -- Then you can interact with motors:
     driveBase.FR = 1;             <-- sets motor power var in class
@@ -41,9 +46,13 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
+import java.util.HashMap;
+import java.util.Map;
 //experemental
 
 public class RobotHardware{
@@ -185,6 +194,38 @@ public class RobotHardware{
                 return Math.max(input_power,-max);
             }
         }
+
+    }
+    public class ServoMotors{
+        private boolean is_servos_inited = false;
+        public boolean is_servos_enabled = false;
+        private Map<String,InternalServo> servos = new HashMap<>();
+        public void init_all(){
+            init_all(true);
+        }
+        public void init_all(boolean do_enable){
+            servos.put("sbros",new InternalServo(hardware.servo.get("sbros")));
+
+            is_servos_inited = true;
+            if (do_enable) {
+                is_servos_enabled = do_enable;
+            }
+        }
+        public void send_to_servos(){
+            for(Map.Entry<String, InternalServo> servo_entry:servos.entrySet()){
+                InternalServo servo_component = servo_entry.getValue();
+                servo_component.AttachedComponent.setPosition(servo_component.position);
+            }
+        }
+
+        private class InternalServo{
+            public double position = 0;
+            public final Servo AttachedComponent;
+            public InternalServo(Servo attachedComponent){
+                this.AttachedComponent = attachedComponent;
+            }
+        }
+        // FIXME: 13.05.2025 add an external servo for interaction
 
     }
 
