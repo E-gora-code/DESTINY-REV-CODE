@@ -205,11 +205,14 @@ public class RobotHardware{
         private boolean is_servos_inited = false;
         public boolean is_servos_enabled = false;
         private Map<String,InternalServo> servos = new HashMap<>();
+        public ServoMotors(){
+            servos.put(servoKeys.apple_drop_module,new InternalServo(hardware.servo.get("sbros")));
+            servos.put(servoKeys.hidden_claw_module,new InternalServo(hardware.servo.get("sbkr")));
+        }
         public void init_all(){
             init_all(true);
         }
         public void init_all(boolean do_enable){
-            servos.put(servoKeys.apple_drop_module,new InternalServo(hardware.servo.get("sbros")));
 
             is_servos_inited = true;
             if (do_enable) {
@@ -227,6 +230,7 @@ public class RobotHardware{
         }
         public class servoKeys{
             public final static String apple_drop_module = "apple drop module";
+            public final static String hidden_claw_module = "hidden claw";
         }
 
         private class InternalServo{
