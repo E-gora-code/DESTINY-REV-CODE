@@ -19,6 +19,8 @@ Instructions:
     RobotHardware.DriveBase.motor_classes.BackLeft BL;
     RobotHardware.DriveBase.motor_classes.BackRight BR;
 
+    RobotHardware.ServoMotors.BasicServo sbros;
+
     public void runOpMode() throws InterruptedException {
         RobotHardware robotHardware = new RobotHardware(hardwareMap);
         RobotHardware.DriveBase driveBase = robotHardware.new DriveBase();
@@ -29,11 +31,15 @@ Instructions:
         BL = motor_classes.new BackLeft(driveBase);
         BR = motor_classes.new BackRight(driveBase);
 
+        RobotHardware.ServoMotors servoMotors = robotHardware.new ServoMotors();
+
+        sbros = servoMotors.new BasicServo(servoMotors, RobotHardware.ServoMotors.servoKeys.apple_drop_module); <-- the "servoKeys" class is used to make renaming components easier
+
 -- Then you can interact with motors:
     driveBase.FR = 1;             <-- sets motor power var in class
-    FL.setPower(0);               <-- sets var in class trough motor class
-    driveBase.send_to_motors();   <-- sets powers to actual motors
-
+    FL.setPower(0);               <-- sets var in class trough motor class, will mostly work same with other classes
+    driveBase.send_to_motors();   <-- sets powers to actual motors, will mostly work same with other classes
+-Note: functions of type "send_to_motors" only accessible in "main thread"(that`s "public void runOpMode()")
 
 
 
@@ -43,7 +49,6 @@ IMPORTANT: THE SYSTEM IS EXPERIMENTAL, so don`t implement it in main files yet
 */
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -204,7 +209,7 @@ public class RobotHardware{
             init_all(true);
         }
         public void init_all(boolean do_enable){
-            servos.put("sbros",new InternalServo(hardware.servo.get("sbros")));
+            servos.put(servoKeys.apple_drop_module,new InternalServo(hardware.servo.get("sbros")));
 
             is_servos_inited = true;
             if (do_enable) {
@@ -212,10 +217,16 @@ public class RobotHardware{
             }
         }
         public void send_to_servos(){
+            if(!(is_servos_inited&&is_servos_enabled)){
+                return;
+            }
             for(Map.Entry<String, InternalServo> servo_entry:servos.entrySet()){
                 InternalServo servo_component = servo_entry.getValue();
                 servo_component.AttachedComponent.setPosition(servo_component.position);
             }
+        }
+        public class servoKeys{
+            public final static String apple_drop_module = "apple drop module";
         }
 
         private class InternalServo{
@@ -225,7 +236,25 @@ public class RobotHardware{
                 this.AttachedComponent = attachedComponent;
             }
         }
-        // FIXME: 13.05.2025 add an external servo for interaction
+        public class BasicServo{
+            public final String component_Key;
+            public final ServoMotors parentClass;
+            private final InternalServo attached_servo;
+            public BasicServo(ServoMotors parentClass, String Key){
+                this.component_Key = Key;
+                this.parentClass = parentClass;
+                this.attached_servo = parentClass.servos.get(component_Key);
+                if(attached_servo == null){
+                    throw new IllegalArgumentException(String.format("RobotHardware.Servo(%s): Key error, no object found!!!",component_Key));
+                }
+            }
+            public void setPosition(double pos){
+                attached_servo.position = pos;
+            }
+            public double getPosition(){
+                return attached_servo.position;
+            }
+        }
 
     }
 

@@ -23,8 +23,10 @@ hardvaretest extends LinearOpMode {
     RobotHardware.DriveBase.motor_classes.BackLeft BL;
     RobotHardware.DriveBase.motor_classes.BackRight BR;
 
+    RobotHardware.ServoMotors.BasicServo sbros;
+
     tred_1 tred__1 = new tred_1();
-    Servo sbkr, grabr, grabl, sbros;
+    Servo sbkr, grabr, grabl;
     CRServo extl, extr;
 
 
@@ -45,13 +47,17 @@ hardvaretest extends LinearOpMode {
         BL = motor_classes.new BackLeft(driveBase);
         BR = motor_classes.new BackRight(driveBase);
 
+        RobotHardware.ServoMotors servoMotors = robotHardware.new ServoMotors();
+
+        sbros = servoMotors.new BasicServo(servoMotors, RobotHardware.ServoMotors.servoKeys.apple_drop_module);
+
         ch0 = hardwareMap.digitalChannel.get("0");
         ch1 = hardwareMap.digitalChannel.get("1");
         ch0.setMode(DigitalChannel.Mode.INPUT);
         ch1.setMode(DigitalChannel.Mode.INPUT);
 
         sbkr = hardwareMap.servo.get("sbkr");
-        sbros = hardwareMap.servo.get("sbros");
+//        sbros = hardwareMap.servo.get("sbros");
         grabl = hardwareMap.servo.get("grabl");
         grabr = hardwareMap.servo.get("grabr");
 //        s1 = hardwareMap.servo.get("servo2");
@@ -85,6 +91,7 @@ hardvaretest extends LinearOpMode {
 //            driveBase.FR = 1;
             FL.setPower(0);
             driveBase.send_to_motors();
+            servoMotors.send_to_servos();
 
         }
 
@@ -98,6 +105,7 @@ hardvaretest extends LinearOpMode {
         public void run(){
             while (opModeIsActive()){
                 Tel();
+                sbros.setPosition(0.4);
             }
         }
     }
