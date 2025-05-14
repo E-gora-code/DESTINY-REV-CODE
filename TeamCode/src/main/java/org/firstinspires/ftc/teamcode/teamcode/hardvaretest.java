@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.teamcode.generic_classes.RobotHardware;
 
+import java.util.Random;
 
 
 @TeleOp
@@ -23,7 +24,7 @@ hardvaretest extends LinearOpMode {
     RobotHardware.DriveBase.motor_classes.BackLeft BL;
     RobotHardware.DriveBase.motor_classes.BackRight BR;
 
-    RobotHardware.ServoMotors.BasicServo sbros;
+    RobotHardware.ServoMotors.BasicServo sbros, claw;
 
     tred_1 tred__1 = new tred_1();
     Servo sbkr, grabr, grabl;
@@ -34,6 +35,7 @@ hardvaretest extends LinearOpMode {
     Acceleration Acceleration = new Acceleration();
     DigitalChannel ch0, ch1;
     double var1 = 0;
+    Random random = new Random();
     Telemetry dash = FtcDashboard.getInstance().getTelemetry();
 
 //    @Override
@@ -50,6 +52,7 @@ hardvaretest extends LinearOpMode {
         RobotHardware.ServoMotors servoMotors = robotHardware.new ServoMotors();
 
         sbros = servoMotors.new BasicServo(servoMotors, RobotHardware.ServoMotors.servoKeys.apple_drop_module);
+        claw = servoMotors.new BasicServo(servoMotors, RobotHardware.ServoMotors.servoKeys.hidden_claw_module);
 
         ch0 = hardwareMap.digitalChannel.get("0");
         ch1 = hardwareMap.digitalChannel.get("1");
@@ -65,6 +68,7 @@ hardvaretest extends LinearOpMode {
         extl = hardwareMap.crservo.get("extl");
         extr = hardwareMap.crservo.get("extr");
         driveBase.init_all();
+        servoMotors.init_all(false);
 
 
 
@@ -97,6 +101,7 @@ hardvaretest extends LinearOpMode {
 
     }
     public void Tel(){
+        telemetry.addData("claw",claw.getPosition());
         telemetry.update();
         dash.update();
     }
@@ -105,11 +110,10 @@ hardvaretest extends LinearOpMode {
         public void run(){
             while (opModeIsActive()){
                 Tel();
-                sbros.setPosition(0.4);
+                claw.setPosition(0);
             }
         }
     }
-    // 8===========D
 }
 
 
