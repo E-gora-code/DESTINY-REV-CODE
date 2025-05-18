@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -24,11 +23,10 @@ hardvaretest extends LinearOpMode {
     RobotHardware.DriveBase.motor_classes.BackLeft BL;
     RobotHardware.DriveBase.motor_classes.BackRight BR;
 
-    RobotHardware.ServoMotors.BasicServo sbros, claw;
+    RobotHardware.ServoMotors.BasicServo sbros, claw, grabr, grabl;
+    RobotHardware.ServoMotors.SparkMotor extr, extl;
 
     tred_1 tred__1 = new tred_1();
-    Servo sbkr, grabr, grabl;
-    CRServo extl, extr;
 
 
     Orientation Orientation = new Orientation();
@@ -53,20 +51,17 @@ hardvaretest extends LinearOpMode {
 
         sbros = servoMotors.new BasicServo(servoMotors, RobotHardware.ServoMotors.servoKeys.apple_drop_module);
         claw = servoMotors.new BasicServo(servoMotors, RobotHardware.ServoMotors.servoKeys.hidden_claw_module);
+        grabl = servoMotors.new BasicServo(servoMotors, RobotHardware.ServoMotors.servoKeys.container_grab_module.leftServo);
+        grabr = servoMotors.new BasicServo(servoMotors, RobotHardware.ServoMotors.servoKeys.container_grab_module.rightServo);
+
+        extr = servoMotors.new SparkMotor(servoMotors,RobotHardware.ServoMotors.servoKeys.SparkMiniKeys.extention_right);
+        extl = servoMotors.new SparkMotor(servoMotors,RobotHardware.ServoMotors.servoKeys.SparkMiniKeys.extention_left);
 
         ch0 = hardwareMap.digitalChannel.get("0");
         ch1 = hardwareMap.digitalChannel.get("1");
         ch0.setMode(DigitalChannel.Mode.INPUT);
         ch1.setMode(DigitalChannel.Mode.INPUT);
 
-        sbkr = hardwareMap.servo.get("sbkr");
-//        sbros = hardwareMap.servo.get("sbros");
-        grabl = hardwareMap.servo.get("grabl");
-        grabr = hardwareMap.servo.get("grabr");
-//        s1 = hardwareMap.servo.get("servo2");
-//        s2 = hardwareMap.servo.get("servo3");
-        extl = hardwareMap.crservo.get("extl");
-        extr = hardwareMap.crservo.get("extr");
         driveBase.init_all();
         servoMotors.init_all(false);
 
@@ -95,7 +90,7 @@ hardvaretest extends LinearOpMode {
 //            driveBase.FR = 1;
             FL.setPower(0);
             driveBase.send_to_motors();
-            servoMotors.send_to_servos();
+            servoMotors.send_to_components();
 
         }
 
@@ -110,7 +105,7 @@ hardvaretest extends LinearOpMode {
         public void run(){
             while (opModeIsActive()){
                 Tel();
-                claw.setPosition(0);
+                claw.setPosition(random.nextDouble());
             }
         }
     }
