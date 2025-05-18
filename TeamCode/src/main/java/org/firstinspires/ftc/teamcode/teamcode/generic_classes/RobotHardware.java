@@ -50,6 +50,7 @@ Instructions:
 
 IMPORTANT: THE SYSTEM IS EXPERIMENTAL, so don`t implement it in main files yet
 */
+// FIXME: 18.05.2025 tutorial is outdated due to OpModeFramework
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.CRServo;

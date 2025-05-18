@@ -10,21 +10,14 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.teamcode.generic_classes.OpModeFramework;
 import org.firstinspires.ftc.teamcode.teamcode.generic_classes.RobotHardware;
 
 import java.util.Random;
 
 
 @TeleOp
-public class
-hardvaretest extends LinearOpMode {
-    RobotHardware.DriveBase.motor_classes.FrontLeft FL;
-    RobotHardware.DriveBase.motor_classes.FrontRight FR;
-    RobotHardware.DriveBase.motor_classes.BackLeft BL;
-    RobotHardware.DriveBase.motor_classes.BackRight BR;
-
-    RobotHardware.ServoMotors.BasicServo sbros, claw, grabr, grabl;
-    RobotHardware.ServoMotors.SparkMotor extr, extl;
+public class hardvaretest extends OpModeFramework {
 
     tred_1 tred__1 = new tred_1();
 
@@ -38,24 +31,7 @@ hardvaretest extends LinearOpMode {
 
 //    @Override
     public void runOpMode() throws InterruptedException {
-        RobotHardware robotHardware = new RobotHardware(hardwareMap);
-        RobotHardware.DriveBase driveBase = robotHardware.new DriveBase();
-        RobotHardware.DriveBase.motor_classes motor_classes = driveBase.new motor_classes();
-
-        FL = motor_classes.new FrontLeft(driveBase);
-        FR = motor_classes.new FrontRight(driveBase);
-        BL = motor_classes.new BackLeft(driveBase);
-        BR = motor_classes.new BackRight(driveBase);
-
-        RobotHardware.ServoMotors servoMotors = robotHardware.new ServoMotors();
-
-        sbros = servoMotors.new BasicServo(servoMotors, RobotHardware.ServoMotors.servoKeys.apple_drop_module);
-        claw = servoMotors.new BasicServo(servoMotors, RobotHardware.ServoMotors.servoKeys.hidden_claw_module);
-        grabl = servoMotors.new BasicServo(servoMotors, RobotHardware.ServoMotors.servoKeys.container_grab_module.leftServo);
-        grabr = servoMotors.new BasicServo(servoMotors, RobotHardware.ServoMotors.servoKeys.container_grab_module.rightServo);
-
-        extr = servoMotors.new SparkMotor(servoMotors,RobotHardware.ServoMotors.servoKeys.SparkMiniKeys.extention_right);
-        extl = servoMotors.new SparkMotor(servoMotors,RobotHardware.ServoMotors.servoKeys.SparkMiniKeys.extention_left);
+        selfInit(hardwareMap);
 
         ch0 = hardwareMap.digitalChannel.get("0");
         ch1 = hardwareMap.digitalChannel.get("1");
@@ -63,7 +39,7 @@ hardvaretest extends LinearOpMode {
         ch1.setMode(DigitalChannel.Mode.INPUT);
 
         driveBase.init_all();
-        servoMotors.init_all(false);
+        servoMotors.init_all(true);
 
 
 
