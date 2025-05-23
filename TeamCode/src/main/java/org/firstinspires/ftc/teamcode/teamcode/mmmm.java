@@ -40,6 +40,7 @@ public class mmmm extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
+            addToBothTelemetry("GmR",Math.round(Math.toDegrees(Math.atan2(gamepad1.right_stick_y,gamepad1.right_stick_x))+90));
             addToBothTelemetry("r",gamepad1.right_stick_x);
             addToBothTelemetry("g",gamepad1.right_stick_y);
             addToBothTelemetry("b",gamepad1.left_stick_x);
