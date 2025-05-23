@@ -59,6 +59,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import java.util.HashMap;
@@ -131,6 +134,15 @@ public class RobotHardware{
             hrd_BR.setPower(_normolaize_DC(BR));
 
 
+        }
+        public Orientation Angle() {
+            Orientation = Gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            return Orientation;
+        }
+
+        public Acceleration Axel() {
+            Acceleration = Gyro.getLinearAcceleration();
+            return Acceleration;
         }
 
         public class motor_classes{

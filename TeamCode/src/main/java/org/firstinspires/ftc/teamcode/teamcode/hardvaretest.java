@@ -31,7 +31,7 @@ public class hardvaretest extends OpModeFramework {
 
 //    @Override
     public void runOpMode() throws InterruptedException {
-        selfInit(hardwareMap);
+        selfInit();
 
         ch0 = hardwareMap.digitalChannel.get("0");
         ch1 = hardwareMap.digitalChannel.get("1");
