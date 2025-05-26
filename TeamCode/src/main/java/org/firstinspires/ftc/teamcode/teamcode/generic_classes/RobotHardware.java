@@ -81,6 +81,9 @@ public class RobotHardware{
         private boolean is_gyro_inited = false;
         public boolean is_gyro_enabled = false;
 
+        public boolean is_inited(){
+            return is_gyro_inited;
+        }
         public void init_all(){
             init_all(true);
         }
@@ -125,11 +128,14 @@ public class RobotHardware{
 
     public class DriveBase{
         public double FL=0, BL=0, FR=0, BR=0;
-        public int FL_enc=0, BL_enc=0, FR_enc=0, BR_enc=0;// FIXME: 07.05.2025 implement encoder reading from robot
+        public int FL_enc=0, BL_enc=0, FR_enc=0, BR_enc=0;
         public DcMotor hrd_FL, hrd_BL, hrd_FR, hrd_BR; // please avoid calling these
 
         private boolean is_drive_base_inited = false;
         public boolean is_drive_base_enabled = false;
+        public boolean is_inited(){
+            return is_drive_base_inited;
+        }
         public void init_all(){
             init_all(true);
         }
@@ -295,7 +301,9 @@ public class RobotHardware{
         }
 
 
-
+        public boolean is_inited(){
+            return is_servos_inited;
+        }
         public void init_all(){
             init_all(true,true);
         }
