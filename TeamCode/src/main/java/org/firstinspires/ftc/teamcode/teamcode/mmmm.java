@@ -40,7 +40,7 @@ public class mmmm extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            addToBothTelemetry("GmR",Math.round(Math.toDegrees(Math.atan2(gamepad1.right_stick_y,gamepad1.right_stick_x))+90));
+            addToBothTelemetry("GmR",RstickAngle());
             addToBothTelemetry("r",gamepad1.right_stick_x);
             addToBothTelemetry("g",gamepad1.right_stick_y);
             addToBothTelemetry("b",gamepad1.left_stick_x);
@@ -74,6 +74,16 @@ public class mmmm extends LinearOpMode {
 
 
     }
+    public double RstickAngle(){
+        double raw = Math.round(Math.toDegrees(Math.atan2(gamepad1.right_stick_y,gamepad1.right_stick_x)));
+        if (raw<=0){
+            return -raw;
+        }
+        else{
+            return 360-raw;
+        }
+    }
+
     public void addToBothTelemetry(String caption,Object value){
         telemetry.addData(caption,value);
         dash.addData(caption,value);
