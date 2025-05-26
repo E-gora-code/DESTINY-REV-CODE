@@ -41,10 +41,12 @@ public abstract class OpModeFramework extends LinearOpMode {
     protected RobotHardware robotHardware;
     protected RobotHardware.ServoMotors servoMotors;
     protected RobotHardware.DriveBase driveBase;
+    protected RobotHardware.GyroIMU gyro;
     protected RobotHardware.DriveBase.motor_classes motor_classes;
 
     public void selfInit(){
         robotHardware = new RobotHardware(hardwareMap);
+        gyro = robotHardware.new GyroIMU();
         driveBase = robotHardware.new DriveBase();
         motor_classes = driveBase.new motor_classes();
 
