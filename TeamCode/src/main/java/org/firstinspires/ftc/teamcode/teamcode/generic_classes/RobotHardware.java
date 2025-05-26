@@ -174,6 +174,16 @@ public class RobotHardware{
 
 
         }
+        public void update_encoders(){
+            FL_enc = hrd_FL.getCurrentPosition();
+            FR_enc = hrd_FR.getCurrentPosition();
+            BL_enc = hrd_BL.getCurrentPosition();
+            BR_enc = hrd_BR.getCurrentPosition();
+        }
+        public void class_tick(){
+            update_encoders();
+            send_to_motors();
+        }
 
         public class motor_classes{
             public class FrontLeft{
