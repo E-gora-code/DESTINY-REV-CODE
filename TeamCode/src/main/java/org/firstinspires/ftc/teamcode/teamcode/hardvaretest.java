@@ -38,6 +38,7 @@ public class hardvaretest extends OpModeFramework {
         ch0.setMode(DigitalChannel.Mode.INPUT);
         ch1.setMode(DigitalChannel.Mode.INPUT);
 
+        gyro.init_all();
         driveBase.init_all();
         servoMotors.init_all(true);
 
@@ -72,7 +73,7 @@ public class hardvaretest extends OpModeFramework {
 
     }
     public void Tel(){
-        telemetry.addData("claw",claw.getPosition());
+        telemetry.addData("gyro",gyro.Angle().firstAngle);
         telemetry.update();
         dash.update();
     }

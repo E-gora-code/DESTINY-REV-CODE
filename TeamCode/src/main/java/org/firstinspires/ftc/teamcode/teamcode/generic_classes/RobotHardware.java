@@ -73,14 +73,60 @@ public class RobotHardware{
     public RobotHardware(HardwareMap programmRobotHardwareMap){
         this.hardware = programmRobotHardwareMap;
     }
+    public class GyroIMU{
+        public BNO055IMU GyroIMU;
+        private Orientation Orientation = new Orientation();
+        private Acceleration Acceleration = new Acceleration();
+        private boolean is_gyro_inited = false;
+        public boolean is_gyro_enabled = false;
+
+        public void init_all(){
+            init_all(true);
+        }
+        public void init_all(boolean do_enable){
+            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//        parameters.mode = BNO055IMU.SensorMode.IMU;
+            parameters.mode = BNO055IMU.SensorMode.NDOF; // to usr accelerometer
+            parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+            parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            parameters.loggingEnabled = true;
+
+            GyroIMU = hardware.get(BNO055IMU.class, "imu");
+            GyroIMU.initialize(parameters);
+
+            is_gyro_inited = true;
+            if(do_enable) {
+                is_gyro_enabled = do_enable;
+            }
+        }
+
+        public Orientation Angle() {
+            if(!(is_gyro_inited&&is_gyro_enabled)){
+                return Orientation;
+            }
+            Orientation = GyroIMU.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            return Orientation;
+        }
+
+        public Acceleration Axel() {
+            if(!(is_gyro_inited&&is_gyro_enabled)){
+                Acceleration.xAccel = 0;
+                Acceleration.yAccel = 0;
+                Acceleration.zAccel = 0;
+                return Acceleration;
+            }
+            Acceleration = GyroIMU.getLinearAcceleration();
+            return Acceleration;
+        }
+
+
+    }
 
     public class DriveBase{
         public double FL=0, BL=0, FR=0, BR=0;
         public int FL_enc=0, BL_enc=0, FR_enc=0, BR_enc=0;// FIXME: 07.05.2025 implement encoder reading from robot
         public DcMotor hrd_FL, hrd_BL, hrd_FR, hrd_BR; // please avoid calling these
-        public BNO055IMU Gyro;// FIXME: 06.05.2025 move into own class
-        private Orientation Orientation = new Orientation();
-        private Acceleration Acceleration = new Acceleration();
+
         private boolean is_drive_base_inited = false;
         public boolean is_drive_base_enabled = false;
         public void init_all(){
@@ -108,20 +154,10 @@ public class RobotHardware{
             hrd_BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
-            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-//        parameters.mode = BNO055IMU.SensorMode.IMU;
-            parameters.mode = BNO055IMU.SensorMode.NDOF;
-            parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-            parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-            parameters.loggingEnabled = true;
-
-            Gyro = hardware.get(BNO055IMU.class, "imu");
-            Gyro.initialize(parameters);
-
 
             is_drive_base_inited = true;
             if(do_enable) {
-                is_drive_base_enabled = is_drive_base_inited;
+                is_drive_base_enabled = do_enable;
             }
         }
         public void send_to_motors(){
@@ -134,15 +170,6 @@ public class RobotHardware{
             hrd_BR.setPower(_normolaize_DC(BR));
 
 
-        }
-        public Orientation Angle() {
-            Orientation = Gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            return Orientation;
-        }
-
-        public Acceleration Axel() {
-            Acceleration = Gyro.getLinearAcceleration();
-            return Acceleration;
         }
 
         public class motor_classes{
