@@ -44,6 +44,8 @@ public abstract class OpModeFramework extends LinearOpMode {
     protected RobotHardware.GyroIMU gyro;
     protected RobotHardware.DriveBase.motor_classes motor_classes;
 
+    DigitalChannel ch0, ch1;
+
     public void selfInit(){
         robotHardware = new RobotHardware(hardwareMap);
         gyro = robotHardware.new GyroIMU();
@@ -64,6 +66,12 @@ public abstract class OpModeFramework extends LinearOpMode {
 
         extr = servoMotors.new SparkMotor(servoMotors,RobotHardware.ServoMotors.servoKeys.SparkMiniKeys.extention_right);
         extl = servoMotors.new SparkMotor(servoMotors,RobotHardware.ServoMotors.servoKeys.SparkMiniKeys.extention_left);
+
+        // FIXME: 26.05.2025 maybe make a class for these
+        ch0 = hardwareMap.digitalChannel.get("0");
+        ch1 = hardwareMap.digitalChannel.get("1");
+        ch0.setMode(DigitalChannel.Mode.INPUT);
+        ch1.setMode(DigitalChannel.Mode.INPUT);
     }
 
     @Override
