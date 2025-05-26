@@ -19,13 +19,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
-//@TeleOp
+@TeleOp
 public class tolyacontrol extends LinearOpMode {
     boolean xkfi = false;
     PID_setting pid_setting = new PID_setting();
     // config
     boolean simple_ext = true;
     double sbkrpos ;
+    double powery =0 ;
+    double powerx=0;
     // end
     double mult = 1;
     double extr_zero = 0, extl_zero = 0;
@@ -129,14 +131,6 @@ public class tolyacontrol extends LinearOpMode {
         ch0.setMode(DigitalChannel.Mode.INPUT);
         ch1.setMode(DigitalChannel.Mode.INPUT);
 
-        sbkr = hardwareMap.servo.get("sbkr");
-        sbros = hardwareMap.servo.get("sbros");
-        grabl = hardwareMap.servo.get("grabl");
-        grabr = hardwareMap.servo.get("grabr");
-//        s1 = hardwareMap.servo.get("servo2");
-//        s2 = hardwareMap.servo.get("servo3");
-        extl = hardwareMap.crservo.get("extl");
-        extr = hardwareMap.crservo.get("extr");
 
 
 
@@ -164,8 +158,8 @@ public class tolyacontrol extends LinearOpMode {
         driftCore.reset();
         driving.start();
         while (opModeIsActive()) {
-            MoveSbros();
-            setSbkr();
+
+
         }
 
     }
@@ -174,35 +168,8 @@ public class tolyacontrol extends LinearOpMode {
         Orientation = Gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return Orientation.firstAngle;
     }
-    public void MoveSbros(){
-        if (gamepad2.right_trigger >0.5){
-            sbros.setPosition(0);
-        }
-        else{
-            sbros.setPosition(0.95);
-        }
 
-    }
-    public void setSbkr(){
 
-        if (gamepad1.y && lastsbkr!=gamepad1.y){
-            if (sbkrpos == 2){
-                sbkrpos =1;
-            }
-            else{
-                sbkrpos =2;
-            }
-        }
-
-        if (sbkrpos ==2){
-            sbkr.setPosition(0);
-        }
-        else{
-            sbkr.setPosition(1);
-        }
-        lastsbkr =gamepad1.y;
-
-    }
 
 
     class Driving extends Thread {
@@ -222,8 +189,7 @@ public class tolyacontrol extends LinearOpMode {
                     mult = Math.min(drive.milliseconds() * 0.04, 1);
                 }
 
-                double power = Math.sqrt((gamepad1.left_stick_x * gamepad1.left_stick_x) + (gamepad1.left_stick_y * gamepad1.left_stick_y));
-                double radian = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x);
+
                 double Angle = Angle();
 
                 deltaHed = Angle - deltaHedL;
@@ -243,10 +209,12 @@ public class tolyacontrol extends LinearOpMode {
                     targAngle = currentAngle;
                     turnPower = -gamepad1.right_stick_x * 0.8;
                 }
-                FR.setPower(((power * Math.cos(radian - Math.PI / 4 + Math.toRadians(currentAngle) + Math.PI) * Math.sqrt(2)) + turnPower) * (-Multiply * mult));
-                FL.setPower(((power * Math.cos(radian - 3 * Math.PI / 4 + Math.toRadians(currentAngle) + Math.PI) * Math.sqrt(2)) - turnPower) * (Multiply * mult));
-                BR.setPower(((power * Math.cos(radian - 3 * Math.PI / 4 + Math.toRadians(currentAngle) + Math.PI) * Math.sqrt(2)) + turnPower) * (-Multiply * mult));
-                BL.setPower(((power * Math.cos(radian - Math.PI / 4 + Math.toRadians(currentAngle) + Math.PI) * Math.sqrt(2)) - turnPower) * (Multiply * mult));
+                powery = Math.cos(Math.toRadians(currentAngle))*gamepad1.left_stick_x -  Math.sin(Math.toRadians(currentAngle)) * gamepad1.left_stick_y;
+                powerx = Math.sin(Math.toRadians(currentAngle))*gamepad1.left_stick_x + Math.cos(Math.toRadians(currentAngle)) *  gamepad1.left_stick_y;
+                FR.setPower(((-powerx  + powery + turnPower)) * (-Multiply * mult));
+                FL.setPower(((powerx  + powery + turnPower)) * (-Multiply * mult));
+                BR.setPower(((-powerx  - powery + turnPower)) * (-Multiply * mult));
+                BL.setPower(((powerx  - powery + turnPower)) * (-Multiply * mult));
                 dash.addData("positionx", BR.getCurrentPosition());
                 dash.addData("positiony", BL.getCurrentPosition());
                 dash.addData("ignorex", currentAngle);

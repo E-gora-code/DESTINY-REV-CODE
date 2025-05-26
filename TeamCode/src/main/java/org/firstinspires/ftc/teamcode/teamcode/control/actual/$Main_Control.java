@@ -961,7 +961,7 @@ public class $Main_Control extends LinearOpMode {
                         mult_on_press_R_stick = 1/Multiply;
                     }
 
-                    FR.setPower(((power * Math.cos(radian - Math.PI / 4 + Math.toRadians(currentAngle) + Math.PI) * Math.sqrt(2))*mult_on_press_L_stick) * (Multiply)*0.7 + turnPower*mult_on_press_R_stick);
+                    FR.setPower(((power * Math.cos(radian - Math.PI / 4 + Math.toRadians(currentAngle) + Math.PI) * Math.sqrt(2))*mult_on_press_L_stick) * (-Multiply)*0.7 - turnPower*mult_on_press_R_stick);
                     FL.setPower(((power * Math.cos(radian - 3 * Math.PI / 4 + Math.toRadians(currentAngle) + Math.PI) * Math.sqrt(2))*mult_on_press_L_stick) * (Multiply) - turnPower*mult_on_press_R_stick);
                     BR.setPower(((power * Math.cos(radian - 3 * Math.PI / 4 + Math.toRadians(currentAngle) + Math.PI) * Math.sqrt(2))*mult_on_press_L_stick) * (-Multiply) - turnPower*mult_on_press_R_stick);
                     BL.setPower(((power * Math.cos(radian - Math.PI / 4 + Math.toRadians(currentAngle) + Math.PI) * Math.sqrt(2))*mult_on_press_L_stick) * (Multiply) - turnPower*mult_on_press_R_stick);

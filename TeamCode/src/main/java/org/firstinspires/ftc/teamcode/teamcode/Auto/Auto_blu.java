@@ -307,6 +307,7 @@ public class Auto_blu extends LinearOpMode {
     }
 
 
+
     public double Angle() {
         Orientation = Gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return Orientation.firstAngle;
@@ -439,6 +440,7 @@ public class Auto_blu extends LinearOpMode {
 
             }
         }
+
     }
     class Count extends Thread {
         public void run() {
