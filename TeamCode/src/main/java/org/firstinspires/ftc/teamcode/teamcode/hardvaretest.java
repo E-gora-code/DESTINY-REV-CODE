@@ -21,10 +21,6 @@ public class hardvaretest extends OpModeFramework {
 
     tred_1 tred__1 = new tred_1();
 
-
-    Orientation Orientation = new Orientation();
-    Acceleration Acceleration = new Acceleration();
-    DigitalChannel ch0, ch1;
     double var1 = 0;
     Random random = new Random();
     Telemetry dash = FtcDashboard.getInstance().getTelemetry();
@@ -33,10 +29,6 @@ public class hardvaretest extends OpModeFramework {
     public void runOpMode() throws InterruptedException {
         selfInit();
 
-        ch0 = hardwareMap.digitalChannel.get("0");
-        ch1 = hardwareMap.digitalChannel.get("1");
-        ch0.setMode(DigitalChannel.Mode.INPUT);
-        ch1.setMode(DigitalChannel.Mode.INPUT);
 
         gyro.init_all();
         driveBase.init_all();
