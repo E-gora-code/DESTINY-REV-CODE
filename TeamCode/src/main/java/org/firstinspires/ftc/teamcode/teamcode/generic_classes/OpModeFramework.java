@@ -12,7 +12,7 @@ public abstract class OpModeFramework extends LinearOpMode {
     protected RobotHardware.DriveBase.motor_classes.BackRight BR;
 
     protected RobotHardware.Motors.BasicServo sbros, claw, grabr, grabl;
-//    protected RobotHardware.ServoMotors.SparkMotor extr, extl;
+    protected RobotHardware.Motors.DCMotor extr, extl;
     protected RobotHardware robotHardware;
     protected RobotHardware.Motors motors;
     protected RobotHardware.DriveBase driveBase;
@@ -39,8 +39,8 @@ public abstract class OpModeFramework extends LinearOpMode {
         grabl = motors.new BasicServo(motors, RobotHardware.Motors.servoKeys.servoNameKeys.container_grab_module.leftServo);
         grabr = motors.new BasicServo(motors, RobotHardware.Motors.servoKeys.servoNameKeys.container_grab_module.rightServo);
 
-//        extr = servoMotors.new SparkMotor(servoMotors,RobotHardware.ServoMotors.servoKeys.SparkMiniKeys.extention_right);
-//        extl = servoMotors.new SparkMotor(servoMotors,RobotHardware.ServoMotors.servoKeys.SparkMiniKeys.extention_left);
+        extr = motors.new DCMotor(motors,RobotHardware.Motors.servoKeys.motorDCNameKeys.extention_right);
+        extl = motors.new DCMotor(motors,RobotHardware.Motors.servoKeys.motorDCNameKeys.extention_left);
 
         // FIXME: 26.05.2025 maybe make a class for these
         ch0 = hardwareMap.digitalChannel.get("0");

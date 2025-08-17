@@ -265,12 +265,13 @@ public class RobotHardware{
 
     }
     public class Motors {
-        private boolean is_motors_inited = false;
+        private boolean is_components_inited = false;
         public boolean is_servos_enabled = false;
         public boolean is_sparks_enabled = false;
+        public boolean is_motors_enabled = false;
         private Map<String,InternalServo> servos = new HashMap<>();
         private Map<String,InternalSpark> sparks = new HashMap<>();
-        private Map<String,InternalSpark> motorsDC = new HashMap<>();
+        private Map<String,InternalMotorDC> motorsDC = new HashMap<>();
 
         public class servoKeys{
             // Class for easy renaming purposes
@@ -284,11 +285,10 @@ public class RobotHardware{
                 }
             }
             public class SparkMiniNameKeys{
-                public final static String extention_right = "extention_R";
-                public final static String extention_left = "extention_L";
             }
             public class motorDCNameKeys {
-
+                public final static String extention_right = "extention_R";
+                public final static String extention_left = "extention_L";
             }
         }
 
@@ -307,29 +307,32 @@ public class RobotHardware{
 
 
         public boolean is_inited(){
-            return is_motors_inited;
+            return is_components_inited;
         }
         public void init_all(){
-            init_all(true,true);
+            init_all(true,true,true);
         }
         public void init_all(boolean enable_servos){
-            init_all(enable_servos,true);
+            init_all(enable_servos,true,true);
         }
-        public void init_all(boolean enable_servos, boolean enable_sparks){
+        public void init_all(boolean enable_servos, boolean enable_sparks,boolean enable_DC){
 
-            is_motors_inited = true;
+            is_components_inited = true;
             if (enable_servos) {
                 is_servos_enabled = enable_servos;
             }
             if (enable_sparks){
                 is_sparks_enabled = enable_sparks;
             }
+            if (enable_DC){
+                is_motors_enabled = enable_DC;
+            }
         }
 
 
 
         public void send_to_components(){
-            if(!is_motors_inited){
+            if(!is_components_inited){
                 return;
             }
             if(is_servos_enabled) {
@@ -348,6 +351,20 @@ public class RobotHardware{
                     }
                 }
             }
+            if(is_motors_enabled) {
+                for (Map.Entry<String, InternalMotorDC> motor_entry : motorsDC.entrySet()) {
+                    InternalMotorDC motor_component = motor_entry.getValue();
+                    if (motor_component.AttachedComponent != null) {
+                        motor_component.AttachedComponent.setPower(motor_component.power);
+                    }
+                }
+            }
+        }
+        public void update_encoders(){
+        }
+        public void class_tick(){
+            update_encoders();
+            send_to_components();
         }
 
 
@@ -374,7 +391,15 @@ public class RobotHardware{
             return output;
         }
 
-
+        private DcMotor getMotorDCFunction(String name){
+            DcMotor output;
+            try {
+                output = hardware.dcMotor.get(name);
+            }catch (Exception ignored){
+                output = null;
+            }
+            return output;
+        }
 
         private class InternalServo{
             public double position = 0;
@@ -386,7 +411,6 @@ public class RobotHardware{
         }
 
 
-
         private class InternalSpark{
             public double power = 0;
             public final CRServo AttachedComponent;
@@ -395,7 +419,14 @@ public class RobotHardware{
             }
         }
 
-
+        private class InternalMotorDC{
+            public double power = 0;
+            public double encoder = 0;
+            public final DcMotor AttachedComponent;
+            public InternalMotorDC(String attachedComponentName){
+                this.AttachedComponent = getMotorDCFunction(attachedComponentName);
+            }
+        }
 
         public class BasicServo{
             public final String component_Key;
@@ -437,6 +468,26 @@ public class RobotHardware{
             }
             public double getPower(){
                 return attached_spark.power;
+            }
+        }
+
+        public class DCMotor{
+            public final String component_Key;
+            public final Motors parentClass;
+            private final InternalMotorDC attached_motorDC;
+            public DCMotor(Motors parentClass, String Key){
+                this.component_Key = Key;
+                this.parentClass = parentClass;
+                this.attached_motorDC = parentClass.motorsDC.get(component_Key);
+                if(attached_motorDC == null){
+                    throw new IllegalArgumentException(String.format("RobotHardware.DCMotor(%s): Key error, no object found!!!",component_Key));
+                }
+            }
+            public void setPower(double power){
+                attached_motorDC.power = power;
+            }
+            public double getPower(){
+                return attached_motorDC.power;
             }
         }
 
