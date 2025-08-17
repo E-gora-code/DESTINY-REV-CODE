@@ -2,16 +2,10 @@ package org.firstinspires.ftc.teamcode.teamcode;
 
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.teamcode.generic_classes.OpModeFramework;
-import org.firstinspires.ftc.teamcode.teamcode.generic_classes.RobotHardware;
 
 import java.util.Random;
 
@@ -32,7 +26,7 @@ public class hardvaretest extends OpModeFramework {
 
         gyro.init_all();
         driveBase.init_all();
-        servoMotors.init_all(true);
+        motors.init_all(true);
 
 
 
@@ -59,7 +53,7 @@ public class hardvaretest extends OpModeFramework {
 //            driveBase.FR = 1;
             FL.setPower(0);
             driveBase.send_to_motors();
-            servoMotors.send_to_components();
+            motors.send_to_components();
 
         }
 

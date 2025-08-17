@@ -264,45 +264,50 @@ public class RobotHardware{
         }
 
     }
-    public class ServoMotors{
-        private boolean is_servos_inited = false;
+    public class Motors {
+        private boolean is_motors_inited = false;
         public boolean is_servos_enabled = false;
         public boolean is_sparks_enabled = false;
         private Map<String,InternalServo> servos = new HashMap<>();
         private Map<String,InternalSpark> sparks = new HashMap<>();
-
-
+        private Map<String,InternalSpark> motorsDC = new HashMap<>();
 
         public class servoKeys{
             // Class for easy renaming purposes
-            public final static String apple_drop_module = "apple drop module";
-            public final static String hidden_claw_module = "hidden claw";
-            public class container_grab_module {
-                public final static String rightServo = "container_grab_R";
-                public final static String leftServo = "container_grab_L";
+            public class servoNameKeys {
+                public final static String apple_drop_module = "apple drop module";
+                public final static String hidden_claw_module = "hidden claw";
+
+                public class container_grab_module {
+                    public final static String rightServo = "container_grab_R";
+                    public final static String leftServo = "container_grab_L";
+                }
             }
-            public class SparkMiniKeys{
+            public class SparkMiniNameKeys{
                 public final static String extention_right = "extention_R";
                 public final static String extention_left = "extention_L";
+            }
+            public class motorDCNameKeys {
+
             }
         }
 
 
 
-        public ServoMotors(){
+        public Motors(){
             // Add motors HERE
-            servos.put(servoKeys.apple_drop_module,new InternalServo("sbros"));
-            servos.put(servoKeys.hidden_claw_module,new InternalServo("sbkr"));
-            servos.put(servoKeys.container_grab_module.leftServo,new InternalServo("grabl"));
-            servos.put(servoKeys.container_grab_module.rightServo,new InternalServo("grabr"));
+            servos.put(servoKeys.servoNameKeys.apple_drop_module,new InternalServo("sbros"));
+            servos.put(servoKeys.servoNameKeys.hidden_claw_module,new InternalServo("sbkr"));
+            servos.put(servoKeys.servoNameKeys.container_grab_module.leftServo,new InternalServo("grabl"));
+            servos.put(servoKeys.servoNameKeys.container_grab_module.rightServo,new InternalServo("grabr"));
 
-            sparks.put(servoKeys.SparkMiniKeys.extention_right,new InternalSpark("extr"));
-            sparks.put(servoKeys.SparkMiniKeys.extention_left,new InternalSpark("extl"));
+//            sparks.put(servoKeys.SparkMiniKeys.extention_right,new InternalSpark("extr"));
+//            sparks.put(servoKeys.SparkMiniKeys.extention_left,new InternalSpark("extl"));
         }
 
 
         public boolean is_inited(){
-            return is_servos_inited;
+            return is_motors_inited;
         }
         public void init_all(){
             init_all(true,true);
@@ -312,7 +317,7 @@ public class RobotHardware{
         }
         public void init_all(boolean enable_servos, boolean enable_sparks){
 
-            is_servos_inited = true;
+            is_motors_inited = true;
             if (enable_servos) {
                 is_servos_enabled = enable_servos;
             }
@@ -324,7 +329,7 @@ public class RobotHardware{
 
 
         public void send_to_components(){
-            if(!is_servos_inited){
+            if(!is_motors_inited){
                 return;
             }
             if(is_servos_enabled) {
@@ -394,9 +399,9 @@ public class RobotHardware{
 
         public class BasicServo{
             public final String component_Key;
-            public final ServoMotors parentClass;
+            public final Motors parentClass;
             private final InternalServo attached_servo;
-            public BasicServo(ServoMotors parentClass, String Key){
+            public BasicServo(Motors parentClass, String Key){
                 this.component_Key = Key;
                 this.parentClass = parentClass;
                 this.attached_servo = parentClass.servos.get(component_Key);
@@ -417,9 +422,9 @@ public class RobotHardware{
 
         public class SparkMotor{
             public final String component_Key;
-            public final ServoMotors parentClass;
+            public final Motors parentClass;
             private final InternalSpark attached_spark;
-            public SparkMotor(ServoMotors parentClass, String Key){
+            public SparkMotor(Motors parentClass, String Key){
                 this.component_Key = Key;
                 this.parentClass = parentClass;
                 this.attached_spark = parentClass.sparks.get(component_Key);
