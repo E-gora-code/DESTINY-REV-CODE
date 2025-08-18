@@ -23,67 +23,21 @@ import org.firstinspires.ftc.teamcode.teamcode.generic_classes.OpModeFramework;
 
 @TeleOp
 public class Manual extends OpModeFramework {
-    boolean xkfi = false;
-    PID_setting pid_setting = new PID_setting();
-    double extr_zero = 0, extl_zero = 0;
-    double extr_max = 5170, extl_max;
-    DcMotor FL, BL, FR, BR;
-    Servo sbkr, grabr, grabl, sbros;
-    CRServo extl, extr;
-    double currentAngle = 0;
-    double exterR, exterL, extpowerR, extpowerL, extrlR, extrlL;
+
     double extr_pos, extl_pos;
     double Multiply = 0.6;
-    double turnPower = 0;
-    double targAngle = 0;
-    double turnErr = 0, turnErrL = 0;
-    double deltaHed = 0, deltaHedL = 0;
-    double ext_pos_calk = 0;
-    double gamepad_summ = 0;
-    boolean lastext = false;
-    boolean presed_reset_ang = false;
-    boolean ext_press = false;
-    boolean is_homed_ever = false;
     boolean b_press = false;
     boolean grab_toggle = false;
 
     boolean independent_drive = false;
     boolean independent_drive_press = false;
-    ElapsedTime homatimr = new ElapsedTime();
-    ElapsedTime lastctrl = new ElapsedTime();
-    ElapsedTime hold_to_wake_homa = new ElapsedTime();
-    ElapsedTime ext_timer = new ElapsedTime();
-    ElapsedTime presed_reset_ang_timer = new ElapsedTime();
-    ElapsedTime presed_reset_extencion_timer = new ElapsedTime();
-    double x = 0;
-    int click = 0;
-    int clmult = 1;
-    double pos = 0;
-    double gm2ls_summ = 0;
-
-
-    ElapsedTime extention_time = new ElapsedTime();
-    double extention_time_interval = 10;
-
-    double color_pulse = 1;
-    ElapsedTime color_pulse_timer = new ElapsedTime();
-
-
-    boolean can_homa_wake_up = true;
-
-    boolean ishoma = false;
-    ElapsedTime lastcl = new ElapsedTime();
-    boolean iscl1 = false;
-    boolean iscl = false;
-    BNO055IMU Gyro;
-    Orientation Orientation = new Orientation();
-    Acceleration Acceleration = new Acceleration();
-    DigitalChannel ch0, ch1;
 
     Telemetry dash = FtcDashboard.getInstance().getTelemetry();
 
     @Override
     public void runOpMode() throws InterruptedException {
+        selfInit();
+
         driveBase.init_all();
         motors.init_all();
         gyro.init_all();
@@ -152,10 +106,10 @@ public class Manual extends OpModeFramework {
             extr_pos = FL.getCurrentPosition();
             extl_pos = FR.getCurrentPosition();
             telemetry.addData("alt",independent_drive);
-            telemetry.addData("Angle X", Angle().firstAngle);
-            telemetry.addData("Angle Y", Angle().secondAngle);
-            telemetry.addData("Angle Z", Angle().thirdAngle);
-            telemetry.addData("Acceliration", (Axel().xAccel+Axel().yAccel+Axel().zAccel));
+            telemetry.addData("Angle X", gyro.Angle().firstAngle);
+            telemetry.addData("Angle Y", gyro.Angle().secondAngle);
+            telemetry.addData("Angle Z", gyro.Angle().thirdAngle);
+            telemetry.addData("Acceliration", (gyro.Axel().xAccel+gyro.Axel().yAccel+gyro.Axel().zAccel));
 
             telemetry.addData("ch0", ch0.getState());
             telemetry.addData("ch1", ch1.getState());
@@ -190,10 +144,10 @@ public class Manual extends OpModeFramework {
 
 
             if (gamepad1.a || gamepad2.right_bumper) {
-                sbkr.setPosition(1);
+                sbros.setPosition(1);
             } else {
                 if (gamepad1.right_bumper != true) {
-                    sbkr.setPosition((gamepad1.right_trigger * 0.48) + 0.52);
+                    sbros.setPosition((gamepad1.right_trigger * 0.48) + 0.52);
                 }
 
             }
@@ -261,15 +215,7 @@ public class Manual extends OpModeFramework {
 
     }
 
-    public Orientation Angle() {
-        Orientation = Gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return Orientation;
-    }
 
-    public Acceleration Axel() {
-        Acceleration = Gyro.getAcceleration();
-        return Acceleration;
-    }
 
 }
 

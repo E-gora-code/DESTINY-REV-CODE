@@ -34,13 +34,13 @@ public abstract class OpModeFramework extends LinearOpMode {
 
         motors = robotHardware.new Motors();
 
-        sbros = motors.new BasicServo(motors, RobotHardware.Motors.servoKeys.servoNameKeys.apple_drop_module);
-        claw = motors.new BasicServo(motors, RobotHardware.Motors.servoKeys.servoNameKeys.hidden_claw_module);
-        grabl = motors.new BasicServo(motors, RobotHardware.Motors.servoKeys.servoNameKeys.container_grab_module.leftServo);
-        grabr = motors.new BasicServo(motors, RobotHardware.Motors.servoKeys.servoNameKeys.container_grab_module.rightServo);
+        sbros = motors.new BasicServo(motors, RobotHardware.Motors.NameKeys.servoNameKeys.apple_drop_module);
+        claw = motors.new BasicServo(motors, RobotHardware.Motors.NameKeys.servoNameKeys.hidden_claw_module);
+        grabl = motors.new BasicServo(motors, RobotHardware.Motors.NameKeys.servoNameKeys.container_grab_module.leftServo);
+        grabr = motors.new BasicServo(motors, RobotHardware.Motors.NameKeys.servoNameKeys.container_grab_module.rightServo);
 
-        extr = motors.new DCMotor(motors,RobotHardware.Motors.servoKeys.motorDCNameKeys.extention_right);
-        extl = motors.new DCMotor(motors,RobotHardware.Motors.servoKeys.motorDCNameKeys.extention_left);
+        extr = motors.new DCMotor(motors, RobotHardware.Motors.NameKeys.motorDCNameKeys.extention_right);
+        extl = motors.new DCMotor(motors, RobotHardware.Motors.NameKeys.motorDCNameKeys.extention_left);
 
         // FIXME: 26.05.2025 maybe make a class for these
         ch0 = hardwareMap.digitalChannel.get("0");

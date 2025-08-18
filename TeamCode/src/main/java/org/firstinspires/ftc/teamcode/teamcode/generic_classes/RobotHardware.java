@@ -273,7 +273,7 @@ public class RobotHardware{
         private Map<String,InternalSpark> sparks = new HashMap<>();
         private Map<String,InternalMotorDC> motorsDC = new HashMap<>();
 
-        public class servoKeys{
+        public class NameKeys {
             // Class for easy renaming purposes
             public class servoNameKeys {
                 public final static String apple_drop_module = "apple drop module";
@@ -296,13 +296,13 @@ public class RobotHardware{
 
         public Motors(){
             // Add motors HERE
-            servos.put(servoKeys.servoNameKeys.apple_drop_module,new InternalServo("sbros"));
-            servos.put(servoKeys.servoNameKeys.hidden_claw_module,new InternalServo("sbkr"));
-            servos.put(servoKeys.servoNameKeys.container_grab_module.leftServo,new InternalServo("grabl"));
-            servos.put(servoKeys.servoNameKeys.container_grab_module.rightServo,new InternalServo("grabr"));
+            servos.put(NameKeys.servoNameKeys.apple_drop_module,new InternalServo("sbros"));
+            servos.put(NameKeys.servoNameKeys.hidden_claw_module,new InternalServo("sbkr"));
+            servos.put(NameKeys.servoNameKeys.container_grab_module.leftServo,new InternalServo("grabl"));
+            servos.put(NameKeys.servoNameKeys.container_grab_module.rightServo,new InternalServo("grabr"));
 
-//            sparks.put(servoKeys.SparkMiniKeys.extention_right,new InternalSpark("extr"));
-//            sparks.put(servoKeys.SparkMiniKeys.extention_left,new InternalSpark("extl"));
+            motorsDC.put(NameKeys.motorDCNameKeys.extention_right,new InternalMotorDC("extr"));
+            motorsDC.put(NameKeys.motorDCNameKeys.extention_left,new InternalMotorDC("extl"));
         }
 
 
@@ -444,7 +444,7 @@ public class RobotHardware{
                 attached_servo.position = pos;
                 attached_servo.is_powered = true;
             }
-            public double getPosition(){
+            public double getCurrentPosition(){
                 return attached_servo.position;
             }
         }
