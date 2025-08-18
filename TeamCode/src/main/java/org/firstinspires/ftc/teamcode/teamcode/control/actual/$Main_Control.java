@@ -84,9 +84,6 @@ public class $Main_Control extends OpModeFramework {
     double extr_zero = 0, extl_zero = 0;
     double extr_max = 5681, extl_max = 4055;
     double ext_range = 5000;
-    DcMotor FL, BL, FR, BR;
-    Servo claw, grabr, grabl,sbros;
-    CRServo extl,extr;
     double currentAngle = 0;
     double exterR,exterL,extpowerR,extpowerL,extrlR,extrlL;
     double extr_pos, extl_pos;
@@ -406,10 +403,10 @@ public class $Main_Control extends OpModeFramework {
                 }
 
                 if ((!ch0.getState()) && (!ch1.getState())) {
-                    FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//                    FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//                    FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//                    FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//                    FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     if (pos <= 0) {
                         pos = 0;
 //                        gamepad2.rumble(500);
