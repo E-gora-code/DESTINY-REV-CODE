@@ -49,6 +49,12 @@ public abstract class OpModeFramework extends LinearOpMode {
         ch1.setMode(DigitalChannel.Mode.INPUT);
     }
 
+    public void initAllSystems(){
+        driveBase.init_all();
+        motors.init_all();
+        gyro.init_all();
+    }
+
     @Override
     public abstract void runOpMode() throws InterruptedException;
 }

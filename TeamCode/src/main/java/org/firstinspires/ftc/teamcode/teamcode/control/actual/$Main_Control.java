@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.teamcode.control.actual;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -21,21 +20,20 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.teamcode.PID_setting;
 import org.firstinspires.ftc.teamcode.teamcode.openCV.CameraOverlay;
-import org.firstinspires.ftc.teamcode.teamcode.openCV.Detector;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-
+import org.firstinspires.ftc.teamcode.teamcode.generic_classes.OpModeFramework;
 @TeleOp
-public class $Main_Control extends LinearOpMode {
+public class $Main_Control extends OpModeFramework {
 
     OpenCvCamera webcam;
     private Acceleration acceleration;
     Init_Utilites initUtilites = new Init_Utilites();
 
     GamepadBinds gamepadBinds = new GamepadBinds();
-    Drive_Base drive_base = new Drive_Base();
+    Drive_system drive_system = new Drive_system();
     Telemetry_manage telemetry_manage = new Telemetry_manage();
     Claw_controll claw_controll = new Claw_controll();
     PID_setting pid_setting = new PID_setting();
@@ -189,7 +187,6 @@ public class $Main_Control extends LinearOpMode {
     boolean iscl1 = false;
     boolean iscl = false;
     boolean hanging_state = false;
-    BNO055IMU Gyro;
     Orientation Orientation = new Orientation();
     DigitalChannel ch0, ch1;
 
@@ -201,7 +198,7 @@ public class $Main_Control extends LinearOpMode {
         waitForStart();
 
         gamepadBinds.start();
-        drive_base.start();
+        drive_system.start();
         telemetry_manage.start();
         claw_controll.start();
 
@@ -224,6 +221,8 @@ public class $Main_Control extends LinearOpMode {
             extl_pos =  Normolaze_Enc(FR.getCurrentPosition(),extl_zero,extl_max,ext_range);
             extr_raw_pos = FL.getCurrentPosition();
             extl_raw_pos = FR.getCurrentPosition();
+
+            motors.class_tick();
 
 
 
@@ -806,10 +805,11 @@ public class $Main_Control extends LinearOpMode {
             }
         }
     }
-    public class Drive_Base extends Thread {
+    public class Drive_system extends Thread {
         public void run() {
             while (opModeIsActive()) {
-                acceleration = Gyro.getLinearAcceleration();
+                acceleration = gyro.Axel();
+                driveBase.class_tick();
 
 
                 if (turn_stick_axis != 0 || forward_stick_axis != 0 || side_stick_axis != 0) {
@@ -952,77 +952,35 @@ public class $Main_Control extends LinearOpMode {
     }
     public class Init_Utilites{
         public void start_init_instructions(){
-            FL = hardwareMap.dcMotor.get("FL");
-            FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            FR = hardwareMap.dcMotor.get("FR");
-            FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-            BL = hardwareMap.dcMotor.get("BL");
-            BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-            BR = hardwareMap.dcMotor.get("BR");
-            BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            ch0 = hardwareMap.digitalChannel.get("0");
-            ch1 = hardwareMap.digitalChannel.get("1");
-            ch0.setMode(DigitalChannel.Mode.INPUT);
-            ch1.setMode(DigitalChannel.Mode.INPUT);
+            selfInit();
+            initAllSystems();
 
 
-            claw = hardwareMap.servo.get("sbkr");
-            sbros = hardwareMap.servo.get("sbros");
-            grabl = hardwareMap.servo.get("grabl");
-            grabr = hardwareMap.servo.get("grabr");
-//        s1 = hardwareMap.servo.get("servo2");
-//        s2 = hardwareMap.servo.get("servo3");
-            extl = hardwareMap.crservo.get("extl");
-            extr = hardwareMap.crservo.get("extr");
+            int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+            webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+    //        webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+            CameraOverlay detector = new CameraOverlay();
+            webcam.setPipeline(detector);
+            webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+                @Override
+                public void onOpened() {
+                    webcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
 
+                    FtcDashboard.getInstance().startCameraStream(webcam, 16);
+                }
 
-
-            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-//        parameters.mode = BNO055IMU.SensorMode.IMU;
-            parameters.mode = BNO055IMU.SensorMode.NDOF;
-            parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-            parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-            parameters.loggingEnabled = true;
-
-            Gyro = hardwareMap.get(BNO055IMU.class, "imu");
-            Gyro.initialize(parameters);
-
-
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-//        webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-        CameraOverlay detector = new CameraOverlay();
-        webcam.setPipeline(detector);
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
-
-                FtcDashboard.getInstance().startCameraStream(webcam, 16);
-            }
-
-            @Override
-            public void onError(int errorCode) {
-            }
-        });
-            String[] passord = new String[4];
-            passord[0]="a";
+                @Override
+                public void onError(int errorCode) {
+                }
+            });
+                String[] passord = new String[4];
+                passord[0]="a";
 
         }
     }
     public double Angle() {
-        Orientation = Gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        Orientation = gyro.Angle();
         return Orientation.firstAngle;
     }
 
