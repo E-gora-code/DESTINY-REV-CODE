@@ -19,9 +19,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.teamcode.PID_setting;
 
+import org.firstinspires.ftc.teamcode.teamcode.generic_classes.OpModeFramework;
 
 @TeleOp
-public class Manual extends LinearOpMode {
+public class Manual extends OpModeFramework {
     boolean xkfi = false;
     PID_setting pid_setting = new PID_setting();
     double extr_zero = 0, extl_zero = 0;
@@ -83,48 +84,52 @@ public class Manual extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        FL = hardwareMap.dcMotor.get("FL");
-        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        driveBase.init_all();
+        motors.init_all();
+        gyro.init_all();
+//        FL = hardwareMap.dcMotor.get("FL");
+//        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//
+//        FR = hardwareMap.dcMotor.get("FR");
+//        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//
+//        BL = hardwareMap.dcMotor.get("BL");
+//        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//
+//        BR = hardwareMap.dcMotor.get("BR");
+//        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        ch0 = hardwareMap.digitalChannel.get("0");
+//        ch1 = hardwareMap.digitalChannel.get("1");
+//        ch0.setMode(DigitalChannel.Mode.INPUT);
+//        ch1.setMode(DigitalChannel.Mode.INPUT);
+//
+//        sbkr = hardwareMap.servo.get("sbkr");
+//        sbros = hardwareMap.servo.get("sbros");
+//        grabl = hardwareMap.servo.get("grabl");
+//        grabr = hardwareMap.servo.get("grabr");
+////        s1 = hardwareMap.servo.get("servo2");
+////        s2 = hardwareMap.servo.get("servo3");
+//        extl = hardwareMap.crservo.get("extl");
+//        extr = hardwareMap.crservo.get("extr");
+//
+//
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+//        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+//
+//        Gyro = hardwareMap.get(BNO055IMU.class, "imu");
+//
+//
+//        Gyro.initialize(parameters);
 
-        FR = hardwareMap.dcMotor.get("FR");
-        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        BL = hardwareMap.dcMotor.get("BL");
-        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        BR = hardwareMap.dcMotor.get("BR");
-        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        ch0 = hardwareMap.digitalChannel.get("0");
-        ch1 = hardwareMap.digitalChannel.get("1");
-        ch0.setMode(DigitalChannel.Mode.INPUT);
-        ch1.setMode(DigitalChannel.Mode.INPUT);
-
-        sbkr = hardwareMap.servo.get("sbkr");
-        sbros = hardwareMap.servo.get("sbros");
-        grabl = hardwareMap.servo.get("grabl");
-        grabr = hardwareMap.servo.get("grabr");
-//        s1 = hardwareMap.servo.get("servo2");
-//        s2 = hardwareMap.servo.get("servo3");
-        extl = hardwareMap.crservo.get("extl");
-        extr = hardwareMap.crservo.get("extr");
-
-
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-
-        Gyro = hardwareMap.get(BNO055IMU.class, "imu");
-
-
-        Gyro.initialize(parameters);
 //        OpenCvCamera webcam;
 //        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 //        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -250,7 +255,8 @@ public class Manual extends LinearOpMode {
 //            FR.setPower((-gamepad1.left_stick_x-gamepad1.left_stick_y+turnPower)*Multiply);
 //            FL.setPower((gamepad1.left_stick_x-gamepad1.left_stick_y-turnPower)*Multiply);
 
-
+            driveBase.class_tick();
+            motors.class_tick();
         }
 
     }
