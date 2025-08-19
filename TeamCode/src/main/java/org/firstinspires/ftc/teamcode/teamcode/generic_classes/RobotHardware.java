@@ -289,6 +289,7 @@ public class RobotHardware{
             public class motorDCNameKeys {
                 public final static String extention_right = "extention_R";
                 public final static String extention_left = "extention_L";
+                public final static String factory_extention = "factory_extention";
             }
         }
 
@@ -302,7 +303,8 @@ public class RobotHardware{
             servos.put(NameKeys.servoNameKeys.container_grab_module.rightServo,new InternalServo("grabr"));
 
             motorsDC.put(NameKeys.motorDCNameKeys.extention_right,new InternalMotorDC("extr"));
-            motorsDC.put(NameKeys.motorDCNameKeys.extention_left,new InternalMotorDC("extl"));
+            motorsDC.put(NameKeys.motorDCNameKeys.extention_left,new InternalMotorDC("extl",-1));
+            motorsDC.put(NameKeys.motorDCNameKeys.factory_extention,new InternalMotorDC("zavoz",-1));
         }
 
 
@@ -422,9 +424,14 @@ public class RobotHardware{
         private class InternalMotorDC{
             public double power = 0;
             public double encoder = 0;
+            public double power_multiplier = 1;
             public final DcMotor AttachedComponent;
             public InternalMotorDC(String attachedComponentName){
                 this.AttachedComponent = getMotorDCFunction(attachedComponentName);
+            }
+            public InternalMotorDC(String attachedComponentName,double power_mult){
+                this.AttachedComponent = getMotorDCFunction(attachedComponentName);
+                this.power_multiplier = power_mult;
             }
         }
 
@@ -484,7 +491,7 @@ public class RobotHardware{
                 }
             }
             public void setPower(double power){
-                attached_motorDC.power = power;
+                attached_motorDC.power = power*attached_motorDC.power_multiplier;
             }
             public double getPower(){
                 return attached_motorDC.power;

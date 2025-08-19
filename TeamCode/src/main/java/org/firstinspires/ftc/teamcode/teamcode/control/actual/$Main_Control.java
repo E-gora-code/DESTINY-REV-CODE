@@ -185,7 +185,6 @@ public class $Main_Control extends OpModeFramework {
     boolean iscl = false;
     boolean hanging_state = false;
     Orientation Orientation = new Orientation();
-    DigitalChannel ch0, ch1;
 
     Telemetry dash = FtcDashboard.getInstance().getTelemetry();
 

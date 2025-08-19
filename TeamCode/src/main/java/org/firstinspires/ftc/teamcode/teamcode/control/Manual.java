@@ -175,6 +175,15 @@ public class Manual extends OpModeFramework {
                 extl.setPower(-gamepad2.left_stick_y);
                 extr.setPower(-gamepad2.right_stick_y);
             }
+            if(gamepad2.dpad_right){
+                factory_ext.setPower(1);
+            }
+            else if(gamepad2.dpad_left){
+                factory_ext.setPower(-1);
+            }
+            else {
+                factory_ext.setPower(0);
+            }
 
 
 //        else{
