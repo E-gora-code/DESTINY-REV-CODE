@@ -56,6 +56,10 @@ public abstract class OpModeFramework extends LinearOpMode {
         motors.init_all();
         gyro.init_all();
     }
+    public void tickAll(){
+        driveBase.class_tick();
+        motors.class_tick();
+    }
 
     @Override
     public abstract void runOpMode() throws InterruptedException;
