@@ -279,6 +279,8 @@ public class RobotHardware{
                 public final static String apple_drop_module = "apple drop module";
                 public final static String hidden_claw_module = "hidden claw";
 
+                public final static String factory_lift = "factory_lift";
+
                 public class container_grab_module {
                     public final static String rightServo = "container_grab_R";
                     public final static String leftServo = "container_grab_L";
@@ -301,6 +303,8 @@ public class RobotHardware{
             servos.put(NameKeys.servoNameKeys.hidden_claw_module,new InternalServo("sbkr"));
             servos.put(NameKeys.servoNameKeys.container_grab_module.leftServo,new InternalServo("grabl"));
             servos.put(NameKeys.servoNameKeys.container_grab_module.rightServo,new InternalServo("grabr"));
+
+            servos.put(NameKeys.servoNameKeys.factory_lift,new InternalServo("reika",true));
 
             motorsDC.put(NameKeys.motorDCNameKeys.extention_right,new InternalMotorDC("extr"));
             motorsDC.put(NameKeys.motorDCNameKeys.extention_left,new InternalMotorDC("extl",-1));
@@ -406,9 +410,14 @@ public class RobotHardware{
         private class InternalServo{
             public double position = 0;
             public boolean is_powered = false;
+            public boolean is_continuous = false;
             public final Servo AttachedComponent;
             public InternalServo(String attachedComponentName){
                 this.AttachedComponent = getServoFunction(attachedComponentName);
+            }
+            public InternalServo(String attachedComponentName,boolean is_continuous){
+                this.AttachedComponent = getServoFunction(attachedComponentName);
+                this.is_continuous = is_continuous;
             }
         }
 
@@ -453,6 +462,13 @@ public class RobotHardware{
             }
             public double getCurrentPosition(){
                 return attached_servo.position;
+            }
+            public void setPower(double power){
+                attached_servo.position = (power/2)+0.5;
+                attached_servo.is_powered = true;
+            }
+            public double getPower(){
+                return (attached_servo.position-0.5)*2;
             }
         }
 

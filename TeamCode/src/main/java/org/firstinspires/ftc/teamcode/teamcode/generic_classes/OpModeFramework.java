@@ -11,8 +11,9 @@ public abstract class OpModeFramework extends LinearOpMode {
     protected RobotHardware.DriveBase.motor_classes.BackLeft BL;
     protected RobotHardware.DriveBase.motor_classes.BackRight BR;
 
-    protected RobotHardware.Motors.BasicServo sbros, claw, grabr, grabl;
+    protected RobotHardware.Motors.BasicServo sbros, claw, grabr, grabl,reika;
     protected RobotHardware.Motors.DCMotor extr, extl,factory_ext;
+
     protected RobotHardware robotHardware;
     protected RobotHardware.Motors motors;
     protected RobotHardware.DriveBase driveBase;
@@ -38,6 +39,8 @@ public abstract class OpModeFramework extends LinearOpMode {
         claw = motors.new BasicServo(motors, RobotHardware.Motors.NameKeys.servoNameKeys.hidden_claw_module);
         grabl = motors.new BasicServo(motors, RobotHardware.Motors.NameKeys.servoNameKeys.container_grab_module.leftServo);
         grabr = motors.new BasicServo(motors, RobotHardware.Motors.NameKeys.servoNameKeys.container_grab_module.rightServo);
+
+        reika = motors.new BasicServo(motors, RobotHardware.Motors.NameKeys.servoNameKeys.factory_lift);
 
         extr = motors.new DCMotor(motors, RobotHardware.Motors.NameKeys.motorDCNameKeys.extention_right);
         extl = motors.new DCMotor(motors, RobotHardware.Motors.NameKeys.motorDCNameKeys.extention_left);

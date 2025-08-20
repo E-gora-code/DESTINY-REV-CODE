@@ -185,6 +185,16 @@ public class Manual extends OpModeFramework {
                 factory_ext.setPower(0);
             }
 
+            if(gamepad2.dpad_up){
+                reika.setPower(1);
+            }
+            else if(gamepad2.dpad_down){
+                reika.setPower(-1);
+            }
+            else {
+                reika.setPower(0);
+            }
+
 
 //        else{
 //            FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
