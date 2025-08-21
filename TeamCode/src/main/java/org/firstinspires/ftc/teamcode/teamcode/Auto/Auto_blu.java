@@ -1,119 +1,114 @@
 package org.firstinspires.ftc.teamcode.teamcode.Auto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.localization.Pose;
+import com.pedropathing.pathgen.BezierCurve;
+import com.pedropathing.pathgen.BezierLine;
+import com.pedropathing.pathgen.Path;
+import com.pedropathing.pathgen.PathChain;
+import com.pedropathing.pathgen.Point;
+import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.teamcode.PID_setting;
 import org.firstinspires.ftc.teamcode.teamcode.openCV.Detector;
-import org.firstinspires.ftc.teamcode.teamcode.openCV.ReducedDetector;
-import org.firstinspires.ftc.teamcode.teamcode.openCV.ZID;
+import org.firstinspires.ftc.teamcode.teamcode.openCV.SecondaryColorDetector;
 import org.openftc.easyopencv.OpenCvCamera;
-
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(group = "Full auto")
-public class Auto_blu extends LinearOpMode {
-    ZID z = new ZID();
+@Autonomous(name = "Auto_blu", group = "Autonomous")
+public class Auto_blu extends OpMode {
 
+    // Hardware devi
+    // ces
     ElapsedTime moveTimer = new ElapsedTime();
-    ElapsedTime mover = new ElapsedTime();
-    PID_setting pid_setting = new PID_setting();
-    Driving driving = new Driving();
-    Count count = new Count();
+    private DcMotor FL, BL, FR, BR;
+    private Servo sbkr, grabr, grabl, sbros;
+    private DcMotor extl, extr;
+    private BNO055IMU Gyro;
+    private OpenCvCamera webcam;
+    private SecondaryColorDetector detector;
 
-    DcMotor FL, BL, FR, BR;
-//    ColorSensor colorSensorSbros,colorSensordown;
-    Servo sbkr, grabr, grabl,sbros;
-    double positiony,positionx;
-    double Angleosui;
-    double currentAngle,deltaHedL,deltaHed;
-    double lastposx,lastposy;
-    double Multiply = 0;
-    double turnPower = 0;
-    boolean nottaken = true;
-    double drivePowerx= 0;
-    double drivePowery = 0;
-    double targDistx = 0;
-    double targDisty = 0;
-    double targAngle = 0;
-    double currAngle = 0, AngleL = 0, turnErr = 0, turnErrL = 0;
-    double driveErrx = 0;
-    double driveErry = 0;
-    double driveErrLx = 0;
-    double driveErrLy= 0;
-    double x,y;
-    boolean et= true;
-    CRServo extl,extr;
-    double Base = 3;
-    BNO055IMU Gyro;
-    Orientation Orientation = new Orientation();
-    double lastAngle;
-    OpenCvCamera webcam;
+    // Pedro Pathing
+    private Follower follower;
+    private Timer pathTimer, opmodeTimer;
+    private int pathState;
+
+    // Positions (in cm, converted to inches for Pedro)
+    private final Pose startPose = new Pose(144, 60, Math.toRadians(-90)); // Facing -90 degrees (down)
+    private final Pose chekPose1 = new Pose(144-7,124,Math.toRadians(-90));
+    private final Pose chekPose2 = new Pose(144-28,124,Math.toRadians(-90));
+    private final Pose chekPose3 = new Pose(144-52,120,Math.toRadians(-90));
+    private final Pose apple= new Pose(144-19.412, 62.961,Math.toRadians(-180));
+    private final Pose factory= new Pose(144-21.419, 35.805, Math.toRadians(-270));
+
+
+    // Paths
+    private PathChain moveToScore1;
+    private PathChain moveToScore2;
+    private PathChain moveToScore3;
+    private PathChain  moveToScoreg1;
+    private PathChain  moveToScoreg2;
+    private PathChain  moveToScoreg3;
+    private Path park;
+    private PathChain score1;
+    private PathChain score2;
+    private PathChain score3;
+    private PathChain movetoredbox1;
+    private PathChain movetoap1;
+    private PathChain movetoap2;
+    private PathChain movetoap3;
+    private PathChain moveTofac;
+    private PathChain movetofactory;
+
+    // Other
+    private double Base = 3;
+    private double Red = 2;
+    private double Grenn = 3;
+
     Telemetry dash = FtcDashboard.getInstance().getTelemetry();
-    double pos = 0;
-    double lastpos;
-    boolean flag = false;
 
     @Override
-    public void runOpMode() throws InterruptedException {
-        FL = hardwareMap.dcMotor.get("FL");
-        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        FR = hardwareMap.dcMotor.get("FR");
-        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        BL = hardwareMap.dcMotor.get("BL");
-        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        BR = hardwareMap.dcMotor.get("BR");
-        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+    public void init() {
         sbkr = hardwareMap.servo.get("sbkr");
         sbros = hardwareMap.servo.get("sbros");
         grabl = hardwareMap.servo.get("grabl");
         grabr = hardwareMap.servo.get("grabr");
 
-        extl = hardwareMap.crservo.get("extl");
-        extr = hardwareMap.crservo.get("extr");
-//        colorSensorSbros = hardwareMap.get(ColorSensor.class, "color_sensor");
-//        colorSensordown = hardwareMap.get(ColorSensor.class, "color_sensor1");
+        extl = hardwareMap.dcMotor.get("extl");
+        extr = hardwareMap.dcMotor.get("extr");
+
+        extl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        extl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
+        extr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        extr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-//        s = hardwareMap.servo.get("servo3");
-//        s1=hardwareMap.servo.get("servo2");
+        // Initialize camera
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(
+                hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        Gyro = hardwareMap.get(BNO055IMU.class, "imu");
-        Gyro.initialize(parameters);
-        telemetry.addLine("Ready");
-        telemetry.update();
+        // В вашем основном классе:
 
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        ReducedDetector detector = new ReducedDetector();
+// В методе init():
+        detector = new SecondaryColorDetector();
         webcam.setPipeline(detector);
+
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -122,403 +117,448 @@ public class Auto_blu extends LinearOpMode {
 
             @Override
             public void onError(int errorCode) {
+                telemetry.addData("Camera Error", errorCode);
+                telemetry.update();
             }
         });
+
         FtcDashboard.getInstance().startCameraStream(webcam, 24);
-        while (!opModeIsActive()&&!isStopRequested()) {
-            telemetry.addData("Base", Base);
-            dash.addData("fill", detector.fillValue);
-            dash.addData("center", detector.center);
-            dash.update();
-            if (detector.fillValue < 0.003) {
-                Base = 3;
-                dash.addData("park", "3");
-            } else if (detector.center < 160) {
-                Base = 1;
-                dash.addData("park", "1");
-            } else if (detector.center > 160) {
-                Base = 2;
-                dash.addData("park", "2");
-            }
 
-        }
+        // Initialize Pedro Pathing
+        pathTimer = new Timer();
+        opmodeTimer = new Timer();
+        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
+        follower.setStartingPose((startPose));
+        // Build paths
+        buildPaths();
+    }
 
-        waitForStart();
-
-
-//        webcam.stopStreaming();
-        driving.start();
-        count.start();
-//        while (opModeIsActive()) {
-        dash.addData("angle", currAngle);
+    @Override
+    public void init_loop() {
+        // Camera telemetry while waiting for start
+        telemetry.addData("Base", Base);
+        dash.addData("fill1", detector.fill1);
+        dash.addData("center1", detector.centerX1);
+        dash.addData("fill2", detector.fill2);
+        dash.addData("center2", detector.centerX2);
         dash.update();
-        parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        Gyro = hardwareMap.get(BNO055IMU.class, "imu");
-        Gyro.initialize(parameters);
 
-        x=0;
-        y=0;
-
-
-
-        Move(0, 13, 0);
-        if(!isStopRequested()){
-            sleep(1000);
+        if (detector.fill2 < 0.00003) {
+            Grenn = 3;
+            dash.addData("parkGREEN", "3");
+        } else if (detector.centerX2 > 200) {
+            Grenn = 2;
+            dash.addData("parkGREEN", "2");
+        } else if (detector.centerX2 < 200) {
+            Grenn  = 1;
+            dash.addData("parkGREEN", "1");
         }
-
-
-
-        int park = z.N;
-        double fill_needed = 0.02;
-        if((park==1)||(park==2)||(park==3)){
-            detector.setHSV(0,0,0,0,0,0);
+        if (detector.fill1 < 0.00003) {
+            Red = 3;
+            dash.addData("parkRED", "3");
+        } else if (detector.centerX1 > 200) {
+            Red= 2;
+            dash.addData("parkRED", "2");
+        } else if (detector.centerX1 < 200) {
+            Red = 1;
+            dash.addData("parkRED", "1");
         }
-        if ((detector.fillValue > fill_needed && nottaken)||park==1) {
-            Move(50,13,0);
-            nottaken = false;
-            grabr.setPosition(0.1);
-            grabl.setPosition(0.9);
+    }
+
+    @Override
+    public void start() {
+        opmodeTimer.resetTimer();
+        setPathState(0);
+        webcam.stopStreaming();
+    }
+
+    @Override
+    public void loop() {
+        autonomousPathUpdate();
+        follower.update();
+
+        // Telemetry
+        Pose currentPoseInInches = follower.getPose();
+        Pose currentPoseInCm = new Pose(
+                currentPoseInInches.getX() * 2.54,
+                currentPoseInInches.getY() * 2.54,
+                currentPoseInInches.getHeading()
+        );
+
+        telemetry.addData("Path State", pathState);
+        telemetry.addData("X (cm)", currentPoseInCm.getX());
+        dash.addData("X (cm)", currentPoseInCm.getX());
+        dash.addData("Y (cm)", currentPoseInCm.getY());
+        telemetry.addData("Y (cm)", currentPoseInCm.getY());
+        telemetry.addData("Heading", Math.toDegrees(currentPoseInCm.getHeading()));
+        dash.update();
+        telemetry.update();
+    }
+
+    @Override
+    public void stop() {
+        webcam.stopStreaming();
+    }
+    private void buildPaths() {
+        // Путь с разворотом на 180 градусов в конце
 
 
-            sleep(1000);
+        moveToScore1 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Point(startPose),
+                                new Point(-4.227, 59.973, Point.CARTESIAN),
 
-        }
-        else {
-            Move(0, 70, 0);
-            if(!isStopRequested()){
-                sleep(1000);
-            }
+                                new Point(chekPose1)
+                        )
+                )
+                .setLinearHeadingInterpolation(
+                        startPose.getHeading(),
+                        chekPose1.getHeading()
+                )
+                .build();
+        movetoap1 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Point(chekPose1),
+                                new Point(144-9.227, 59.973, Point.CARTESIAN),
+                                new Point(apple)
+                        )
+                )
+                .setLinearHeadingInterpolation(
+                        chekPose1.getHeading(),  // Начальный угол
+                        apple.getHeading() // Конечный угол (разворот на 180°)
+                )
+                .build();
+        moveToScore2 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Point(startPose),
+                                new Point(144-28.0,70),
+                                new Point(chekPose2)
+                        )
+                )
+                .setLinearHeadingInterpolation(
+                        startPose.getHeading(),
+                        chekPose2.getHeading()
+                )
+                .build();
+        movetoap2 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Point(chekPose2),
+                                new Point(144-9.227, 59.973, Point.CARTESIAN),
+                                new Point(apple)
+                        )
+                )
+                .setLinearHeadingInterpolation(
+                        chekPose2.getHeading(),  // Начальный угол
+                        apple.getHeading() // Конечный угол (разворот на 180°)
+                )
+                .build();
+        moveToScore3 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Point(startPose),
+                                new Point(144-3.130, 105.446, Point.CARTESIAN),
+                                new Point(144-56.130, 109.446, Point.CARTESIAN),
+                                new Point(chekPose3)
+                        )
+                )
+                .setLinearHeadingInterpolation(
+                        startPose.getHeading(),
+                        chekPose3.getHeading()
+                )
+                .build();
+        movetoap3 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Point(chekPose3),
+                                new Point(144-0, 100.849, Point.CARTESIAN),
+                                new Point(144-0, 67.849, Point.CARTESIAN),
+                                new Point(apple)
+                        )
+                )
+                .setLinearHeadingInterpolation(
+                        chekPose3.getHeading(),  // Начальный угол
+                        apple.getHeading() // Конечный угол (разворот на 180°)
+                )
+                .build();
+
+        moveTofac= follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Point(apple),
+                                new Point(factory)
+                        )
+                )
+                .setLinearHeadingInterpolation(
+                        apple.getHeading(),factory.getHeading()
+                )
+                .build();
+        moveToScoreg1 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Point(factory),
+                                new Point(chekPose1)
+                        )
+                )
+                .setLinearHeadingInterpolation(
+                        factory.getHeading(),
+                        chekPose1.getHeading()
+                )
+                .build();
+        moveToScoreg2 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Point(factory),
+                                new Point(144-28.0,70),
+                                new Point(chekPose2)
+                        )
+                )
+                .setLinearHeadingInterpolation(
+                        factory.getHeading(),
+                        chekPose1.getHeading()
+                )
+                .build();
+        moveToScoreg3 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Point(factory),
+                                new Point(144-3.130, 105.446, Point.CARTESIAN),
+                                new Point(144-55.130, 106.446, Point.CARTESIAN),
+                                new Point(chekPose3)
+                        )
+                )
+                .setLinearHeadingInterpolation(
+                        factory.getHeading(),
+                        chekPose1.getHeading()
+                )
+                .build();
+
+
+    }
 
 
 
-            if ((detector.fillValue > fill_needed && nottaken)||park==2) {
-                Move(50, 70, 0);
-                nottaken = false;
-                grabr.setPosition(0.1);
-                grabl.setPosition(0.9);
+    private void autonomousPathUpdate() {
+        switch (pathState) {
+            case 0:
+
+                moveTimer.reset();
+
+                if (Red==1){
+                    setPathState(1);
+                }
+                else if (Red==2){
+                    setPathState(3);
+                }
+                else{
+                    setPathState(5);
+                }
+                break;
+            case 1: // Move to first position
+                follower.followPath(moveToScore1,true);
+                setPathState(2);
+                break;
+
+            case 2:
+                if (moveTimer.milliseconds()>2000){
+                    extl.setPower(0);
+                    extr.setPower(0);
 
 
-                sleep(1000);
-
-            }
-            else{
-                Move(0, 130, 0);
-                if(!isStopRequested()){
+                }// Move to AprilTag position 1
+                if (!follower.isBusy()) {
+                    grabr.setPosition(0.05);
+                    grabl.setPosition(0.75);
                     sleep(1000);
+
+
+                    follower.followPath(movetoap1,true);
+                    setPathState(7);
                 }
-                if ((detector.fillValue > fill_needed && nottaken)||park==3) {
-                    Move(50, 130, 0);
-                    nottaken = false;
-                    grabr.setPosition(0.1);
-                    grabl.setPosition(0.9);
+                break;
+            case 3:
+                follower.followPath(moveToScore2,true);
+                setPathState(4);
+                break;
+            case 4:
+                if (moveTimer.milliseconds()>2000){
+                    extl.setPower(0);
+                    extr.setPower(0);
+
+
+                }
+                if (!follower.isBusy()) {
+                    grabr.setPosition(0.05);
+                    grabl.setPosition(0.75);
                     sleep(1000);
+                    follower.followPath(movetoap2,true);
+                    setPathState(7);
                 }
-            }
-        }
-//        webcam.stopStreaming();
+                break;
+            case 5:
 
-
-        Move(0,45,0);
-        Move(-95,45,0);
-        while (FL.getCurrentPosition()<3850&&!isStopRequested()){
-            dash.addData("posu",FL.getCurrentPosition());
-            dash.update();
-            extr.setPower(1);
-            extl.setPower(1);
-        }
-        extr.setPower(0);
-        extl.setPower(0);
-
-        Mve(-86,70.7,90);
+                follower.followPath(moveToScore3,true);
+                setPathState(6);
+                break;
+            case 6:
+                if (moveTimer.milliseconds()>2500){
+                    extl.setPower(0);
+                    extr.setPower(0);
 
 
 
-
-
-        flag = true;
-        Mve(-103,70.7,90);
-        sleep(1000);
-
-        flag = false;
-
-
-        Move(-70,50,180);
-
-        extr.setPower(-1);
-        extl.setPower(-1);
-        sleep(1500);
-
-        extr.setPower(0);
-        extl.setPower(0);
-
-        Mve(-200,50,180);
-
-
-        grabr.setPosition(0.9);
-        grabl.setPosition(0);
-        sleep(1000);
-        Move(-190,50,270);
-
-
-
-
-
-
-
-
-
-
-
-
-
-    }
-
-    public void Move(double disty,double distx,double turn) {
-
-        targAngle = -turn;
-        targDisty = disty * 699;
-        targDistx = -distx * 699;
-        moveTimer.reset();
-        while ((Math.abs(targDisty-y)>400 || Math.abs(targDistx-x)>400 || Math.abs(targAngle-currentAngle)>5)&&!isStopRequested()) {
-            dash.addData("ignorey",Math.abs(targDisty-y));
-            dash.addData("ignorex",Math.abs(targDistx-x));
-            dash.addData("ignorea",Math.abs(targAngle-currentAngle));
-            dash.update();
-        }
-        if (!isStopRequested()){
-            sleep(300);
-            dash.addData("ignorey", Math.abs(targDisty - y) > 500);
-            dash.addData("ignorex", Math.abs(targDistx - x) > 500);
-            dash.addData("ignorea", Math.abs(targAngle - currentAngle) > 5);
-
-            dash.update();
-        }
-    }
-    public void Mve(double disty,double distx,double turn) {
-
-        targAngle = -turn;
-        targDisty = disty * 699;
-        targDistx = -distx * 699;
-        moveTimer.reset();
-
-        sleep(2500);
-
-    }
-
-
-
-    public double Angle() {
-        Orientation = Gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return Orientation.firstAngle;
-    }
-
-    class Driving extends Thread {
-        public void run() {
-            while (opModeIsActive()&&!isStopRequested()) {
-                double Angle = Angle();
-                double BLs = BL.getCurrentPosition();
-                double BRs = BR.getCurrentPosition();
-
-
-                deltaHed = Angle - deltaHedL;
-                if (deltaHed > 180) {
-                    deltaHed -= 360;
-                } else if (deltaHed < -180) {
-                    deltaHed += 360;
                 }
-
-                currentAngle += deltaHed;
-
-
-
-                double deltaAngle = (currentAngle - lastAngle);
-
-                double deltaY = (BLs - lastposy - (deltaAngle * pid_setting.ignorey));
-                double deltaX = (BRs - lastposx - (deltaAngle * pid_setting.ignorex));
-
-                double angleRadians = Math.toRadians(currentAngle);
-                double cosAngle = Math.cos(angleRadians);
-                double sinAngle = Math.sin(angleRadians);
-                y += -cosAngle * deltaY - sinAngle * deltaX;
-                x += sinAngle * deltaY - cosAngle * deltaX;
-
-// Обновление последних позиций
-                lastposx = BRs;
-                lastposy = BLs;
-                lastAngle = currentAngle;
-
-
-
-
-                turnErr = targAngle - currentAngle;
-                turnPower = (turnErr * pid_setting.turnKp + (turnErr - turnErrL) * pid_setting.turnKd);
-                driveErry =-targDisty + y;
-                drivePowery = driveErry * pid_setting.driveKp + (driveErry - driveErrLy) * pid_setting.driveKd;
-                driveErrx = targDistx - x;
-                drivePowerx = driveErrx * pid_setting.drivexKp + (driveErrx - driveErrLx) * pid_setting.drivexKd;
-                if (drivePowerx > 0.8) {
-                    drivePowerx = 0.6;
-                }
-                if (drivePowerx < -0.8) {
-                    drivePowerx = -0.6;
-                }
-                if (drivePowery > 0.8) {
-                    drivePowery = 0.6;
-                }
-                if (drivePowery < -0.8) {
-                    drivePowery = -0.6;
-                }
-                if (turnPower > 0.5) {
-                    turnPower = 0.8;
-                }
-                if (turnPower < -0.5) {
-                    turnPower = -0.8;
-                }
-
-
-
-                double power = Math.sqrt((drivePowerx*drivePowerx)+(drivePowery*drivePowery));
-                double radian = Math.atan2(drivePowery,drivePowerx);
-
-
-
-
-                FR.setPower(((power*Math.cos(radian-Math.PI/4+Math.toRadians(currentAngle)+Math.PI)*Math.sqrt(2))+turnPower)*-Multiply);
-                FL.setPower(((power*Math.cos(radian-3*Math.PI/4+Math.toRadians(currentAngle)+Math.PI)*Math.sqrt(2))-turnPower)*Multiply);
-                BR.setPower(((power*Math.cos(radian-3*Math.PI/4+Math.toRadians(currentAngle)+Math.PI)*Math.sqrt(2))+turnPower)*-Multiply);
-                BL.setPower(((power*Math.cos(radian-Math.PI/4+Math.toRadians(currentAngle)+Math.PI)*Math.sqrt(2))-turnPower)*Multiply);
-
-
-
-                turnErrL = turnErr;
-                driveErrLy = driveErry;
-                driveErrLx = driveErrx;
-                AngleL = currAngle;
-                dash.addData("x",x/699);
-                dash.addData("y",y/699);
-                dash.addData("A",currentAngle);
+                dash.addData("ext",extl.getCurrentPosition());
                 dash.update();
-
-
-
-
-
-
-                deltaHedL = Angle;
-                if (lastpos!=pos){
-                    moveTimer.reset();
-
+                if (!follower.isBusy()) {
+                    grabr.setPosition(0.05);
+                    grabl.setPosition(0.75);
+                    sleep(1000);
+                    follower.followPath(movetoap3,true);
+                    setPathState(7);
                 }
-                lastpos = pos;
+                break;
 
-                if (flag && et){
-                    if (pos ==2){
-                        if (moveTimer.milliseconds() <500){
-                            sbros.setPosition(0.5);
-                        }
-                        else {
-                            pos = 1;
-                        }
-                    }
-                    else{
-                        if (moveTimer.milliseconds() <500){
-                            sbros.setPosition(1);
-                        }
-                        else {
-                            pos = 2;
-                        }
-                    }
+            case 7: // Final park
+                if (!follower.isBusy()) {
+                    extl.setPower(-1);
+                    extr.setPower(1);
+                    follower.followPath(moveTofac,true);
+                    setPathState(8);
+                }
+                break;
+            case 8:
 
+                if (Grenn ==1){
+                    setPathState(9);
+                }
+                else if (Grenn ==2){
+                    setPathState(11);
                 }
                 else{
-                    sbros.setPosition(0);
-
+                    setPathState(13);
                 }
+                break;
+            case 9:
+                if (!follower.isBusy()) {
+                    grabr.setPosition(1);
+                    grabl.setPosition(0);
+                    sleep(1000);// Move to first position
+                    follower.followPath(moveToScoreg1,true);
+                    setPathState(10);}
+                break;
+
+            case 10: // Move to AprilTag position 1
+                if (!follower.isBusy()) {
+                    grabr.setPosition(0.05);
+                    grabl.setPosition(0.75);
+                    sleep(1000);
+                    follower.followPath(movetoap1,true);
+                    setPathState(15);
+                }
+                break;
+            case 11:
+                if (!follower.isBusy()) {
+                    grabr.setPosition(1);
+                    grabl.setPosition(0);
+                    sleep(1000);
+                    follower.followPath(moveToScoreg2,true);
+                    setPathState(12);}
+                break;
+            case 12:
+                if (!follower.isBusy()) {
+                    grabr.setPosition(0.05);
+                    grabl.setPosition(0.75);
+                    sleep(1000);
+                    follower.followPath(movetoap2,true);
+                    setPathState(15);
+                }
+                break;
+            case 13:
+                if (!follower.isBusy()) {
+                    grabr.setPosition(1);
+                    grabl.setPosition(0);
+                    sleep(1000);
+                    follower.followPath(moveToScoreg3,true);
+                    setPathState(14);
+                }
+                break;
+            case 14:
+                if (!follower.isBusy()) {
+                    grabr.setPosition(0.05);
+                    grabl.setPosition(0.75);
+                    sleep(1000);
+                    follower.followPath(movetoap3,true);
+                    setPathState(15);
+                }
+                break;
+
+            case 15: // Final park
+                if (!follower.isBusy()) {
+                    sbros.setPosition(1);
+                    sleep(400);
+                    sbros.setPosition(0.5);
+                    sleep(400);
+                    sbros.setPosition(1);
+                    sleep(400);
+                    sbros.setPosition(0.5);
+                    sleep(400);
+                    sbros.setPosition(1);
+                    sleep(400);
+                    sbros.setPosition(0.5);
+                    sleep(400);
+
+                    follower.followPath(moveTofac,true);
+                    setPathState(16);
+                }
+                break;
 
 
 
-            }
+
+
+
+
+            case 16: // Final park
+                if (!follower.isBusy()) {
+                    grabr.setPosition(1);
+                    grabl.setPosition(0);
+                    sleep(1000);
+
+                    setPathState(-1); // End
+                }
+                break;
+
+            case -1: // End
+                break;
         }
-
     }
-    class Count extends Thread {
-        public void run() {
-            boolean sbros = false;
-            boolean down = false;
-            double count = 0;
 
-            boolean mover_timer_reseted = false;
+    private void operateExtension() {
+        extl.setPower(-0.7);
+        extr.setPower(0.7);
+        sleep(1000);
 
-            while (opModeIsActive()&&!isStopRequested()) {
-                if (flag && !(mover_timer_reseted)){
-                    mover.reset();
-                    mover_timer_reseted = true;
-                }
-                if (flag && mover.milliseconds()<3000){
-                    Multiply = 0.4  ;
+        extl.setPower(0.7);
+        extr.setPower(-0.7);
+        sleep(1000);
 
-                    int redsbros = colorSensorSbros.red();
-                    int greensbros = colorSensorSbros.green();
-                    int bluesbros = colorSensorSbros.blue();
-                    if (redsbros>greensbros &&redsbros>bluesbros){
-                        sbros = true;
-                    }
-                    telemetry.addData("redsbros",redsbros);
-                    telemetry.addData("gren",greensbros);
-                    telemetry.addData("blue",bluesbros);
-                    telemetry.addData("me",mover.milliseconds());
-
-                    telemetry.update();
-
-                    if (sbros){
-                        count += 0.5;
-                        sbros = false;
-                        while (((colorSensordown.red()<colorSensordown.green()) || (colorSensordown.red()<colorSensordown.blue()))&& mover.milliseconds()<4000 && count <2){
-                            Multiply = 0;
-                            et = false;
-
-                        }
-                        et = true;
-                        dash.addData("count",count);
-                        dash.update();
-                    }
-
-
-                }
-                else if(flag){
-                    Multiply =1.5;
-
-                    et = false;
-                }
-                else{
-                    Multiply = 1;
-                }
-            }
-        }
+        extl.setPower(0);
+        extr.setPower(0);
     }
-    private static class colorSensorSbros{
-        static int red(){
-            return 0;
-        }
-        static int green(){
-            return 0;
-        }
-        static int blue(){
-            return 0;
-        }
-    }
-    private static class colorSensordown{
-        static int red(){
-            return 0;
-        }
-        static int green(){
-            return 0;
-        }
-        static int blue(){
-            return 0;
-        }
-    }
-}
 
+    private void setPathState(int newState) {
+        pathState = newState;
+        pathTimer.resetTimer();
+    }
 
+    private void sleep(long milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }}

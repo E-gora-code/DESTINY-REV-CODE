@@ -27,8 +27,8 @@ public class Manual extends LinearOpMode {
     double extr_zero = 0, extl_zero = 0;
     double extr_max = 5170, extl_max;
     DcMotor FL, BL, FR, BR;
-    Servo sbkr, grabr, grabl, sbros;
-    CRServo extl, extr;
+    Servo sbkr, grabr, grabl, sbros,vilas,vilar;
+    DcMotor extl, extr;
     double currentAngle = 0;
     double exterR, exterL, extpowerR, extpowerL, extrlR, extrlL;
     double extr_pos, extl_pos;
@@ -113,8 +113,18 @@ public class Manual extends LinearOpMode {
         grabr = hardwareMap.servo.get("grabr");
 //        s1 = hardwareMap.servo.get("servo2");
 //        s2 = hardwareMap.servo.get("servo3");
-        extl = hardwareMap.crservo.get("extl");
-        extr = hardwareMap.crservo.get("extr");
+        extl = hardwareMap.dcMotor.get("extl");
+        extr = hardwareMap.dcMotor.get("extr");
+
+        extl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        extl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        extr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        extr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
 
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -154,8 +164,8 @@ public class Manual extends LinearOpMode {
 
             telemetry.addData("ch0", ch0.getState());
             telemetry.addData("ch1", ch1.getState());
-            telemetry.addData("extR", extr_pos);
-            telemetry.addData("extL", extl_pos);
+            telemetry.addData("extR",extr.getCurrentPosition() );
+            telemetry.addData("extL", extl.getCurrentPosition());
             telemetry.addData("BL", BL.getCurrentPosition());
             telemetry.addData("BR", BR.getCurrentPosition());
             telemetry.addData("Start_press",(gamepad1.start||gamepad2.start));

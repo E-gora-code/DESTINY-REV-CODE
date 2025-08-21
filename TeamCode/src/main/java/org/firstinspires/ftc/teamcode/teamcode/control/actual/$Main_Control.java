@@ -88,7 +88,7 @@ public class $Main_Control extends LinearOpMode {
     double ext_range = 5000;
     DcMotor FL, BL, FR, BR;
     Servo claw, grabr, grabl,sbros;
-    CRServo extl,extr;
+    DcMotor extl,extr;
     double currentAngle = 0;
     double exterR,exterL,extpowerR,extpowerL,extrlR,extrlL;
     double extr_pos, extl_pos;
@@ -252,7 +252,7 @@ public class $Main_Control extends LinearOpMode {
 //                sbros.setPosition(0);
                 if(simple_ext = true) {
                     extl.setPower(0.5);
-                    extr.setPower(0.5);
+                    extr.setPower(-0.5);
                 }
                 if(gamepad2.start){
                     hanging_state = false;
@@ -1032,8 +1032,16 @@ public class $Main_Control extends LinearOpMode {
             grabr = hardwareMap.servo.get("grabr");
 //        s1 = hardwareMap.servo.get("servo2");
 //        s2 = hardwareMap.servo.get("servo3");
-            extl = hardwareMap.crservo.get("extl");
-            extr = hardwareMap.crservo.get("extr");
+            extl = hardwareMap.dcMotor.get("extl");
+            extr = hardwareMap.dcMotor.get("extr");
+
+            extl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            extl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            extl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+            extr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            extr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            extr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
 
@@ -1112,12 +1120,12 @@ public class $Main_Control extends LinearOpMode {
     public void setExtRightPower(double power){
         power = -power;
         if(ch0.getState()){
-            extr.setPower(power);
+            extr.setPower(-power);
         }else if(power>0){
-            extr.setPower(power);
+            extr.setPower(-power);
         }
         else {
-            extr.setPower(0.1);
+            extr.setPower(-0.1);
         }
     }
     public void setExtLeftPower(double power){
