@@ -147,7 +147,7 @@ public class Manual extends OpModeFramework {
                 sbros.setPosition(1);
             } else {
                 if (gamepad1.right_bumper != true) {
-                    sbros.setPosition((gamepad1.right_trigger * 0.48) + 0.52);
+                    sbros.setPosition((gamepad1.right_trigger * 0.48) + 0.63);
                 }
 
             }
@@ -176,10 +176,10 @@ public class Manual extends OpModeFramework {
                 extr.setPower(-gamepad2.right_stick_y);
             }
             if(gamepad2.dpad_right){
-                factory_ext.setPower(1);
+                factory_ext.setPower(-1);
             }
             else if(gamepad2.dpad_left){
-                factory_ext.setPower(-1);
+                factory_ext.setPower(1);
             }
             else {
                 factory_ext.setPower(0);
@@ -194,7 +194,8 @@ public class Manual extends OpModeFramework {
             else {
                 reika.setPower(0);
             }
-
+            vila_r.setPosition(gamepad2.right_trigger);
+            vila_l.setPosition(1-gamepad2.right_trigger);
 
 //        else{
 //            FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

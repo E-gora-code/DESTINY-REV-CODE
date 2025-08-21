@@ -280,6 +280,10 @@ public class RobotHardware{
                 public final static String hidden_claw_module = "hidden claw";
 
                 public final static String factory_lift = "factory_lift";
+                public class fork_module {
+                    public final static String fork_right = "fork_right";
+                    public final static String fork_left = "fork_left";
+                }
 
                 public class container_grab_module {
                     public final static String rightServo = "container_grab_R";
@@ -304,7 +308,10 @@ public class RobotHardware{
             servos.put(NameKeys.servoNameKeys.container_grab_module.leftServo,new InternalServo("grabl"));
             servos.put(NameKeys.servoNameKeys.container_grab_module.rightServo,new InternalServo("grabr"));
 
-            servos.put(NameKeys.servoNameKeys.factory_lift,new InternalServo("reika",true));
+            servos.put(NameKeys.servoNameKeys.fork_module.fork_right,new InternalServo("vilar"));
+            servos.put(NameKeys.servoNameKeys.fork_module.fork_left,new InternalServo("vilal"));
+
+            servos.put(NameKeys.servoNameKeys.factory_lift,new InternalServo("reika",true, true));
 
             motorsDC.put(NameKeys.motorDCNameKeys.extention_right,new InternalMotorDC("extr"));
             motorsDC.put(NameKeys.motorDCNameKeys.extention_left,new InternalMotorDC("extl",-1));
@@ -411,13 +418,19 @@ public class RobotHardware{
             public double position = 0;
             public boolean is_powered = false;
             public boolean is_continuous = false;
+            public boolean is_reverse = false;
             public final Servo AttachedComponent;
             public InternalServo(String attachedComponentName){
                 this.AttachedComponent = getServoFunction(attachedComponentName);
             }
-            public InternalServo(String attachedComponentName,boolean is_continuous){
+            public InternalServo(String attachedComponentName,boolean is_reverse){
+                this.AttachedComponent = getServoFunction(attachedComponentName);
+                this.is_reverse = is_reverse;
+            }
+            public InternalServo(String attachedComponentName,boolean is_continuous, boolean is_reverse){
                 this.AttachedComponent = getServoFunction(attachedComponentName);
                 this.is_continuous = is_continuous;
+                this.is_reverse = is_reverse;
             }
         }
 
@@ -456,19 +469,27 @@ public class RobotHardware{
                     throw new IllegalArgumentException(String.format("RobotHardware.Servo(%s): Key error, no object found!!!",component_Key));
                 }
             }
+            private double reversePosCheck(double pos){
+                if (attached_servo.is_reverse) {
+                    return (1 - pos);
+                }
+                else {
+                    return pos;
+                }
+            }
             public void setPosition(double pos){
-                attached_servo.position = pos;
+                attached_servo.position = reversePosCheck(pos);
                 attached_servo.is_powered = true;
             }
             public double getCurrentPosition(){
-                return attached_servo.position;
+                return reversePosCheck(attached_servo.position);
             }
             public void setPower(double power){
-                attached_servo.position = (power/2)+0.5;
+                attached_servo.position = reversePosCheck((power/2)+0.5);
                 attached_servo.is_powered = true;
             }
             public double getPower(){
-                return (attached_servo.position-0.5)*2;
+                return reversePosCheck((attached_servo.position-0.5)*2);
             }
         }
 
