@@ -44,12 +44,12 @@ public class Auto_blu extends OpMode {
     private int pathState;
 
     // Positions (in cm, converted to inches for Pedro)
-    private final Pose startPose = new Pose(144, 60, Math.toRadians(-90)); // Facing -90 degrees (down)
-    private final Pose chekPose1 = new Pose(144-7,124,Math.toRadians(-90));
-    private final Pose chekPose2 = new Pose(144-28,124,Math.toRadians(-90));
-    private final Pose chekPose3 = new Pose(144-52,120,Math.toRadians(-90));
-    private final Pose apple= new Pose(144-19.412, 62.961,Math.toRadians(-180));
-    private final Pose factory= new Pose(144-21.419, 35.805, Math.toRadians(-270));
+    private final Pose startPose = new Pose(144, 60, Math.toRadians(90)); // Facing -90 degrees (down)
+    private final Pose chekPose1 = new Pose(144-7,124,Math.toRadians(90));
+    private final Pose chekPose2 = new Pose(144-28,124,Math.toRadians(90));
+    private final Pose chekPose3 = new Pose(144-52,120,Math.toRadians(90));
+    private final Pose apple= new Pose(144-19.412, 85.961,Math.toRadians(0));
+    private final Pose factory= new Pose(160-21.419, 35.805, Math.toRadians(-90));
 
 
     // Paths
@@ -100,7 +100,7 @@ public class Auto_blu extends OpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(
-                hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+                hardwareMap.get(WebcamName.class, "Webcam 2"), cameraMonitorViewId);
 
         // В вашем основном классе:
 
