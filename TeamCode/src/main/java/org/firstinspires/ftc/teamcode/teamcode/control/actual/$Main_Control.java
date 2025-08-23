@@ -36,6 +36,7 @@ public class $Main_Control extends OpModeFramework {
     Drive_system drive_system = new Drive_system();
     Telemetry_manage telemetry_manage = new Telemetry_manage();
     Claw_controll claw_controll = new Claw_controll();
+    FactoryClass factory_class = new FactoryClass();
     PID_setting pid_setting = new PID_setting();
     // extention
     boolean simple_ext = true;
@@ -500,13 +501,13 @@ public class $Main_Control extends OpModeFramework {
             /*
             factory
              */
-
+            factory_class.run();
 
 
         }
 
     }
-    public class factory_class{
+    public class FactoryClass{
         public void run(){
             factory_ext.setPower(factory_bind);
         }
