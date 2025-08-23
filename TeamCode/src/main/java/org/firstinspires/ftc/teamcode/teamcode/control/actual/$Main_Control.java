@@ -73,6 +73,8 @@ public class $Main_Control extends OpModeFramework {
         double sbros_with_alt_pos_bind = 0;
     //Silly binds
         boolean dual_rumble_bind = false;
+
+        double factory_bind = 0;
     //end
     // Reset
         ElapsedTime presed_reset_ang_timer = new ElapsedTime();
@@ -495,12 +497,19 @@ public class $Main_Control extends OpModeFramework {
                 presed_reset_ang =false;
             }
 
-
+            /*
+            factory
+             */
 
 
 
         }
 
+    }
+    public class factory_class{
+        public void run(){
+            factory_ext.setPower(factory_bind);
+        }
     }
     public class GamepadBinds extends Thread{
         public void run() {
@@ -588,7 +597,10 @@ public class $Main_Control extends OpModeFramework {
 
             sbros_bind = Math.max(gamepad2.right_trigger,statement_double(sbros_with_alt_pos_bind,claw_alt_key_bind));
 
-            ext_pos_change_bind = gamepad2.left_stick_y+gamepad2.right_stick_y;
+
+            factory_bind = gamepad2.left_stick_x;
+
+            ext_pos_change_bind = gamepad2.right_stick_y;
             ext_up_button_bind = gamepad1.dpad_up || gamepad2.dpad_up;
             ext_down_button_bind = gamepad1.dpad_down || gamepad2.dpad_down;
             if(!simple_ext) {
