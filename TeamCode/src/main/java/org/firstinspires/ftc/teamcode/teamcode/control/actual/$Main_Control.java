@@ -76,6 +76,8 @@ public class $Main_Control extends OpModeFramework {
         boolean dual_rumble_bind = false;
 
         double factory_bind = 0;
+        double first_vila_bind = 0;
+        double second_vila_bind = 0;
     //end
     // Reset
         ElapsedTime presed_reset_ang_timer = new ElapsedTime();
@@ -510,6 +512,8 @@ public class $Main_Control extends OpModeFramework {
     public class FactoryClass{
         public void run(){
             factory_ext.setPower(factory_bind);
+            vila_r.setPosition(first_vila_bind);
+            vila_l.setPosition(second_vila_bind);
         }
     }
     public class GamepadBinds extends Thread{
@@ -600,6 +604,10 @@ public class $Main_Control extends OpModeFramework {
 
 
             factory_bind = gamepad2.left_stick_x;
+            if (gamepad2.left_bumper) {
+                first_vila_bind = gamepad2.left_trigger;
+                second_vila_bind = gamepad2.right_trigger;
+            }
 
             ext_pos_change_bind = gamepad2.right_stick_y;
             ext_up_button_bind = gamepad1.dpad_up || gamepad2.dpad_up;
@@ -627,7 +635,7 @@ public class $Main_Control extends OpModeFramework {
 
             gamepad_summ = gamepad1.left_stick_x+gamepad1.left_stick_y+gamepad1.right_stick_x+gamepad1.left_stick_y;
 
-            dual_rumble_bind = gamepad2.left_bumper;
+//            dual_rumble_bind = gamepad2.left_bumper;
 
             grab_toggle_bind = gamepad1.b;
 
