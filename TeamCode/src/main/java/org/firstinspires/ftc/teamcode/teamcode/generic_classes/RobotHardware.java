@@ -66,17 +66,19 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+import java.security.PublicKey;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 //experemental
 
 public class RobotHardware{
+    public static List<Integer> checkErrorsIds = Arrays.asList();
     HardwareMap hardware;
     BiConsumer<Exception, Integer> errorHandler;
+
     public RobotHardware(HardwareMap programmRobotHardwareMap, BiConsumer<Exception, Integer> errorHandler){
         this.hardware = programmRobotHardwareMap;
         this.errorHandler = errorHandler;
@@ -88,8 +90,8 @@ public class RobotHardware{
         public static void ignore(Exception e, int id){
         }
         public static void raise_id(Exception e, int id){
-            List<Integer> checkIds = Arrays.asList(1,5);
-            if(checkIds.contains(id)){
+
+            if(checkErrorsIds.contains(id)){
                 throw new IllegalArgumentException("!!ID: "+id+"\n"+e.getMessage());
             }
         }
