@@ -90,7 +90,7 @@ public class RobotHardware{
         public static void raise_id(Exception e, int id){
             List<Integer> checkIds = Arrays.asList(1,5);
             if(checkIds.contains(id)){
-                throw new IllegalArgumentException(e.getMessage());
+                throw new IllegalArgumentException("!!ID: "+id+"\n"+e.getMessage());
             }
         }
     }
@@ -160,7 +160,7 @@ public class RobotHardware{
             init_all(true);
         }
 
-        private void motor_init_helper(DcMotor motor,String name, int id){
+        private DcMotor motor_init_helper(DcMotor motor,String name, int id){
             try {
                 motor = hardware.dcMotor.get(name);
                 motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -168,12 +168,13 @@ public class RobotHardware{
                 motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
             catch (Exception ex){errorHandler.accept(ex,id);}
+            return motor;
         }
         public void init_all(boolean do_enable){
-            motor_init_helper(hrd_FL,"FL",0);
-            motor_init_helper(hrd_FR,"FR",1);
-            motor_init_helper(hrd_BL,"BL",2);
-            motor_init_helper(hrd_BR,"BR",3);
+            hrd_FL = motor_init_helper(hrd_FL,"FL",0);
+            hrd_FR = motor_init_helper(hrd_FR,"FR",1);
+            hrd_BL = motor_init_helper(hrd_BL,"BL",2);
+            hrd_BR = motor_init_helper(hrd_BR,"BR",3);
 
 
             is_drive_base_inited = true;
