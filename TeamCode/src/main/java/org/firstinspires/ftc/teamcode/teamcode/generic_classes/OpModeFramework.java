@@ -18,11 +18,12 @@ public abstract class OpModeFramework extends LinearOpMode {
 
     protected RobotHardware robotHardware;
     protected RobotHardware.Motors motors;
+    protected RobotHardware.Sensors sensors;
     protected RobotHardware.DriveBase driveBase;
     protected RobotHardware.GyroIMU gyro;
     protected RobotHardware.DriveBase.motor_classes motor_classes;
 
-    protected DigitalChannel ch0, ch1;
+    protected RobotHardware.Sensors.BasicChannel ch0, ch1;
 
     public void selfInit(){
 
@@ -37,6 +38,7 @@ public abstract class OpModeFramework extends LinearOpMode {
         BR = motor_classes.new BackRight(driveBase);
 
         motors = robotHardware.new Motors();
+        sensors = robotHardware.new Sensors();
 
         sbros = motors.new BasicServo(motors, RobotHardware.Motors.NameKeys.servoNameKeys.apple_drop_module);
         claw = motors.new BasicServo(motors, RobotHardware.Motors.NameKeys.servoNameKeys.hidden_claw_module);
@@ -53,14 +55,10 @@ public abstract class OpModeFramework extends LinearOpMode {
 
         factory_ext = motors.new DCMotor(motors, RobotHardware.Motors.NameKeys.motorDCNameKeys.factory_extention);
 
-        // FIXME: 26.05.2025 maybe make a class for these
-        try {
-            ch0 = hardwareMap.digitalChannel.get("0");
-            ch1 = hardwareMap.digitalChannel.get("1");
-            ch0.setMode(DigitalChannel.Mode.INPUT);
-            ch1.setMode(DigitalChannel.Mode.INPUT);
-        }
-        catch (Exception ignored){}
+
+        ch0 = sensors.new BasicChannel(sensors, RobotHardware.Sensors.NameKeys.channelsNameKeys.ch0);
+        ch1 = sensors.new BasicChannel(sensors, RobotHardware.Sensors.NameKeys.channelsNameKeys.ch1);
+
     }
 
     public void initAllSystems(){

@@ -56,10 +56,10 @@ IMPORTANT: THE SYSTEM IS "kinda" EXPERIMENTAL, so don`t implement it in main fil
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Function;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -543,6 +543,123 @@ public class RobotHardware{
                 return attached_motorDC.power;
             }
         }
+
+    }
+
+
+
+    public class Sensors {
+        private boolean is_components_inited = false;
+        public boolean is_channels_enabled = false;
+
+        private Map<String,InternalChannel> channels = new HashMap<>();
+
+        public class NameKeys {
+            // Class for easy renaming purposes
+            public class channelsNameKeys {
+                public final static String ch0 = "ch0";
+                public final static String ch1 = "ch1";
+            }
+        }
+
+
+
+        public Sensors(){
+            // Add motors HERE
+            channels.put(NameKeys.channelsNameKeys.ch0,new InternalChannel("ch0"));
+            channels.put(NameKeys.channelsNameKeys.ch1,new InternalChannel("ch1"));
+        }
+
+
+        public boolean is_inited(){
+            return is_components_inited;
+        }
+        public void init_all(){
+            init_all(true);
+        }
+        public void init_all(boolean enable_channels){
+
+            is_components_inited = true;
+            if (enable_channels) {
+                is_channels_enabled = enable_channels;
+            }
+        }
+
+
+
+        public void read_from_components(){
+            if(!is_components_inited){
+                return;
+            }
+            if(is_channels_enabled) {
+                for (Map.Entry<String, InternalChannel> channel_entry :  channels.entrySet()) {
+                    InternalChannel channel_component = channel_entry.getValue();
+                    if ((channel_component.AttachedComponent != null)) {
+                        channel_component.state =channel_component.AttachedComponent.getState();
+                    }
+                }
+            }
+        }
+        public void class_tick(){
+            read_from_components();
+        }
+
+
+
+        private DigitalChannel getChannelFunction(String name){
+            DigitalChannel output;
+            try {
+                output = hardware.digitalChannel.get(name);
+            }catch (Exception ex){
+                errorHandler.accept(ex);
+                output = null;
+            }
+            return output;
+        }
+
+
+
+        private class InternalChannel{
+            public boolean state = false;
+            public boolean is_reverse = false;
+            public final DigitalChannel AttachedComponent;
+            public InternalChannel(String attachedComponentName){
+                this.AttachedComponent = getChannelFunction(attachedComponentName);
+            }
+            public InternalChannel(String attachedComponentName,boolean is_reverse){
+                this.AttachedComponent = getChannelFunction(attachedComponentName);
+                this.is_reverse = is_reverse;
+            }
+        }
+
+
+
+
+        public class BasicChannel{
+            public final String component_Key;
+            public final Sensors parentClass;
+            private final InternalChannel attached_channel;
+            public BasicChannel(Sensors parentClass, String Key){
+                this.component_Key = Key;
+                this.parentClass = parentClass;
+                this.attached_channel = parentClass.channels.get(component_Key);
+                if(attached_channel == null){
+                    throw new IllegalArgumentException(String.format("RobotHardware.Servo(%s): Key error, no object found!!!",component_Key));
+                }
+            }
+            private boolean reversePosCheck(boolean state){
+                if (attached_channel.is_reverse) {
+                    return !state;
+                }
+                else {
+                    return state;
+                }
+            }
+            public boolean getState(){
+                return reversePosCheck(attached_channel.state);
+            }
+        }
+
 
     }
 
