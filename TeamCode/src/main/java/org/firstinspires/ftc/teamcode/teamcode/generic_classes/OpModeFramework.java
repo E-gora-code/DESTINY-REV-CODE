@@ -27,7 +27,7 @@ public abstract class OpModeFramework extends LinearOpMode {
 
     public void selfInit(){
 
-        robotHardware = new RobotHardware(hardwareMap,RobotHardware.errorResponses::ignore);
+        robotHardware = new RobotHardware(hardwareMap,RobotHardware.errorResponses::raise_id);
         gyro = robotHardware.new GyroIMU();
         driveBase = robotHardware.new DriveBase();
         motor_classes = driveBase.new motor_classes();
@@ -64,11 +64,13 @@ public abstract class OpModeFramework extends LinearOpMode {
     public void initAllSystems(){
         driveBase.init_all();
         motors.init_all();
+        sensors.init_all();
         gyro.init_all();
     }
     public void tickAll(){
         driveBase.class_tick();
         motors.class_tick();
+        sensors.class_tick();
     }
 
     @Override

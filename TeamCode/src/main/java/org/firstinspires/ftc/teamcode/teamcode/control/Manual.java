@@ -37,10 +37,7 @@ public class Manual extends OpModeFramework {
     @Override
     public void runOpMode() throws InterruptedException {
         selfInit();
-
-        driveBase.init_all();
-        motors.init_all();
-        gyro.init_all();
+        initAllSystems();
 //        FL = hardwareMap.dcMotor.get("FL");
 //        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -219,7 +216,7 @@ public class Manual extends OpModeFramework {
             }
             else {
                 FL.setPower(-gamepad1.left_stick_y);
-                FR.setPower(gamepad1.right_stick_y*0.7);
+                FR.setPower(gamepad1.right_stick_y);
                 BL.setPower(gamepad1.left_stick_x);
                 BR.setPower(gamepad1.right_stick_x);
             }
@@ -229,8 +226,7 @@ public class Manual extends OpModeFramework {
 //            FR.setPower((-gamepad1.left_stick_x-gamepad1.left_stick_y+turnPower)*Multiply);
 //            FL.setPower((gamepad1.left_stick_x-gamepad1.left_stick_y-turnPower)*Multiply);
 
-            driveBase.class_tick();
-            motors.class_tick();
+            tickAll();
         }
 
     }

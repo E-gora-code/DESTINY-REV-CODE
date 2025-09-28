@@ -24,10 +24,7 @@ public class hardvaretest extends OpModeFramework {
         selfInit();
 
 
-        gyro.init_all();
-        driveBase.init_all();
-        motors.init_all(true);
-
+        initAllSystems();
 
 
 
@@ -51,15 +48,15 @@ public class hardvaretest extends OpModeFramework {
         tred__1.start();
         while (opModeIsActive()) {
 //            driveBase.FR = 1;
-            FL.setPower(0);
-            driveBase.send_to_motors();
-            motors.send_to_components();
+            FR.setPower(1);
+            tickAll();
 
         }
 
     }
     public void Tel(){
-        telemetry.addData("gyro",gyro.Angle().firstAngle);
+        telemetry.addData("init", driveBase.is_inited());
+        telemetry.addData("enable", driveBase.is_drive_base_enabled);
         telemetry.update();
         dash.update();
     }
