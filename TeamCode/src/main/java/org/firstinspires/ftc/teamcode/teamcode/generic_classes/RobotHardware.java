@@ -59,6 +59,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Function;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -67,12 +68,22 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 //experemental
 
 public class RobotHardware{
     HardwareMap hardware;
-    public RobotHardware(HardwareMap programmRobotHardwareMap){
+    Consumer<Exception> errorHandler;
+    public RobotHardware(HardwareMap programmRobotHardwareMap, Consumer<Exception> errorHandler){
         this.hardware = programmRobotHardwareMap;
+        this.errorHandler = errorHandler;
+    }
+    public static class errorResponses{
+        public static void raise(Exception e){
+            throw new IllegalArgumentException(e.getMessage());
+        }
+        public static void ignore(Exception e){
+        }
     }
     public class GyroIMU{
         public BNO055IMU GyroIMU;
@@ -139,32 +150,27 @@ public class RobotHardware{
         public void init_all(){
             init_all(true);
         }
+
+        private void motor_init_helper(DcMotor motor,String name){
+            try {
+                motor = hardware.dcMotor.get(name);
+                motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            }
+            catch (Exception ex){errorHandler.accept(ex);}
+        }
         public void init_all(boolean do_enable){
             try {
-                hrd_FL = hardware.dcMotor.get("FL");
-                hrd_FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                hrd_FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                hrd_FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-                hrd_FR = hardware.dcMotor.get("FR");
-                hrd_FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                hrd_FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                hrd_FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-                hrd_BL = hardware.dcMotor.get("BL");
-                hrd_BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                hrd_BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                hrd_BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-                hrd_BR = hardware.dcMotor.get("BR");
-                hrd_BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                hrd_BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                hrd_BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                motor_init_helper(hrd_FL,"FL");
+                motor_init_helper(hrd_FR,"FR");
+                motor_init_helper(hrd_BL,"BL");
+                motor_init_helper(hrd_BR,"BR");
 
 
                 is_drive_base_inited = true;
             }
-            catch (Exception ignored){}
+            catch (Exception ex){errorHandler.accept(ex);}
             if(do_enable) {
                 is_drive_base_enabled = do_enable;
             }
@@ -173,18 +179,18 @@ public class RobotHardware{
             if(!(is_drive_base_inited&&is_drive_base_enabled)){
                 return;
             }
-            hrd_FL.setPower(_normolaize_DC(FL));
-            hrd_FR.setPower(_normolaize_DC(FR));
-            hrd_BL.setPower(_normolaize_DC(BL));
-            hrd_BR.setPower(_normolaize_DC(BR));
+            try {hrd_FL.setPower(_normolaize_DC(FL));}catch (Exception ex){errorHandler.accept(ex);}
+            try {hrd_FR.setPower(_normolaize_DC(FR));}catch (Exception ex){errorHandler.accept(ex);}
+            try {hrd_BL.setPower(_normolaize_DC(BL));}catch (Exception ex){errorHandler.accept(ex);}
+            try {hrd_BR.setPower(_normolaize_DC(BR));}catch (Exception ex){errorHandler.accept(ex);}
 
 
         }
         public void update_encoders(){
-            FL_enc = hrd_FL.getCurrentPosition();
-            FR_enc = hrd_FR.getCurrentPosition();
-            BL_enc = hrd_BL.getCurrentPosition();
-            BR_enc = hrd_BR.getCurrentPosition();
+            try {FL_enc = hrd_FL.getCurrentPosition();}catch (Exception ex){errorHandler.accept(ex);}
+            try {FR_enc = hrd_FR.getCurrentPosition();}catch (Exception ex){errorHandler.accept(ex);}
+            try {BL_enc = hrd_BL.getCurrentPosition();}catch (Exception ex){errorHandler.accept(ex);}
+            try {BR_enc = hrd_BR.getCurrentPosition();}catch (Exception ex){errorHandler.accept(ex);}
         }
         public void class_tick(){
             update_encoders();
@@ -386,7 +392,8 @@ public class RobotHardware{
             Servo output;
             try {
                 output = hardware.servo.get(name);
-            }catch (Exception ignored){
+            }catch (Exception ex){
+                errorHandler.accept(ex);
                 output = null;
             }
             return output;
@@ -398,7 +405,8 @@ public class RobotHardware{
             CRServo output;
             try {
                 output = hardware.crservo.get(name);
-            }catch (Exception ignored){
+            }catch (Exception ex){
+                errorHandler.accept(ex);
                 output = null;
             }
             return output;
@@ -408,7 +416,8 @@ public class RobotHardware{
             DcMotor output;
             try {
                 output = hardware.dcMotor.get(name);
-            }catch (Exception ignored){
+            }catch (Exception ex){
+                errorHandler.accept(ex);
                 output = null;
             }
             return output;

@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 
 public abstract class OpModeFramework extends LinearOpMode {
+
+
     protected RobotHardware.DriveBase.motor_classes.FrontLeft FL;
     protected RobotHardware.DriveBase.motor_classes.FrontRight FR;
     protected RobotHardware.DriveBase.motor_classes.BackLeft BL;
@@ -23,7 +25,8 @@ public abstract class OpModeFramework extends LinearOpMode {
     protected DigitalChannel ch0, ch1;
 
     public void selfInit(){
-        robotHardware = new RobotHardware(hardwareMap);
+
+        robotHardware = new RobotHardware(hardwareMap,RobotHardware.errorResponses::ignore);
         gyro = robotHardware.new GyroIMU();
         driveBase = robotHardware.new DriveBase();
         motor_classes = driveBase.new motor_classes();
@@ -51,10 +54,13 @@ public abstract class OpModeFramework extends LinearOpMode {
         factory_ext = motors.new DCMotor(motors, RobotHardware.Motors.NameKeys.motorDCNameKeys.factory_extention);
 
         // FIXME: 26.05.2025 maybe make a class for these
-        ch0 = hardwareMap.digitalChannel.get("0");
-        ch1 = hardwareMap.digitalChannel.get("1");
-        ch0.setMode(DigitalChannel.Mode.INPUT);
-        ch1.setMode(DigitalChannel.Mode.INPUT);
+        try {
+            ch0 = hardwareMap.digitalChannel.get("0");
+            ch1 = hardwareMap.digitalChannel.get("1");
+            ch0.setMode(DigitalChannel.Mode.INPUT);
+            ch1.setMode(DigitalChannel.Mode.INPUT);
+        }
+        catch (Exception ignored){}
     }
 
     public void initAllSystems(){
