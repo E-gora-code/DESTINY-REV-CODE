@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.teamcode.generic_classes;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-
-import java.util.Arrays;
 
 
 public abstract class OpModeFramework extends LinearOpMode {
@@ -19,6 +16,8 @@ public abstract class OpModeFramework extends LinearOpMode {
     protected RobotHardware.Motors.DCMotor extr, extl,factory_ext;
 
     protected RobotHardware robotHardware;
+    protected GamepadDriver controllerDriver_1;
+    protected GamepadDriver controllerDriver_2;
     protected RobotHardware.Motors motors;
     protected RobotHardware.Sensors sensors;
     protected RobotHardware.DriveBase driveBase;
@@ -30,6 +29,9 @@ public abstract class OpModeFramework extends LinearOpMode {
     public void selfInit(){
         //Error processing settings
         robotHardware = new RobotHardware(hardwareMap,RobotHardware.errorResponses::ignore);
+
+        controllerDriver_1 = new GamepadDriver(gamepad1);
+        controllerDriver_2 = new GamepadDriver(gamepad2);
 
         gyro = robotHardware.new GyroIMU();
         driveBase = robotHardware.new DriveBase();

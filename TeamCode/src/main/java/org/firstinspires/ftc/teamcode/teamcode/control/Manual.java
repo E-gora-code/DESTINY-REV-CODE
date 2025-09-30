@@ -103,6 +103,9 @@ public class Manual extends OpModeFramework {
             extr_pos = FL.getCurrentPosition();
             extl_pos = FR.getCurrentPosition();
             telemetry.addData("alt",independent_drive);
+            telemetry.addData("PS5",gamepad1.touchpad_finger_1);
+            telemetry.addData("PSx",gamepad1.touchpad_finger_1_x);
+            telemetry.addData("PSy",gamepad1.touchpad_finger_1_y);
             telemetry.addData("Angle X", gyro.Angle().firstAngle);
             telemetry.addData("Angle Y", gyro.Angle().secondAngle);
             telemetry.addData("Angle Z", gyro.Angle().thirdAngle);
