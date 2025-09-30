@@ -48,7 +48,7 @@ public class hardvaretest extends OpModeFramework {
         tred__1.start();
         while (opModeIsActive()) {
 //            driveBase.FR = 1;
-            FR.setPower(1);
+            FR.setPower(gamepad1.right_stick_x);
             tickAll();
 
         }
