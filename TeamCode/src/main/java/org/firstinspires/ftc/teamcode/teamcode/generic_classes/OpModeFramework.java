@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode.teamcode.generic_classes;
 
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
 public abstract class OpModeFramework extends LinearOpMode {
+    protected Telemetry dash;
 
 
     protected RobotHardware.DriveBase.motor_classes.FrontLeft FL;
@@ -42,6 +46,8 @@ public abstract class OpModeFramework extends LinearOpMode {
         BL = motor_classes.new BackLeft(driveBase);
         BR = motor_classes.new BackRight(driveBase);
 
+        dash = FtcDashboard.getInstance().getTelemetry();
+
         motors = robotHardware.new Motors();
         sensors = robotHardware.new Sensors();
 
@@ -76,6 +82,14 @@ public abstract class OpModeFramework extends LinearOpMode {
         driveBase.class_tick();
         motors.class_tick();
         sensors.class_tick();
+    }
+    public void printTelemetry(String caption, Object value){
+        telemetry.addData(caption,value);
+        dash.addData(caption,value);
+    }
+    public void UpdatePrint(){
+        telemetry.update();
+        dash.update();
     }
 
     @Override

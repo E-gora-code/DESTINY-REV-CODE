@@ -14,11 +14,12 @@ public class rotation extends OpModeFramework {
     ElapsedTime rpmTimer = new ElapsedTime();
     double rpm_zero = 0;
     double rpm;
-    double m_power = 0.01;
+    double m_power = 0.1;
     double m_power_l = 0;
 
     double target_rpm = 2000;
-    double p = 1/1e5;
+    double p = 1/1e4;
+    double d = 1/1e3;
 
     List<Double> rpm_mean = new ArrayList<Double>(3);
 
@@ -33,7 +34,8 @@ public class rotation extends OpModeFramework {
             FR.setPower(m_power);
             if(rpmTimer.seconds()>0.1){
                 update_rpm();
-                m_power = m_power+(target_rpm-rpm)*p;
+                m_power = m_power+(target_rpm-rpm)*p+(m_power-m_power_l)*d;
+                m_power_l = m_power;
             }
             tickAll();
         }
@@ -49,10 +51,10 @@ public class rotation extends OpModeFramework {
            mean_summ += i;
         }
         rpm = mean_summ/rpm_mean.size();
-        telemetry.addData("RPM", rpm);
-        telemetry.addData("enc", FR.getCurrentPosition());
-        telemetry.addData("power", FR.getPower());
-        telemetry.update();
+        printTelemetry("RPM", rpm);
+        printTelemetry("enc", FR.getCurrentPosition());
+        printTelemetry("power", FR.getPower());
+        UpdatePrint();
         rpm_zero = FR.getCurrentPosition();
         rpmTimer.reset();
     }

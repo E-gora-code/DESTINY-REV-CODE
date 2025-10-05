@@ -191,7 +191,7 @@ public class $Main_Control extends OpModeFramework {
     boolean hanging_state = false;
     Orientation Orientation = new Orientation();
 
-    Telemetry dash = FtcDashboard.getInstance().getTelemetry();
+
 
     @Override
     public void runOpMode() throws InterruptedException {
