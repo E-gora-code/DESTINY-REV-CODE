@@ -17,14 +17,20 @@ public class rotation extends OpModeFramework {
     double m_power = 0.1;
     double m_power_l = 0;
 
-    double target_rpm = 2000;
+    double target_rpm = -2000;
     double p = 1/1e4;
     double d = 1/1e3;
+
+
 
     List<Double> rpm_mean = new ArrayList<Double>(3);
 
     @Override
     public void runOpMode() throws InterruptedException {
+        if(true){
+            p = 1/1e6;
+            d = 0;
+        }
         selfInit();
         initAllSystems();
         waitForStart();
