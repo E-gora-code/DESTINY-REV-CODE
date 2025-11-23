@@ -194,8 +194,11 @@ public class Manual extends OpModeFramework {
             else {
                 reika.setPower(0);
             }
-            vila_r.setPosition(gamepad2.right_trigger);
-            vila_l.setPosition(1-gamepad2.right_trigger);
+            if (gamepad2.left_bumper){
+                vila_r.setPosition(gamepad2.right_trigger);
+                vila_l.setPosition(gamepad2.left_trigger);
+            }
+            ;
 
 //        else{
 //            FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

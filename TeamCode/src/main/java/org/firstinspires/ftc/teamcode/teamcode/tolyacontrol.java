@@ -109,7 +109,7 @@ public class tolyacontrol extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         FL = hardwareMap.dcMotor.get("FL");
         FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         FR = hardwareMap.dcMotor.get("FR");
@@ -215,6 +215,7 @@ public class tolyacontrol extends LinearOpMode {
                 FL.setPower(((powerx  + powery + turnPower)) * (-Multiply * mult));
                 BR.setPower(((-powerx  - powery + turnPower)) * (-Multiply * mult));
                 BL.setPower(((powerx  - powery + turnPower)) * (-Multiply * mult));
+                FL.getPower();
                 dash.addData("positionx", BR.getCurrentPosition());
                 dash.addData("positiony", BL.getCurrentPosition());
                 dash.addData("ignorex", currentAngle);
