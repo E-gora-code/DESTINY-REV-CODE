@@ -1,16 +1,11 @@
 package org.firstinspires.ftc.teamcode.teamcode.generic_classes;
 
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 
 public abstract class OpModeFramework extends LinearOpMode {
-    protected Telemetry dash;
-
-
     protected RobotHardware.DriveBase.motor_classes.FrontLeft FL;
     protected RobotHardware.DriveBase.motor_classes.FrontRight FR;
     protected RobotHardware.DriveBase.motor_classes.BackLeft BL;
@@ -20,23 +15,15 @@ public abstract class OpModeFramework extends LinearOpMode {
     protected RobotHardware.Motors.DCMotor extr, extl,factory_ext;
 
     protected RobotHardware robotHardware;
-    protected GamepadDriver controllerDriver_1;
-    protected GamepadDriver controllerDriver_2;
     protected RobotHardware.Motors motors;
-    protected RobotHardware.Sensors sensors;
     protected RobotHardware.DriveBase driveBase;
     protected RobotHardware.GyroIMU gyro;
     protected RobotHardware.DriveBase.motor_classes motor_classes;
 
-    protected RobotHardware.Sensors.BasicChannel ch0, ch1;
+    protected DigitalChannel ch0, ch1;
 
     public void selfInit(){
-        //Error processing settings
-        robotHardware = new RobotHardware(hardwareMap,RobotHardware.errorResponses::ignore);
-
-        controllerDriver_1 = new GamepadDriver(gamepad1);
-        controllerDriver_2 = new GamepadDriver(gamepad2);
-
+        robotHardware = new RobotHardware(hardwareMap);
         gyro = robotHardware.new GyroIMU();
         driveBase = robotHardware.new DriveBase();
         motor_classes = driveBase.new motor_classes();
@@ -46,10 +33,7 @@ public abstract class OpModeFramework extends LinearOpMode {
         BL = motor_classes.new BackLeft(driveBase);
         BR = motor_classes.new BackRight(driveBase);
 
-        dash = FtcDashboard.getInstance().getTelemetry();
-
         motors = robotHardware.new Motors();
-        sensors = robotHardware.new Sensors();
 
         sbros = motors.new BasicServo(motors, RobotHardware.Motors.NameKeys.servoNameKeys.apple_drop_module);
         claw = motors.new BasicServo(motors, RobotHardware.Motors.NameKeys.servoNameKeys.hidden_claw_module);
@@ -66,30 +50,21 @@ public abstract class OpModeFramework extends LinearOpMode {
 
         factory_ext = motors.new DCMotor(motors, RobotHardware.Motors.NameKeys.motorDCNameKeys.factory_extention);
 
-
-        ch0 = sensors.new BasicChannel(sensors, RobotHardware.Sensors.NameKeys.channelsNameKeys.ch0);
-        ch1 = sensors.new BasicChannel(sensors, RobotHardware.Sensors.NameKeys.channelsNameKeys.ch1);
-
+        // FIXME: 26.05.2025 maybe make a class for these
+        ch0 = hardwareMap.digitalChannel.get("0");
+        ch1 = hardwareMap.digitalChannel.get("1");
+        ch0.setMode(DigitalChannel.Mode.INPUT);
+        ch1.setMode(DigitalChannel.Mode.INPUT);
     }
 
     public void initAllSystems(){
         driveBase.init_all();
         motors.init_all();
-        sensors.init_all();
         gyro.init_all();
     }
     public void tickAll(){
         driveBase.class_tick();
         motors.class_tick();
-        sensors.class_tick();
-    }
-    public void printTelemetry(String caption, Object value){
-        telemetry.addData(caption,value);
-        dash.addData(caption,value);
-    }
-    public void UpdatePrint(){
-        telemetry.update();
-        dash.update();
     }
 
     @Override

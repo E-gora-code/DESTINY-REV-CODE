@@ -56,7 +56,6 @@ IMPORTANT: THE SYSTEM IS "kinda" EXPERIMENTAL, so don`t implement it in main fil
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -66,35 +65,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-import java.security.PublicKey;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 //experemental
 
 public class RobotHardware{
-    public static List<Integer> checkErrorsIds = Arrays.asList();
     HardwareMap hardware;
-    BiConsumer<Exception, Integer> errorHandler;
-
-    public RobotHardware(HardwareMap programmRobotHardwareMap, BiConsumer<Exception, Integer> errorHandler){
+    public RobotHardware(HardwareMap programmRobotHardwareMap){
         this.hardware = programmRobotHardwareMap;
-        this.errorHandler = errorHandler;
-    }
-    public static class errorResponses{
-        public static void raise(Exception e, int id){
-            throw new IllegalArgumentException(e.getMessage());
-        }
-        public static void ignore(Exception e, int id){
-        }
-        public static void raise_id(Exception e, int id){
-
-            if(checkErrorsIds.contains(id)){
-                throw new IllegalArgumentException("!!ID: "+id+"\n"+e.getMessage());
-            }
-        }
     }
     public class GyroIMU{
         public BNO055IMU GyroIMU;
@@ -161,25 +139,32 @@ public class RobotHardware{
         public void init_all(){
             init_all(true);
         }
-
-        private DcMotor motor_init_helper(DcMotor motor,String name, int id){
-            try {
-                motor = hardware.dcMotor.get(name);
-                motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            }
-            catch (Exception ex){errorHandler.accept(ex,id);}
-            return motor;
-        }
         public void init_all(boolean do_enable){
-            hrd_FL = motor_init_helper(hrd_FL,"FL",0);
-            hrd_FR = motor_init_helper(hrd_FR,"FR",1);
-            hrd_BL = motor_init_helper(hrd_BL,"BL",2);
-            hrd_BR = motor_init_helper(hrd_BR,"BR",3);
+            try {
+                hrd_FL = hardware.dcMotor.get("FL");
+                hrd_FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                hrd_FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                hrd_FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+                hrd_FR = hardware.dcMotor.get("FR");
+                hrd_FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                hrd_FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                hrd_FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+                hrd_BL = hardware.dcMotor.get("BL");
+                hrd_BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                hrd_BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                hrd_BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+                hrd_BR = hardware.dcMotor.get("BR");
+                hrd_BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                hrd_BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                hrd_BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
-            is_drive_base_inited = true;
+                is_drive_base_inited = true;
+            }
+            catch (Exception ignored){}
             if(do_enable) {
                 is_drive_base_enabled = do_enable;
             }
@@ -188,18 +173,18 @@ public class RobotHardware{
             if(!(is_drive_base_inited&&is_drive_base_enabled)){
                 return;
             }
-            try {hrd_FL.setPower(_normolaize_DC(FL));}catch (Exception ex){errorHandler.accept(ex,4);}
-            try {hrd_FR.setPower(_normolaize_DC(FR));}catch (Exception ex){errorHandler.accept(ex,5);}
-            try {hrd_BL.setPower(_normolaize_DC(BL));}catch (Exception ex){errorHandler.accept(ex,6);}
-            try {hrd_BR.setPower(_normolaize_DC(BR));}catch (Exception ex){errorHandler.accept(ex,7);}
+            hrd_FL.setPower(_normolaize_DC(FL));
+            hrd_FR.setPower(_normolaize_DC(FR));
+            hrd_BL.setPower(_normolaize_DC(BL));
+            hrd_BR.setPower(_normolaize_DC(BR));
 
 
         }
         public void update_encoders(){
-            try {FL_enc = hrd_FL.getCurrentPosition();}catch (Exception ex){errorHandler.accept(ex,8);}
-            try {FR_enc = hrd_FR.getCurrentPosition();}catch (Exception ex){errorHandler.accept(ex,9);}
-            try {BL_enc = hrd_BL.getCurrentPosition();}catch (Exception ex){errorHandler.accept(ex,10);}
-            try {BR_enc = hrd_BR.getCurrentPosition();}catch (Exception ex){errorHandler.accept(ex,11);}
+            FL_enc = hrd_FL.getCurrentPosition();
+            FR_enc = hrd_FR.getCurrentPosition();
+            BL_enc = hrd_BL.getCurrentPosition();
+            BR_enc = hrd_BR.getCurrentPosition();
         }
         public void class_tick(){
             update_encoders();
@@ -401,8 +386,7 @@ public class RobotHardware{
             Servo output;
             try {
                 output = hardware.servo.get(name);
-            }catch (Exception ex){
-                errorHandler.accept(ex,12);
+            }catch (Exception ignored){
                 output = null;
             }
             return output;
@@ -414,8 +398,7 @@ public class RobotHardware{
             CRServo output;
             try {
                 output = hardware.crservo.get(name);
-            }catch (Exception ex){
-                errorHandler.accept(ex,13);
+            }catch (Exception ignored){
                 output = null;
             }
             return output;
@@ -425,8 +408,7 @@ public class RobotHardware{
             DcMotor output;
             try {
                 output = hardware.dcMotor.get(name);
-            }catch (Exception ex){
-                errorHandler.accept(ex,14);
+            }catch (Exception ignored){
                 output = null;
             }
             return output;
@@ -552,123 +534,6 @@ public class RobotHardware{
                 return attached_motorDC.power;
             }
         }
-
-    }
-
-
-
-    public class Sensors {
-        private boolean is_components_inited = false;
-        public boolean is_channels_enabled = false;
-
-        private Map<String,InternalChannel> channels = new HashMap<>();
-
-        public class NameKeys {
-            // Class for easy renaming purposes
-            public class channelsNameKeys {
-                public final static String ch0 = "ch0";
-                public final static String ch1 = "ch1";
-            }
-        }
-
-
-
-        public Sensors(){
-            // Add motors HERE
-            channels.put(NameKeys.channelsNameKeys.ch0,new InternalChannel("ch0"));
-            channels.put(NameKeys.channelsNameKeys.ch1,new InternalChannel("ch1"));
-        }
-
-
-        public boolean is_inited(){
-            return is_components_inited;
-        }
-        public void init_all(){
-            init_all(true);
-        }
-        public void init_all(boolean enable_channels){
-
-            is_components_inited = true;
-            if (enable_channels) {
-                is_channels_enabled = enable_channels;
-            }
-        }
-
-
-
-        public void read_from_components(){
-            if(!is_components_inited){
-                return;
-            }
-            if(is_channels_enabled) {
-                for (Map.Entry<String, InternalChannel> channel_entry :  channels.entrySet()) {
-                    InternalChannel channel_component = channel_entry.getValue();
-                    if ((channel_component.AttachedComponent != null)) {
-                        channel_component.state =channel_component.AttachedComponent.getState();
-                    }
-                }
-            }
-        }
-        public void class_tick(){
-            read_from_components();
-        }
-
-
-
-        private DigitalChannel getChannelFunction(String name){
-            DigitalChannel output;
-            try {
-                output = hardware.digitalChannel.get(name);
-            }catch (Exception ex){
-                errorHandler.accept(ex,15);
-                output = null;
-            }
-            return output;
-        }
-
-
-
-        private class InternalChannel{
-            public boolean state = false;
-            public boolean is_reverse = false;
-            public final DigitalChannel AttachedComponent;
-            public InternalChannel(String attachedComponentName){
-                this.AttachedComponent = getChannelFunction(attachedComponentName);
-            }
-            public InternalChannel(String attachedComponentName,boolean is_reverse){
-                this.AttachedComponent = getChannelFunction(attachedComponentName);
-                this.is_reverse = is_reverse;
-            }
-        }
-
-
-
-
-        public class BasicChannel{
-            public final String component_Key;
-            public final Sensors parentClass;
-            private final InternalChannel attached_channel;
-            public BasicChannel(Sensors parentClass, String Key){
-                this.component_Key = Key;
-                this.parentClass = parentClass;
-                this.attached_channel = parentClass.channels.get(component_Key);
-                if(attached_channel == null){
-                    throw new IllegalArgumentException(String.format("RobotHardware.Servo(%s): Key error, no object found!!!",component_Key));
-                }
-            }
-            private boolean reversePosCheck(boolean state){
-                if (attached_channel.is_reverse) {
-                    return !state;
-                }
-                else {
-                    return state;
-                }
-            }
-            public boolean getState(){
-                return reversePosCheck(attached_channel.state);
-            }
-        }
-
 
     }
 
