@@ -20,7 +20,7 @@ import com.pedropathing.localization.Localizer;
 import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.pedro.Follower;
+import org.firstinspires.ftc.teamcode.teamcode.pedro.Follower;
 
 /** This is the FollowerBuilder.
  * It is used to create Followers with a specific drivetrain + localizer without having to use a full constructor
@@ -84,7 +84,7 @@ public class FollowerBuilder {
         return this;
     }
 
-    public Follower build() {
+    public org.firstinspires.ftc.teamcode.teamcode.pedro.Follower build() {
         return new Follower(constants, localizer, drivetrain, constraints);
     }
 }

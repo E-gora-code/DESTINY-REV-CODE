@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.customconsts;
-import org.firstinspires.ftc.teamcode.pedro.Follower;
-import org.firstinspires.ftc.teamcode.pedro.FollowerBuilder;
+import org.firstinspires.ftc.teamcode.teamcode.customconsts;
+import org.firstinspires.ftc.teamcode.teamcode.pedro.Follower;
+import org.firstinspires.ftc.teamcode.teamcode.pedro.FollowerBuilder;
 
 // Убедитесь, что этот класс существует в вашем проекте
 
