@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teamcode.pedro;
+package org.firstinspires.ftc.teamcode.pedro;
 
 import com.pedropathing.control.KalmanFilter;
 import com.pedropathing.control.KalmanFilterParameters;
@@ -93,10 +93,6 @@ public class ErrorCalculator {
         if (currentPath == null) {
             return 0;
         }
-        if (distanse/2<distanceToGoal){
-            distanceToGoal =  distanse-distanceToGoal+10;
-        }
-
 
 
         Vector tangent = currentPath.getClosestPointTangentVector().normalize();
@@ -106,11 +102,11 @@ public class ErrorCalculator {
         Vector forwardHeadingVector = new Vector(1.0, currentPose.getHeading());
         double forwardVelocity = forwardHeadingVector.dot(velocity);
         double forwardDistanceToGoal = forwardHeadingVector.dot(distanceToGoalVector);
-        double  forwardacs =Math.signum(forwardDistanceToGoal)* Math.sqrt(Math.abs(forwardDistanceToGoal*constants.forwardZeroPowerAcceleration));
+        double  forwardacs = Math.signum(forwardDistanceToGoal)*Math.sqrt(Math.abs(forwardDistanceToGoal*constants.forwardZeroPowerAcceleration));
         double forwardVelocityGoal = Kinematics.getVelocityToStopWithDeceleration(
             forwardDistanceToGoal,
             constants.forwardZeroPowerAcceleration
-                * 0.5
+                * (currentPath.getBrakingStrength() * 4)
         );
         double forwardVelocityZeroPowerDecay = forwardVelocity -
                 Kinematics.getFinalVelocityAtDistance(
@@ -123,11 +119,11 @@ public class ErrorCalculator {
         Vector lateralHeadingVector = new Vector(1.0, currentPose.getHeading() - Math.PI / 2);
         double lateralVelocity = lateralHeadingVector.dot(velocity);
         double lateralDistanceToGoal = lateralHeadingVector.dot(distanceToGoalVector);
-        double lateracs = lateralDistanceToGoal * 4*0;
+        double lateracs =  Math.signum(lateralDistanceToGoal)*Math.sqrt(Math.abs(lateralDistanceToGoal*constants.lateralZeroPowerAcceleration));
         double lateralVelocityGoal = Kinematics.getVelocityToStopWithDeceleration(
             lateralDistanceToGoal,
             constants.lateralZeroPowerAcceleration
-                * 0.5
+                * (currentPath.getBrakingStrength() * 4)
         );
         double lateralVelocityZeroPowerDecay = lateralVelocity -
             Kinematics.getFinalVelocityAtDistance(
@@ -137,11 +133,9 @@ public class ErrorCalculator {
             );
 
 
-//1
-        Vector forwardVelocityError = new Vector(forwardVelocityGoal, forwardHeadingVector.getTheta());
-//        Vector forwardVelocityError = new Vector(forwardacs, forwardHeadingVector.getTheta());
 
-        Vector lateralVelocityError = new Vector(lateralVelocityGoal, lateralHeadingVector.getTheta());
+        Vector forwardVelocityError = new Vector(forwardacs, forwardHeadingVector.getTheta());
+        Vector lateralVelocityError = new Vector(lateracs, lateralHeadingVector.getTheta());
         Vector velocityErrorVector = forwardVelocityError.plus(lateralVelocityError);
 
         previousRawDriveError = rawDriveError;

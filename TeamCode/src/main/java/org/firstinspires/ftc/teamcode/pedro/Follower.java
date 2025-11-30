@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teamcode.pedro;
+package org.firstinspires.ftc.teamcode.pedro;
 
 import com.pedropathing.Drivetrain;
 import com.pedropathing.control.FilteredPIDFCoefficients;
@@ -1094,5 +1094,187 @@ public class Follower  {
 
     public double getHeading() {
         return getPose().getHeading();
+    }
+
+
+    public boolean smalltrianglepos(){
+        double cx = getPose().getX();
+        double cy = getPose().getY();
+        double angle = Math.toRadians(getPose().getHeading());
+        double cos_a = Math.cos(angle);
+        double sin_a = Math.sin(angle);
+
+
+        double[][] triangle = {{48, 0}, {72, 24}, {96, 0}};
+
+
+        double hw = 12.9 / 2;
+        double hh = 14.9 / 2;
+
+
+        double[][] rectVerts = new double[4][2];
+
+        rectVerts[0][0] = cx + (-hw) * cos_a - (-hh) * sin_a;
+        rectVerts[0][1] = cy + (-hw) * sin_a + (-hh) * cos_a;
+
+        rectVerts[1][0] = cx + (hw) * cos_a - (-hh) * sin_a;
+        rectVerts[1][1] = cy + (hw) * sin_a + (-hh) * cos_a;
+
+        rectVerts[2][0] = cx + (hw) * cos_a - (hh) * sin_a;
+        rectVerts[2][1] = cy + (hw) * sin_a + (hh) * cos_a;
+
+        rectVerts[3][0] = cx + (-hw) * cos_a - (hh) * sin_a;
+        rectVerts[3][1] = cy + (-hw) * sin_a + (hh) * cos_a;
+
+
+        double[][] axes = new double[5][2];
+        int axisCount = 0;
+
+
+        for (int i = 0; i < 2; i++) {
+            double x1 = rectVerts[i][0];
+            double y1 = rectVerts[i][1];
+            double x2 = rectVerts[i + 1][0];
+            double y2 = rectVerts[i + 1][1];
+            double dx = x2 - x1;
+            double dy = y2 - y1;
+            double inv_len = 1.0 / Math.sqrt(dx * dx + dy * dy);
+            axes[axisCount][0] = -dy * inv_len;
+            axes[axisCount][1] = dx * inv_len;
+            axisCount++;
+        }
+
+
+        for (int i = 0; i < 3; i++) {
+            double x1 = triangle[i][0];
+            double y1 = triangle[i][1];
+            double x2 = triangle[(i + 1) % 3][0];
+            double y2 = triangle[(i + 1) % 3][1];
+            double dx = x2 - x1;
+            double dy = y2 - y1;
+            double inv_len = 1.0 / Math.sqrt(dx * dx + dy * dy);
+            axes[axisCount][0] = -dy * inv_len;
+            axes[axisCount][1] = dx * inv_len;
+            axisCount++;
+        }
+
+
+        for (int i = 0; i < axisCount; i++) {
+            double[] axis = axes[i];
+
+
+            double triMin = Double.MAX_VALUE;
+            double triMax = -Double.MAX_VALUE;
+            for (int j = 0; j < triangle.length; j++) {
+                double projection = triangle[j][0] * axis[0] + triangle[j][1] * axis[1];
+                if (projection < triMin) triMin = projection;
+                if (projection > triMax) triMax = projection;
+            }
+
+
+            double rectMin = Double.MAX_VALUE;
+            double rectMax = -Double.MAX_VALUE;
+            for (int j = 0; j < rectVerts.length; j++) {
+                double projection = rectVerts[j][0] * axis[0] + rectVerts[j][1] * axis[1];
+                if (projection < rectMin) rectMin = projection;
+                if (projection > rectMax) rectMax = projection;
+            }
+
+            if (rectMax < triMin || triMax < rectMin) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    public boolean bigtrianglepos(){
+        double cx = getPose().getX();
+        double cy = getPose().getY();
+        double angle = Math.toRadians(getPose().getHeading());
+        double cos_a = Math.cos(angle);
+        double sin_a = Math.sin(angle);
+
+
+        double[][] triangle = {{0, 144}, {72, 72}, {144, 144}};
+
+
+        double hw = 12.9 / 2;
+        double hh = 14.9 / 2;
+
+
+        double[][] rectVerts = new double[4][2];
+
+        rectVerts[0][0] = cx + (-hw) * cos_a - (-hh) * sin_a;
+        rectVerts[0][1] = cy + (-hw) * sin_a + (-hh) * cos_a;
+
+        rectVerts[1][0] = cx + (hw) * cos_a - (-hh) * sin_a;
+        rectVerts[1][1] = cy + (hw) * sin_a + (-hh) * cos_a;
+
+        rectVerts[2][0] = cx + (hw) * cos_a - (hh) * sin_a;
+        rectVerts[2][1] = cy + (hw) * sin_a + (hh) * cos_a;
+
+        rectVerts[3][0] = cx + (-hw) * cos_a - (hh) * sin_a;
+        rectVerts[3][1] = cy + (-hw) * sin_a + (hh) * cos_a;
+
+
+        double[][] axes = new double[5][2];
+        int axisCount = 0;
+
+
+        for (int i = 0; i < 2; i++) {
+            double x1 = rectVerts[i][0];
+            double y1 = rectVerts[i][1];
+            double x2 = rectVerts[i + 1][0];
+            double y2 = rectVerts[i + 1][1];
+            double dx = x2 - x1;
+            double dy = y2 - y1;
+            double inv_len = 1.0 / Math.sqrt(dx * dx + dy * dy);
+            axes[axisCount][0] = -dy * inv_len;
+            axes[axisCount][1] = dx * inv_len;
+            axisCount++;
+        }
+
+
+        for (int i = 0; i < 3; i++) {
+            double x1 = triangle[i][0];
+            double y1 = triangle[i][1];
+            double x2 = triangle[(i + 1) % 3][0];
+            double y2 = triangle[(i + 1) % 3][1];
+            double dx = x2 - x1;
+            double dy = y2 - y1;
+            double inv_len = 1.0 / Math.sqrt(dx * dx + dy * dy);
+            axes[axisCount][0] = -dy * inv_len;
+            axes[axisCount][1] = dx * inv_len;
+            axisCount++;
+        }
+
+
+        for (int i = 0; i < axisCount; i++) {
+            double[] axis = axes[i];
+
+
+            double triMin = Double.MAX_VALUE;
+            double triMax = -Double.MAX_VALUE;
+            for (int j = 0; j < triangle.length; j++) {
+                double projection = triangle[j][0] * axis[0] + triangle[j][1] * axis[1];
+                if (projection < triMin) triMin = projection;
+                if (projection > triMax) triMax = projection;
+            }
+
+
+            double rectMin = Double.MAX_VALUE;
+            double rectMax = -Double.MAX_VALUE;
+            for (int j = 0; j < rectVerts.length; j++) {
+                double projection = rectVerts[j][0] * axis[0] + rectVerts[j][1] * axis[1];
+                if (projection < rectMin) rectMin = projection;
+                if (projection > rectMax) rectMax = projection;
+            }
+
+            if (rectMax < triMin || triMax < rectMin) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

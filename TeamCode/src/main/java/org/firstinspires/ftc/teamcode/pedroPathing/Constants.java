@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teamcode.pedroPathing;
+package org.firstinspires.ftc.teamcode.pedroPathing;
 
 import com.pedropathing.control.FilteredPIDFCoefficients;
 import com.pedropathing.control.PIDFCoefficients;
@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.teamcode.customconsts;
-import org.firstinspires.ftc.teamcode.teamcode.pedro.Follower;
-import org.firstinspires.ftc.teamcode.teamcode.pedro.FollowerBuilder;
+import org.firstinspires.ftc.teamcode.customconsts;
+import org.firstinspires.ftc.teamcode.pedro.Follower;
+import org.firstinspires.ftc.teamcode.pedro.FollowerBuilder;
 
 // Убедитесь, что этот класс существует в вашем проекте
 
@@ -29,7 +29,7 @@ public class Constants {
             .centripetalScaling(0.0005)
             .translationalPIDFCoefficients(new PIDFCoefficients(0.03, 0.00, 0.02, 0))
             .headingPIDFCoefficients(new PIDFCoefficients(1, 0, 0.1, 0))
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.008, 0, 0.0, 0, 0));
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.015, 0, 0.007, 0, 0));
 
     public static customconsts driveConstants = new customconsts()
             .leftFrontMotorName("FL")
@@ -58,8 +58,8 @@ public class Constants {
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
 
     public static PathConstraints pathConstraints = new PathConstraints(
-            10,
-            200,
+            1,
+            2000,
             1,
             1.0
     );

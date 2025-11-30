@@ -1,5 +1,4 @@
-package org.firstinspires.ftc.teamcode.teamcode.pedro;
-
+package org.firstinspires.ftc.teamcode.pedro;
 import com.pedropathing.Drivetrain;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.drivetrains.Mecanum;
@@ -19,8 +18,6 @@ import com.pedropathing.ftc.localization.localizers.TwoWheelLocalizer;
 import com.pedropathing.localization.Localizer;
 import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.firstinspires.ftc.teamcode.teamcode.pedro.Follower;
 
 /** This is the FollowerBuilder.
  * It is used to create Followers with a specific drivetrain + localizer without having to use a full constructor
@@ -84,7 +81,7 @@ public class FollowerBuilder {
         return this;
     }
 
-    public org.firstinspires.ftc.teamcode.teamcode.pedro.Follower build() {
+    public Follower build() {
         return new Follower(constants, localizer, drivetrain, constraints);
     }
 }

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teamcode.pedro;
+package org.firstinspires.ftc.teamcode.pedro;
 
 import com.pedropathing.control.FilteredPIDFCoefficients;
 import com.pedropathing.control.FilteredPIDFController;

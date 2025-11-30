@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teamcode.pedroPathing;
+package org.firstinspires.ftc.teamcode.pedroPathing;
 
 import static com.pedropathing.math.MathFunctions.findNormalizingScaling;
 
@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-import org.firstinspires.ftc.teamcode.teamcode.customconsts;
+import org.firstinspires.ftc.teamcode.customconsts;
 
 import java.util.Arrays;
 import java.util.List;
