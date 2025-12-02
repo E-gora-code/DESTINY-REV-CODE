@@ -56,11 +56,11 @@ public class rotation extends OpModeFramework {
         for(double i :rpm_mean){
            mean_summ += i;
         }
-//        rpm = mean_summ/rpm_mean.size();
-//        printTelemetry("RPM", rpm);
-//        printTelemetry("enc", FR.getCurrentPosition());
-//        printTelemetry("power", FR.getPower());
-//        UpdatePrint();
+        rpm = mean_summ/rpm_mean.size();
+        telemetry.addData("RPM", rpm);
+        telemetry.addData("enc", FR.getCurrentPosition());
+        telemetry.addData("power", FR.getPower());
+        telemetry.update();
         rpm_zero = FR.getCurrentPosition();
         rpmTimer.reset();
     }
