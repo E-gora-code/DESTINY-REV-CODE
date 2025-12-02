@@ -716,8 +716,9 @@ public class $Main_Control extends OpModeFramework {
                 addToBothTelemetry("-----------------------------"," ");
 
                 telemetry.addData("tog", claw_toggle);
-                dash.addData("ext", FL.getCurrentPosition());
-                dash.update();
+//                FtcDashboard.TelemetryAdapter dash;
+//                dash.addData("ext", FL.getCurrentPosition());
+//                dash.update();
 
 
 
@@ -729,11 +730,11 @@ public class $Main_Control extends OpModeFramework {
         }
         public void addToBothTelemetry(String caption,Object value){
             telemetry.addData(caption,value);
-            dash.addData(caption,value);
+//            dash.addData(caption,value);
         }
         public void updateBothTelemrtry(){
             telemetry.update();
-            dash.update();
+//            dash.update();
         }
 
         public void doHoma(){
