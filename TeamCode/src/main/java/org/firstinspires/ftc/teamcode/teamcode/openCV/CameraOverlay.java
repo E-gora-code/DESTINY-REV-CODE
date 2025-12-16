@@ -38,7 +38,7 @@ public class CameraOverlay extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-        // Конвертируем в HSV
+
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
         Mat output = input;
 
@@ -49,18 +49,14 @@ public class CameraOverlay extends OpenCvPipeline {
         }
 
 
-//        // Рисуем прямоугольник зоны анализа и центр масс (для визуализации)
-//        Imgproc.rectangle(output, new Point(0, 100), new Point(320, 210), new Scalar(255, 0, 0), 1);
-//        Imgproc.circle(output, centroid, 10, new Scalar(255, 0, 0), -1);
 
-        // Освобождаем ресурсы (чтобы не было утечек памяти)
         mat.release();
         mask.release();
         submat.release();
 
 
 
-        return output; // Возвращаем изображение с инвертированными областями
+        return output;
     }
 
     private Point Center(final Mat binaryImage) {
