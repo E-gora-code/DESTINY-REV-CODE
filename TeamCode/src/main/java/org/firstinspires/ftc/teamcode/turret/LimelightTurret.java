@@ -1,5 +1,6 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.turret;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.limelightvision.*;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -8,6 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 @TeleOp
@@ -26,17 +29,22 @@ public class LimelightTurret extends LinearOpMode {
     private final double FILTER_A = 0.35;
 
     private long lastTime = 0;
-    private double yawPowerFiltered = 0.0;
 
     private static final int TICKS_PER_REV = 560;
     private final double SHOOT_TARGET_RPM = 280.0;
     private final double RAMP_TIME = 0.25;
 
+
+    private SmoothPID yawPID = new SmoothPID(0.0035, 0.0001, 0.0005, 0.23);
+
+
+    private SmoothPID pitchPID = new SmoothPID(0.01, 0.00005, 0.001, 0.02);
+
+
     private double shooterKp = 0.0022;
     private double shooterKi = 0.0;
     private double shooterKd = 0.00045;
     private double shooterKf = 1.0 / 300.0;
-
     private double shooterIntegral = 0.0;
     private double shooterPrevError = 0.0;
     private double shooterTargetRpm = 0.0;
@@ -45,8 +53,7 @@ public class LimelightTurret extends LinearOpMode {
     private final double CAMERA_HEIGHT_M = 0.25;
     private final double TARGET_HEIGHT_M = 0.40;
     private double shooterVelocityMps = 10.0;
-
-    private SmoothPID pitchPID = new SmoothPID(0.01, 0.00005, 0.001, 0.02);
+    Telemetry dash = FtcDashboard.getInstance().getTelemetry();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -106,34 +113,26 @@ public class LimelightTurret extends LinearOpMode {
 
             filteredTx = FILTER_A * tx + (1 - FILTER_A) * filteredTx;
             filteredTy = FILTER_A * ty + (1 - FILTER_A) * filteredTy;
+            dash.addData("tx",filteredTx);
+            dash.update();
 
-            double targetPower = 0.0;
+            double yawPower = 0.0;
 
             if (hasTarget) {
-                double err = filteredTx;
 
-                double dead = 3.0;
-                if (Math.abs(err) < dead) {
-                    targetPower = 0;
+                double yawError = filteredTx;
+                double deadzone = 0.5;
+                if (Math.abs(yawError) < deadzone) {
+                    yawPower = 0;
                 } else {
-                    double baseK = 0.0038;
-                    double adapt = baseK * (1.0 + Math.min(Math.abs(err) / 25.0, 1.4));
-                    targetPower = adapt * err;
-
-                    double min = 0.045;
-                    if (targetPower > 0) targetPower += min;
-                    else targetPower -= min;
+                    yawPower = yawPID.update(yawError, dt);
                 }
             } else {
-                targetPower = 0.0;
+                yawPower = 0;
+                yawPID.resetIntegral();
             }
 
-            targetPower = clamp(targetPower, -0.23, 0.23);
-
-            yawPowerFiltered += (targetPower - yawPowerFiltered) * 0.35;
-
-            servoYaw.setPower(yawPowerFiltered);
-
+            servoYaw.setPower(yawPower);
             double pitchPos = servoPitch.getPosition();
             double currPitchDeg = (pitchPos - CENTER_PITCH) * PITCH_RANGE_DEG;
 
@@ -160,6 +159,7 @@ public class LimelightTurret extends LinearOpMode {
             newPos = clamp(newPos, 0.0, 1.0);
             servoPitch.setPosition(newPos);
 
+            // Управление стреляющим механизмом (остается без изменений)
             boolean shoot = gamepad1.left_bumper;
 
             double desiredRpm;
@@ -198,7 +198,10 @@ public class LimelightTurret extends LinearOpMode {
 
             telemetry.addData("HasTag", hasTarget);
             telemetry.addData("tx", tx);
-            telemetry.addData("YawPower", yawPowerFiltered);
+            telemetry.addData("FilteredTx", filteredTx);
+            telemetry.addData("YawPower", yawPower);
+            telemetry.addData("YawPID Error", hasTarget ? filteredTx : 0);
+            telemetry.addData("PitchPos", servoPitch.getPosition());
             telemetry.addData("RPM", currentRpm);
             telemetry.update();
         }
@@ -230,6 +233,16 @@ public class LimelightTurret extends LinearOpMode {
             double out = prevOut + (raw - prevOut) * smooth;
             prevOut = out;
             return out;
+        }
+
+        public void resetIntegral() {
+            integral = 0;
+        }
+
+        public void setGains(double kp, double ki, double kd) {
+            this.kp = kp;
+            this.ki = ki;
+            this.kd = kd;
         }
     }
 }
