@@ -48,9 +48,9 @@ public class turet {
 
 
             double yDist = filtTy * 8.485;
-            if (yDist > 172.8) yDist = 345.6 - yDist;
+            if (yDist > 172.8) yDist = Math.max(345.6 - yDist,0);
 
-            double angle = yDist / 3.84;
+            double angle = 50-yDist *0.089;
             angle = clamp(angle, -10, 60);
 
             double sinA = Math.sin(Math.toRadians(angle));
