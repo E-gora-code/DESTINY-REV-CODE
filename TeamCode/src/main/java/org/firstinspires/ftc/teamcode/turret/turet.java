@@ -51,7 +51,7 @@ public class turet {
             if (yDist > 172.8) yDist = Math.max(345.6 - yDist,0);
 
             double angle = 50-yDist *0.089;
-            angle = clamp(angle, -10, 60);
+            angle = clamp(angle, 30, 50);
 
             double sinA = Math.sin(Math.toRadians(angle));
             double cosA = Math.cos(Math.toRadians(angle));
