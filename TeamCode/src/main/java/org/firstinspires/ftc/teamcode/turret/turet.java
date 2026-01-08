@@ -48,10 +48,10 @@ public class turet {
 
 
             double yDist = filtTy * 8.485;
-            if (yDist > 172.8) yDist = Math.max(345.6 - yDist,0);
 
-            double angle = 50-yDist *0.089;
-            angle = clamp(angle, 30, 50);
+
+            double angle = 80-yDist *0.069;
+            angle = clamp(angle, 55, 80);
 
             double sinA = Math.sin(Math.toRadians(angle));
             double cosA = Math.cos(Math.toRadians(angle));
@@ -67,15 +67,16 @@ public class turet {
             pitchPos = clamp(pitchPos, 0.0, 1.0);
             pitch.setPosition(pitchPos);
 
+            if (shoot) {
+                double currRpm = shooterL.getVelocity() * 60.0 / 560;
+                double shooterOut = pid(targetRpm, currRpm, 0.0022, 0, 0.00045, 0.02, -1, 1, 0.5, 4000);
+                double power = (1.0/300) * targetRpm + shooterOut;
+                power = clamp(power, 0.0, 1.0);
+                if (targetRpm <= 0) power = 0;
 
-            double currRpm = shooterL.getVelocity() * 60.0 / 560;
-            double shooterOut = pid(targetRpm, currRpm, 0.0022, 0, 0.00045, 0.02, -1, 1, 0.5, 4000);
-            double power = (1.0/300) * targetRpm + shooterOut;
-            power = clamp(power, 0.0, 1.0);
-            if (targetRpm <= 0) power = 0;
-
-            shooterL.setPower(power);
-            shooterR.setPower(power);
+                shooterL.setPower(power);
+                shooterR.setPower(power);
+            }
         }
     }
 

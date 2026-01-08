@@ -160,7 +160,7 @@ public class LimelightTurret extends LinearOpMode {
             servoPitch.setPosition(newPos);
 
             // Управление стреляющим механизмом (остается без изменений)
-            boolean shoot = gamepad1.left_bumper;
+            boolean shoot = gamepad1.right_bumper;
 
             double desiredRpm;
             if (shoot && hasTarget && !Double.isNaN(distanceM)) {
