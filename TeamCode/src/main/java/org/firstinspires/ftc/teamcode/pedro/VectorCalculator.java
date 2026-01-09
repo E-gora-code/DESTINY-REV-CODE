@@ -10,8 +10,11 @@ import com.pedropathing.math.MathFunctions;
 import com.pedropathing.math.Vector;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
+import com.google.common.hash.Hashing;
+import java.util.LinkedHashMap;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /** This is the VectorCalculator.
  * It is in charge of taking the errors produced by the ErrorCalculator and determining and returning drive + corrective vectors
@@ -19,6 +22,14 @@ import java.util.ArrayList;
  * @author Baron Henderson - 20077 The Indubitables
  */
 public class VectorCalculator {
+    private final LinkedHashMap<Long, Vector[]> teleopCache =
+            new LinkedHashMap<Long, Vector[]>(32, 0.75f, true) {
+                protected boolean removeEldestEntry(Map.Entry<Long, Vector[]> eldest) {
+                    return size() > 20;
+                }
+            };
+
+    private long lastTeleopHash = 0;
     private FollowerConstants constants;
 
     private Path currentPath;
@@ -60,6 +71,7 @@ public class VectorCalculator {
     private FilteredPIDFController secondaryDrivePIDF, drivePIDF;
 
     public VectorCalculator(FollowerConstants constants) {
+        teleopDriveValues = new double[3];
         this.constants = constants;
         drivePIDF = new FilteredPIDFController(constants.coefficientsDrivePIDF);
         secondaryDrivePIDF = new FilteredPIDFController(constants.coefficientsSecondaryDrivePIDF);
@@ -318,21 +330,43 @@ public class VectorCalculator {
      * @param robotCentric sets if the movement will be field or robot centric
      * @param headingOffset sets an offset for the heading based either robot centric or field centric movement
      */
-    public void setTeleOpMovementVectors(double forwardDrive, double lateralDrive, double heading, boolean robotCentric, double headingOffset) {
-        teleopDriveValues[0] = MathFunctions.clamp(forwardDrive, -1, 1);
-        teleopDriveValues[1] = MathFunctions.clamp(lateralDrive, -1, 1);
-        teleopDriveValues[2] = MathFunctions.clamp(heading, -1, 1);
-        teleopDriveVector.setOrthogonalComponents(teleopDriveValues[0], teleopDriveValues[1]);
-        teleopDriveVector.setMagnitude(MathFunctions.clamp(teleopDriveVector.getMagnitude(), 0, 1));
+     public void setTeleOpMovementVectors(double forwardDrive, double lateralDrive, double heading, boolean robotCentric, double headingOffset) {
 
-        if (robotCentric) {
-            teleopDriveVector.rotateVector(currentPose.getHeading());
-        }
+         long hash = Hashing.murmur3_128().newHasher()
+                 .putDouble(Math.round(forwardDrive * 20) / 20.0)
+                 .putDouble(Math.round(lateralDrive * 20) / 20.0)
+                 .putDouble(Math.round(heading * 20) / 20.0)
+                 .putBoolean(robotCentric)
+                 .putDouble(Math.round(headingOffset * 100) / 100.0)
+                 .putDouble(Math.round(currentPose.getHeading() * 100) / 100.0)
+                 .hash().asLong();
 
-        teleopDriveVector.rotateVector(headingOffset);
+         if (hash == lastTeleopHash && teleopCache.containsKey(hash)) {
+            Vector[] cached = teleopCache.get(hash);
+            teleopDriveVector = cached[0];
+            teleopHeadingVector = cached[1];
+            return;
+         }
 
-        teleopHeadingVector.setComponents(teleopDriveValues[2], currentPose.getHeading());
-    }
+         teleopDriveValues[0] = MathFunctions.clamp(forwardDrive, -1, 1);
+         teleopDriveValues[1] = MathFunctions.clamp(lateralDrive, -1, 1);
+         teleopDriveValues[2] = MathFunctions.clamp(heading, -1, 1);
+
+         teleopDriveVector.setOrthogonalComponents(teleopDriveValues[0], teleopDriveValues[1]);
+         teleopDriveVector.setMagnitude(MathFunctions.clamp(teleopDriveVector.getMagnitude(), 0, 1));
+
+         if (robotCentric) teleopDriveVector.rotateVector(currentPose.getHeading());
+         teleopDriveVector.rotateVector(headingOffset);
+         teleopHeadingVector.setComponents(teleopDriveValues[2], currentPose.getHeading());
+
+         teleopCache.put(hash, new Vector[]{
+                 teleopDriveVector.copy(),
+                 teleopHeadingVector.copy()
+         });
+
+         lastTeleopHash = hash;
+     }
+
 
     /**
      * This sets the teleop drive vectors. This defaults to robot centric.
