@@ -5,6 +5,7 @@ import com.qualcomm.hardware.limelightvision.*;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -75,9 +76,10 @@ public class LimelightTurret extends LinearOpMode {
         shooterRight.setDirection(DcMotorEx.Direction.REVERSE);
         shooterLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         shooterRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-
-        shooterLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        shooterRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        shooterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shooterRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shooterLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        shooterRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         servoPitch.setPosition(CENTER_PITCH);
 
@@ -194,7 +196,26 @@ public class LimelightTurret extends LinearOpMode {
             if (shooterTargetRpm <= 0) power = 0;
 
             shooterLeft.setPower(power);
-            shooterRight.setPower(power);
+            double vel2 = shooterRight.getVelocity();
+            double currentRpm2 = vel2 * 60.0 / TICKS_PER_REV;
+
+            double err2 = shooterTargetRpm - currentRpm;
+            shooterIntegral += err2 * dt;
+            shooterIntegral = clamp(shooterIntegral, -4000, 4000);
+            double der2 = (err2 - shooterPrevError) / Math.max(dt, 1e-6);
+            shooterPrevError = err;
+
+            double power2 = shooterKf * shooterTargetRpm
+                    + shooterKp * err
+                    + shooterKi * shooterIntegral
+                    + shooterKd * der;
+
+            power2 = clamp(power2, 0.0, 1.0);
+            if (shooterTargetRpm <= 0) power2 = 0;
+
+
+
+            shooterRight.setPower(power2);
 
             telemetry.addData("HasTag", hasTarget);
             telemetry.addData("tx", tx);

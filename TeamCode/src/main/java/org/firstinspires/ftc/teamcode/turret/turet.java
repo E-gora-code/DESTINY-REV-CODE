@@ -3,20 +3,28 @@ package org.firstinspires.ftc.teamcode.turret;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 public class turet {
     private Limelight3A limelight;
     private CRServo yaw;
     private Servo pitch;
+    private  VoltageSensor voltageSensor;
+
+    public  double nominalVoltage = 12.0;
+    public  double staticFrictionCoefficient = 0.1;
     private DcMotorEx shooterL, shooterR;
 
     private double filtTx = 0, filtTy = 0;
     private double targetRpm = 0;
+    private double voltage;
 
     public turet(HardwareMap hw) {
+        voltageSensor = hw.voltageSensor.iterator().next();
         limelight = hw.get(Limelight3A.class, "limelight");
         yaw = hw.get(CRServo.class, "servoX");
         pitch = hw.get(Servo.class, "servoY");
@@ -24,10 +32,13 @@ public class turet {
         shooterR = hw.get(DcMotorEx.class, "shooterRight");
 
         shooterR.setDirection(DcMotorEx.Direction.REVERSE);
+        shooterR.setDirection(DcMotorEx.Direction.REVERSE);
         shooterL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         shooterR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        shooterL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        shooterR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        shooterL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shooterR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shooterL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        shooterR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void reset() {
@@ -67,15 +78,18 @@ public class turet {
             pitchPos = clamp(pitchPos, 0.0, 1.0);
             pitch.setPosition(pitchPos);
 
+
             if (shoot) {
                 double currRpm = shooterL.getVelocity() * 60.0 / 560;
                 double shooterOut = pid(targetRpm, currRpm, 0.0022, 0, 0.00045, 0.02, -1, 1, 0.5, 4000);
                 double power = (1.0/300) * targetRpm + shooterOut;
                 power = clamp(power, 0.0, 1.0);
                 if (targetRpm <= 0) power = 0;
+                voltage = voltageSensor.getVoltage();
 
-                shooterL.setPower(power);
-                shooterR.setPower(power);
+
+                shooterL.setPower(power*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
+                shooterR.setPower(power*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
             }
         }
     }
