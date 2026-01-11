@@ -2,22 +2,9 @@ package org.firstinspires.ftc.teamcode.teamcode.control;
 
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.teamcode.PID_setting;
 
 import org.firstinspires.ftc.teamcode.teamcode.generic_classes.OpModeFramework;
 
@@ -65,7 +52,7 @@ public class Manual extends OpModeFramework {
 //             varing
             extr_pos = FL.getCurrentPosition();
             extl_pos = FR.getCurrentPosition();
-            telemetry.addData("spindexer", spindexer.getCurrentPosition());
+            telemetry.addData("spindexer", spindexer.getEncoderPosition());
             telemetry.addData("alt", independent_drive);
             telemetry.addData("PS5", gamepad1.touchpad_finger_1);
             telemetry.addData("PSx", gamepad1.touchpad_finger_1_x);

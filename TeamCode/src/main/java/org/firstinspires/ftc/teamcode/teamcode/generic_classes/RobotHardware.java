@@ -67,7 +67,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-import java.security.PublicKey;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -543,8 +542,11 @@ public class RobotHardware{
                 attached_servo.position = reversePosCheck(pos);
                 attached_servo.is_powered = true;
             }
-            public double getCurrentPosition(){
+            public double getSentPosition(){
                 return reversePosCheck(attached_servo.position);
+            }
+            public double getEncoderPosition(){
+                return reversePosCheck(attached_servo.encoderPosition);
             }
             public void setPower(double power){
                 attached_servo.position = reversePosCheck((power/2)+0.5);
