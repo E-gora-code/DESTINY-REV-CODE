@@ -54,6 +54,7 @@ IMPORTANT: THE SYSTEM IS "kinda" EXPERIMENTAL, so don`t implement it in main fil
 
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -389,6 +390,19 @@ public class RobotHardware{
             }
         }
         public void update_encoders(){
+            if(!is_components_inited){
+                return;
+            }
+            for (Map.Entry<String, InternalServo> servo_entry : servos.entrySet()) {
+                InternalServo servo_component = servo_entry.getValue();
+                if (servo_component.AttachedEncoder != null) {
+                    servo_component.encoderVoltage = servo_component.AttachedEncoder.getVoltage();
+                    if (servo_component.encoderLastVoltage > 3.0 && servo_component.encoderVoltage < 0.3) servo_component.encoderRevolutionCount++;
+                    if (servo_component.encoderLastVoltage < 0.3 && servo_component.encoderVoltage > 3.0) servo_component.encoderRevolutionCount--;
+                    servo_component.encoderLastVoltage = servo_component.encoderVoltage;
+                    servo_component.encoderPosition = servo_component.encoderRevolutionCount + (servo_component.encoderVoltage / 3.3);
+                }
+            }
         }
         public void class_tick(){
             update_encoders();
@@ -403,6 +417,16 @@ public class RobotHardware{
                 output = hardware.servo.get(name);
             }catch (Exception ex){
                 errorHandler.accept(ex,12);
+                output = null;
+            }
+            return output;
+        }
+        private AnalogInput getEncoderFunction(String name){
+            AnalogInput output;
+            try {
+                output = hardware.get(AnalogInput.class, name);
+            }catch (Exception ex){
+                errorHandler.accept(ex,15);
                 output = null;
             }
             return output;
@@ -438,6 +462,11 @@ public class RobotHardware{
             public boolean is_continuous = false;
             public boolean is_reverse = false;
             public final Servo AttachedComponent;
+            public AnalogInput AttachedEncoder;
+            public int encoderRevolutionCount = 0;
+            public double encoderPosition = 0;
+            public double encoderVoltage = 0;
+            public double encoderLastVoltage = 0;
             public InternalServo(String attachedComponentName){
                 this.AttachedComponent = getServoFunction(attachedComponentName);
             }
@@ -449,6 +478,12 @@ public class RobotHardware{
                 this.AttachedComponent = getServoFunction(attachedComponentName);
                 this.is_continuous = is_continuous;
                 this.is_reverse = is_reverse;
+            }
+            public InternalServo(String attachedComponentName,boolean is_continuous, boolean is_reverse, String attachedEncoderName){
+                this.AttachedComponent = getServoFunction(attachedComponentName);
+                this.is_continuous = is_continuous;
+                this.is_reverse = is_reverse;
+                this.AttachedEncoder = getEncoderFunction(attachedEncoderName);
             }
         }
 
