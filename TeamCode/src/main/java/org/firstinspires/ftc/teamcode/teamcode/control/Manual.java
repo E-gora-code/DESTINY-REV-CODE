@@ -31,7 +31,7 @@ public class Manual extends OpModeFramework {
 
     boolean independent_drive = false;
     boolean independent_drive_press = false;
-    Servo s1;
+//    Servo s1;
 
     Telemetry dash = FtcDashboard.getInstance().getTelemetry();
 
@@ -39,7 +39,7 @@ public class Manual extends OpModeFramework {
     public void runOpMode() throws InterruptedException {
         selfInit();
         initAllSystems();
-          s1 = hardwareMap.servo.get("s1");
+//          s1 = hardwareMap.servo.get("s1");
 ////        s2 = hardwareMap.servo.get("servo3");
 //
 //
@@ -90,12 +90,12 @@ public class Manual extends OpModeFramework {
             dash.addData("x", BR.getCurrentPosition());
             dash.addData("y", BL.getCurrentPosition());
             dash.update();
-            if(gamepad1.dpad_right){
-                s1.setPosition(0.53);
-            }
-            else{
-                s1.setPosition(0.1);
-            }
+//            if(gamepad1.dpad_right){
+//                s1.setPosition(0.53);
+//            }
+//            else{
+//                s1.setPosition(0.1);
+//            }
 
 
 //            if (gamepad2.right_trigger > 0) {
