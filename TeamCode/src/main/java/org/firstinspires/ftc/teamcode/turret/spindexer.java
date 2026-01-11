@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.turret.config;
 
 public class spindexer {
     private Servo Front_ejector,Back_ejector,Back_wall,Front_wall;
-    public CRServo spindexer;
+    public Servo spindexer;
     private AnalogInput spindexerPos;
     private DcMotorEx Rignt_intake,Left_intake;
     private double lastVoltage = 0;
@@ -24,7 +24,7 @@ public class spindexer {
 //        Back_ejector = hw.get(Servo.class, "BE");
 //        Back_wall = hw.get(Servo.class, "BW");
 //        Front_wall = hw.get(Servo.class, "FW");
-        spindexer = hw.get(CRServo.class, "SP");
+        spindexer = hw.get(Servo.class, "SP");
         spindexerPos = hw.get(AnalogInput.class, "SP_POS");
 //        Left_intake = hw.get(DcMotorEx.class, "LI");
 //        Rignt_intake = hw.get(DcMotorEx.class, "RI");

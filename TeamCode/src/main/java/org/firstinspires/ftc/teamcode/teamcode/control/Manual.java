@@ -53,6 +53,7 @@ public class Manual extends OpModeFramework {
             extr_pos = FL.getCurrentPosition();
             extl_pos = FR.getCurrentPosition();
             telemetry.addData("spindexer", spindexer.getEncoderPosition());
+            telemetry.addData("spindexer_tst", spindexer.getSentPosition());
             telemetry.addData("alt", independent_drive);
             telemetry.addData("PS5", gamepad1.touchpad_finger_1);
             telemetry.addData("PSx", gamepad1.touchpad_finger_1_x);
@@ -92,7 +93,7 @@ public class Manual extends OpModeFramework {
 //                sbros.setPosition(gamepad1.right_trigger + 0);
 //            }
 
-//
+            spindexer.setPosition(gamepad1.left_trigger);
             if (gamepad1.left_bumper || gamepad2.left_bumper) {
                 gamepad1.rumble(3000);
                 gamepad2.rumble(3000);
