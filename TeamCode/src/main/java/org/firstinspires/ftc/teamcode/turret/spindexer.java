@@ -20,27 +20,25 @@ public class spindexer {
     private int revCount = 0;
 
     public spindexer(HardwareMap hw) {
-        Front_ejector = hw.get(Servo.class, "FE");
-        Back_ejector = hw.get(Servo.class, "BE");
-        Back_wall = hw.get(Servo.class, "BW");
-        Front_wall = hw.get(Servo.class, "FW");
+//        Front_ejector = hw.get(Servo.class, "FE");
+//        Back_ejector = hw.get(Servo.class, "BE");
+//        Back_wall = hw.get(Servo.class, "BW");
+//        Front_wall = hw.get(Servo.class, "FW");
         spindexer = hw.get(CRServo.class, "SP");
         spindexerPos = hw.get(AnalogInput.class, "SP_POS");
-        Left_intake = hw.get(DcMotorEx.class, "LI");
-        Rignt_intake = hw.get(DcMotorEx.class, "RI");
-        Left_intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        Rignt_intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        Left_intake.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        Rignt_intake.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        lastVoltage = spindexerPos.getVoltage();
+//        Left_intake = hw.get(DcMotorEx.class, "LI");
+//        Rignt_intake = hw.get(DcMotorEx.class, "RI");
+//        Left_intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+//        Rignt_intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+//        Left_intake.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+//        Rignt_intake.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+//        lastVoltage = spindexerPos.getVoltage();
     }
 
     public double getSpindexerPosition() {
         double v = spindexerPos.getVoltage();
-        if (lastVoltage > 3.0 && v < 0.3) revCount++;
-        if (lastVoltage < 0.3 && v > 3.0) revCount--;
-        lastVoltage = v;
-        return revCount + (v / 3.3);
+
+        return (spindexerPos.getVoltage()-0.172)*121.539;
     }
 
     public void update(boolean shoot,boolean ready) {

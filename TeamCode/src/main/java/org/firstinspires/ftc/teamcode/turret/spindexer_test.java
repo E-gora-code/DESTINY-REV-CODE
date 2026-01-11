@@ -40,15 +40,15 @@ public class spindexer_test extends LinearOpMode {
             spindexerModule.spindexer.setPower(spindexerPower);
 
 
-            spindexerModule.update(shooting, ready);
+//            spindexerModule.update(shooting, ready);
 
 
             telemetry.addData("Shooting", shooting ? "YES" : "NO");
             telemetry.addData("Ready", ready ? "YES" : "NO");
             telemetry.addData("Spindexer Power", "%.2f", spindexerPower);
-            telemetry.addData("Spindexer Position", "%.2f revs", spindexerModule.getSpindexerPosition());
-            telemetry.addData("Position Degrees", "%.1f°",
-                    (spindexerModule.getSpindexerPosition() % 1) * 360);
+            telemetry.addData("Spindexer Position",  spindexerModule.getSpindexerPosition());
+            telemetry.addData("Position Degrees",
+                    (spindexerModule.getSpindexerPosition()) * 360);
             telemetry.update();
 
         }
