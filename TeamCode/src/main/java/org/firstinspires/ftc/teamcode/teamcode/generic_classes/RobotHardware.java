@@ -292,6 +292,7 @@ public class RobotHardware{
         public class NameKeys {
             // Class for easy renaming purposes
             public class servoNameKeys {
+                public final static String spindexer = "spindexer";
                 public final static String apple_drop_module = "apple drop module";
                 public final static String hidden_claw_module = "hidden claw";
 
@@ -319,7 +320,11 @@ public class RobotHardware{
 
         public Motors(){
             // Add motors HERE
-            servos.put(NameKeys.servoNameKeys.apple_drop_module,new InternalServo("sbros"));
+            servos.put(NameKeys.servoNameKeys.spindexer,new InternalServo("SP", "SP_POS"));
+
+
+
+            //Old preserved because there is a lot of use in programs
             servos.put(NameKeys.servoNameKeys.hidden_claw_module,new InternalServo("sbkr"));
             servos.put(NameKeys.servoNameKeys.container_grab_module.leftServo,new InternalServo("grabl"));
             servos.put(NameKeys.servoNameKeys.container_grab_module.rightServo,new InternalServo("grabr"));
@@ -479,10 +484,14 @@ public class RobotHardware{
                 this.is_continuous = is_continuous;
                 this.is_reverse = is_reverse;
             }
-            public InternalServo(String attachedComponentName,boolean is_continuous, boolean is_reverse, String attachedEncoderName){
+            public InternalServo(String attachedComponentName,String attachedEncoderName ,boolean is_continuous, boolean is_reverse){
                 this.AttachedComponent = getServoFunction(attachedComponentName);
                 this.is_continuous = is_continuous;
                 this.is_reverse = is_reverse;
+                this.AttachedEncoder = getEncoderFunction(attachedEncoderName);
+            }
+            public InternalServo(String attachedComponentName,String attachedEncoderName){
+                this.AttachedComponent = getServoFunction(attachedComponentName);
                 this.AttachedEncoder = getEncoderFunction(attachedEncoderName);
             }
         }
