@@ -401,10 +401,10 @@ public class RobotHardware{
                 InternalServo servo_component = servo_entry.getValue();
                 if (servo_component.AttachedEncoder != null) {
                     servo_component.encoderVoltage = servo_component.AttachedEncoder.getVoltage();
-                    if (servo_component.encoderLastVoltage > 3.0 && servo_component.encoderVoltage < 0.3) servo_component.encoderRevolutionCount++;
-                    if (servo_component.encoderLastVoltage < 0.3 && servo_component.encoderVoltage > 3.0) servo_component.encoderRevolutionCount--;
-                    servo_component.encoderLastVoltage = servo_component.encoderVoltage;
-                    servo_component.encoderPosition = servo_component.encoderRevolutionCount + (servo_component.encoderVoltage / 3.3);
+//                    if (servo_component.encoderLastVoltage > 3.0 && servo_component.encoderVoltage < 0.3) servo_component.encoderRevolutionCount++;
+//                    if (servo_component.encoderLastVoltage < 0.3 && servo_component.encoderVoltage > 3.0) servo_component.encoderRevolutionCount--;
+//                    servo_component.encoderLastVoltage = servo_component.encoderVoltage;
+                    servo_component.encoderPosition = (servo_component.encoderVoltage-0.172)*121.539;
                 }
             }
         }
