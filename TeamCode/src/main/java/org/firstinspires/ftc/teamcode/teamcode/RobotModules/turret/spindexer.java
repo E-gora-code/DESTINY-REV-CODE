@@ -1,15 +1,9 @@
-package org.firstinspires.ftc.teamcode.turret;
+package org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret;
 
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import org.firstinspires.ftc.teamcode.turret.config;
 
 public class spindexer {
     private Servo Front_ejector,Back_ejector,Back_wall,Front_wall;
