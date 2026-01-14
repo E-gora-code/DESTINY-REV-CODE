@@ -37,7 +37,7 @@ public class spindexer_test extends LinearOpMode {
 
             spindexerPower = gamepad1.right_trigger;
 
-            spindexerModule.spindexer.setPower(spindexerPower);
+            spindexerModule.spindexer.setPosition(spindexerPower);
 
 
 //            spindexerModule.update(shooting, ready);

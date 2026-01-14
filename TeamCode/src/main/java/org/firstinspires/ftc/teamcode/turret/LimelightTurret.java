@@ -13,6 +13,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import com.acmerobotics.dashboard.config.Config;
 
 @TeleOp
 public class LimelightTurret extends LinearOpMode {
@@ -50,6 +51,7 @@ public class LimelightTurret extends LinearOpMode {
     private double shooterPrevError = 0.0;
     private double shooterTargetRpm = 0.0;
 
+
     private final double GRAVITY = 9.81;
     private final double CAMERA_HEIGHT_M = 0.25;
     private final double TARGET_HEIGHT_M = 0.40;
@@ -76,10 +78,9 @@ public class LimelightTurret extends LinearOpMode {
         shooterRight.setDirection(DcMotorEx.Direction.REVERSE);
         shooterLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         shooterRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        shooterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        shooterRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        shooterRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+
 
         servoPitch.setPosition(CENTER_PITCH);
 
@@ -161,26 +162,25 @@ public class LimelightTurret extends LinearOpMode {
             newPos = clamp(newPos, 0.0, 1.0);
             servoPitch.setPosition(newPos);
 
-            // Управление стреляющим механизмом (остается без изменений)
-            boolean shoot = gamepad1.right_bumper;
+
+            boolean shoot = (gamepad1.a);
 
             double desiredRpm;
             if (shoot && hasTarget && !Double.isNaN(distanceM)) {
                 desiredRpm = 260 + distanceM * 180;
             } else if (shoot) {
-                desiredRpm = 220;
+                desiredRpm = config.shootersp;
             } else {
                 desiredRpm = 0;
             }
 
             if (desiredRpm > SHOOT_TARGET_RPM) desiredRpm = SHOOT_TARGET_RPM;
+            shooterTargetRpm = desiredRpm;
 
-            double alpha = Math.min(1.0, dt / RAMP_TIME);
-            shooterTargetRpm += (desiredRpm - shooterTargetRpm) * alpha;
 
             double vel = shooterLeft.getVelocity();
-            double currentRpm = vel * 60.0 / TICKS_PER_REV;
 
+            double currentRpm = vel * 60.0 / TICKS_PER_REV;
             double err = shooterTargetRpm - currentRpm;
             shooterIntegral += err * dt;
             shooterIntegral = clamp(shooterIntegral, -4000, 4000);
@@ -188,12 +188,14 @@ public class LimelightTurret extends LinearOpMode {
             shooterPrevError = err;
 
             double power = shooterKf * shooterTargetRpm
-                    + shooterKp * err
-                    + shooterKi * shooterIntegral
-                    + shooterKd * der;
+                    + config.shooterKp * err
+                    + config.shooterKi * shooterIntegral
+                    + config.shooterKd * der;
 
-            power = clamp(power, 0.0, 1.0);
+
             if (shooterTargetRpm <= 0) power = 0;
+            power = clamp(power,0,1);
+
 
             shooterLeft.setPower(power);
             shooterRight.setPower(power);
@@ -205,6 +207,11 @@ public class LimelightTurret extends LinearOpMode {
             telemetry.addData("YawPID Error", hasTarget ? filteredTx : 0);
             telemetry.addData("PitchPos", servoPitch.getPosition());
             telemetry.addData("RPM", currentRpm);
+            telemetry.addData("cno", power);
+            dash.addData("cno", power);
+            dash.addData("RPM", currentRpm);
+            dash.addData("0",shooterTargetRpm);
+            dash.update();
             telemetry.update();
         }
 
