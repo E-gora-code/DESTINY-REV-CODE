@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import org.firstinspires.ftc.teamcode.teamcode.generic_classes.OpModeFramework;
+import org.firstinspires.ftc.teamcode.generic_classes.OpModeFramework;
 
 @TeleOp
 public class Manual extends OpModeFramework {

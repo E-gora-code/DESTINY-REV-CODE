@@ -5,34 +5,23 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 
+import org.firstinspires.ftc.teamcode.generic_classes.RobotHardware;
+
 public class spindexer {
-    private Servo Front_ejector,Back_ejector,Back_wall,Front_wall;
-    public Servo spindexer;
-    private AnalogInput spindexerPos;
-    private DcMotorEx Rignt_intake,Left_intake;
-    private double lastVoltage = 0;
-    private int revCount = 0;
+    private RobotHardware.Motors.BasicServo Front_ejector,Back_ejector,Back_wall,Front_wall;
+    public RobotHardware.Motors.BasicServo spindexer;
+    private RobotHardware.Motors.DCMotor Rignt_intake,Left_intake;
 
-    public spindexer(HardwareMap hw) {
-//        Front_ejector = hw.get(Servo.class, "FE");
-//        Back_ejector = hw.get(Servo.class, "BE");
-//        Back_wall = hw.get(Servo.class, "BW");
-//        Front_wall = hw.get(Servo.class, "FW");
-        spindexer = hw.get(Servo.class, "SP");
-        spindexerPos = hw.get(AnalogInput.class, "SP_POS");
-//        Left_intake = hw.get(DcMotorEx.class, "LI");
-//        Rignt_intake = hw.get(DcMotorEx.class, "RI");
-//        Left_intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-//        Rignt_intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-//        Left_intake.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-//        Rignt_intake.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-//        lastVoltage = spindexerPos.getVoltage();
+    public spindexer(DataPackageInitSpindexer pack) {
+        this.spindexer = pack.spindexer;
+        this.Front_ejector = pack.Front_ejector;
+        this.Back_ejector = pack.Back_ejector;
+        this.Back_wall = pack.Back_wall;
+        this.Front_wall = pack.Front_wall;
+
     }
-
-    public double getSpindexerPosition() {
-        double v = spindexerPos.getVoltage();
-
-        return (spindexerPos.getVoltage()-0.172)*121.539;
+    public double getSpindexerPosition(){
+        return  spindexer.getCurrentPosition();
     }
 
     public void update(boolean shoot,boolean ready) {
