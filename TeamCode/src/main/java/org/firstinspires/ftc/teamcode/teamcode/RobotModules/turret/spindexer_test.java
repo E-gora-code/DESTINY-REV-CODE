@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "Spindexer Test", group = "Test")
-public class spindexer_test extends LinearOpMode {
+import org.firstinspires.ftc.teamcode.generic_classes.OpModeFramework;
 
+@TeleOp(name = "Spindexer Test", group = "Test")
+public class spindexer_test extends OpModeFramework {
+    private DataPackageInitSpindexer InitPackage;
     private spindexer spindexerModule;
     private boolean lastA = false;
     private boolean lastB = false;
@@ -14,7 +15,9 @@ public class spindexer_test extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        spindexerModule = new spindexer(hardwareMap);
+        InitPackage = new DataPackageInitSpindexer(hardwareMap);
+        InitPackage.spindexer = spindexer;
+        spindexerModule = new spindexer(InitPackage);
         telemetry.addData("Position", "%.2f revs", spindexerModule.getSpindexerPosition());
         telemetry.update();
 
