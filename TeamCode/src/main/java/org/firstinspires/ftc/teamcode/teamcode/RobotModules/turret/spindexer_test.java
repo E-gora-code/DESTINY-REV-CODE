@@ -17,6 +17,10 @@ public class spindexer_test extends OpModeFramework {
     public void runOpMode() {
         InitPackage = new DataPackageInitSpindexer(hardwareMap);
         InitPackage.spindexer = spindexer;
+        InitPackage.Front_wall = front_wall;
+        InitPackage.Back_wall = back_wall;
+        InitPackage.Front_ejector = front_ejector;
+        InitPackage.Back_ejector = back_ejector;
         spindexerModule = new spindexer(InitPackage);
         telemetry.addData("Position", "%.2f revs", spindexerModule.getSpindexerPosition());
         telemetry.update();
