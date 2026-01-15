@@ -21,7 +21,7 @@ public class spindexer {
 
     }
     public double getSpindexerPosition(){
-        return  spindexer.getCurrentPosition();
+        return  spindexer.getEncoderPosition();
     }
 
     public void update(boolean shoot,boolean ready) {
