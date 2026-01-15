@@ -43,7 +43,7 @@ public class spindexer_test extends OpModeFramework {
 
             spindexerPower = gamepad1.right_trigger;
 
-            spindexerModule.spindexer.setPosition(spindexerPower);
+            spindexerModule.spindexer.setPower(spindexerPower);
 
 
 //            spindexerModule.update(shooting, ready);
