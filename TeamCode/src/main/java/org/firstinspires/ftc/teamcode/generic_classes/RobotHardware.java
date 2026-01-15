@@ -299,26 +299,11 @@ public class RobotHardware{
                 public final static String back_ejector = "back_ejector";
                 public final static String front_wall = "front_wall";
                 public final static String back_wall = "back_wall";
-                public final static String apple_drop_module = "apple drop module";
-                public final static String hidden_claw_module = "hidden claw";
 
-                public final static String factory_lift = "factory_lift";
-                public class fork_module {
-                    public final static String fork_right = "fork_right";
-                    public final static String fork_left = "fork_left";
-                }
-
-                public class container_grab_module {
-                    public final static String rightServo = "container_grab_R";
-                    public final static String leftServo = "container_grab_L";
-                }
             }
             public class SparkMiniNameKeys{
             }
             public class motorDCNameKeys {
-                public final static String extention_right = "extention_R";
-                public final static String extention_left = "extention_L";
-                public final static String factory_extention = "factory_extention";
             }
         }
 
@@ -335,18 +320,18 @@ public class RobotHardware{
 
 
             //Old preserved because there is a lot of use in programs
-            servos.put(NameKeys.servoNameKeys.hidden_claw_module,new InternalServo("sbkr"));
-            servos.put(NameKeys.servoNameKeys.container_grab_module.leftServo,new InternalServo("grabl"));
-            servos.put(NameKeys.servoNameKeys.container_grab_module.rightServo,new InternalServo("grabr"));
-
-            servos.put(NameKeys.servoNameKeys.fork_module.fork_right,new InternalServo("vilar"));
-            servos.put(NameKeys.servoNameKeys.fork_module.fork_left,new InternalServo("vilal"));
-
-            servos.put(NameKeys.servoNameKeys.factory_lift,new InternalServo("reika",true, true));
-
-            motorsDC.put(NameKeys.motorDCNameKeys.extention_right,new InternalMotorDC("extr"));
-            motorsDC.put(NameKeys.motorDCNameKeys.extention_left,new InternalMotorDC("extl",-1));
-            motorsDC.put(NameKeys.motorDCNameKeys.factory_extention,new InternalMotorDC("zavoz",-1));
+//            servos.put(NameKeys.servoNameKeys.hidden_claw_module,new InternalServo("sbkr"));
+//            servos.put(NameKeys.servoNameKeys.container_grab_module.leftServo,new InternalServo("grabl"));
+//            servos.put(NameKeys.servoNameKeys.container_grab_module.rightServo,new InternalServo("grabr"));
+//
+//            servos.put(NameKeys.servoNameKeys.fork_module.fork_right,new InternalServo("vilar"));
+//            servos.put(NameKeys.servoNameKeys.fork_module.fork_left,new InternalServo("vilal"));
+//
+//            servos.put(NameKeys.servoNameKeys.factory_lift,new InternalServo("reika",true, true));
+//
+//            motorsDC.put(NameKeys.motorDCNameKeys.extention_right,new InternalMotorDC("extr"));
+//            motorsDC.put(NameKeys.motorDCNameKeys.extention_left,new InternalMotorDC("extl",-1));
+//            motorsDC.put(NameKeys.motorDCNameKeys.factory_extention,new InternalMotorDC("zavoz",-1));
         }
         public List<String> getServoConfigNames(){
             List<String> output = new ArrayList<>();
