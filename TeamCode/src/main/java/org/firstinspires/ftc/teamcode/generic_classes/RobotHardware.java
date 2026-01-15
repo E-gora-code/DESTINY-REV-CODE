@@ -352,7 +352,10 @@ public class RobotHardware{
             List<String> output = new ArrayList<>();
             for (Map.Entry<String, InternalServo> servo_entry : servos.entrySet()) {
                 InternalServo servo_component = servo_entry.getValue();
-                output.add("Servo: "+servo_entry.getKey()+" --> "+servo_component.AttachedComponent.getDeviceName());
+                output.add("Servo: "+servo_entry.getKey()+" --> "+servo_component.AttachedComponentName);
+                if(servo_component.AttachedEncoderName != null) {
+                    output.add("Analog encoder: " + servo_entry.getKey() + " --> " + servo_component.AttachedEncoderName);
+                }
             }
             return output;
         }
@@ -484,32 +487,41 @@ public class RobotHardware{
             public boolean is_continuous = false;
             public boolean is_reverse = false;
             public final Servo AttachedComponent;
+            public final String AttachedComponentName;
             public AnalogInput AttachedEncoder;
+            public String AttachedEncoderName = null;
             public int encoderRevolutionCount = 0;
             public double encoderPosition = 0;
             public double encoderVoltage = 0;
             public double encoderLastVoltage = 0;
             public InternalServo(String attachedComponentName){
                 this.AttachedComponent = getServoFunction(attachedComponentName);
+                this.AttachedComponentName = attachedComponentName;
             }
             public InternalServo(String attachedComponentName,boolean is_reverse){
                 this.AttachedComponent = getServoFunction(attachedComponentName);
+                this.AttachedComponentName = attachedComponentName;
                 this.is_reverse = is_reverse;
             }
             public InternalServo(String attachedComponentName,boolean is_continuous, boolean is_reverse){
                 this.AttachedComponent = getServoFunction(attachedComponentName);
+                this.AttachedComponentName = attachedComponentName;
                 this.is_continuous = is_continuous;
                 this.is_reverse = is_reverse;
             }
             public InternalServo(String attachedComponentName,String attachedEncoderName ,boolean is_continuous, boolean is_reverse){
                 this.AttachedComponent = getServoFunction(attachedComponentName);
+                this.AttachedComponentName = attachedComponentName;
                 this.is_continuous = is_continuous;
                 this.is_reverse = is_reverse;
                 this.AttachedEncoder = getEncoderFunction(attachedEncoderName);
+                this.AttachedEncoderName = attachedEncoderName;
             }
             public InternalServo(String attachedComponentName,String attachedEncoderName){
                 this.AttachedComponent = getServoFunction(attachedComponentName);
+                this.AttachedComponentName = attachedComponentName;
                 this.AttachedEncoder = getEncoderFunction(attachedEncoderName);
+                this.AttachedEncoderName = attachedEncoderName;
             }
         }
 
