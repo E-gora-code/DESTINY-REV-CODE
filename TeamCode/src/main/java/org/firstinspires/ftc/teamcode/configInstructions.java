@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import org.firstinspires.ftc.teamcode.generic_classes.OpModeFramework;
 import org.firstinspires.ftc.teamcode.generic_classes.RobotHardware;
 
 import java.util.List;
-
+@TeleOp
 public class configInstructions extends OpModeFramework {
 
     @Override
