@@ -14,19 +14,19 @@ public class spindexer {
     private int revCount = 0;
 
     public spindexer(HardwareMap hw) {
-//        Front_ejector = hw.get(Servo.class, "FE");
-//        Back_ejector = hw.get(Servo.class, "BE");
-//        Back_wall = hw.get(Servo.class, "BW");
-//        Front_wall = hw.get(Servo.class, "FW");
+        Front_ejector = hw.get(Servo.class, "FE");
+        Back_ejector = hw.get(Servo.class, "BE");
+        Back_wall = hw.get(Servo.class, "BW");
+        Front_wall = hw.get(Servo.class, "FW");
         spindexer = hw.get(Servo.class, "SP");
         spindexerPos = hw.get(AnalogInput.class, "SP_POS");
-//        Left_intake = hw.get(DcMotorEx.class, "LI");
-//        Rignt_intake = hw.get(DcMotorEx.class, "RI");
-//        Left_intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-//        Rignt_intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-//        Left_intake.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-//        Rignt_intake.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-//        lastVoltage = spindexerPos.getVoltage();
+        Left_intake = hw.get(DcMotorEx.class, "LI");
+        Rignt_intake = hw.get(DcMotorEx.class, "RI");
+        Left_intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        Rignt_intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        Left_intake.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        Rignt_intake.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        lastVoltage = spindexerPos.getVoltage();
     }
 
     public double getSpindexerPosition() {
@@ -39,18 +39,23 @@ public class spindexer {
         if (ready){
             Front_ejector.setPosition(config.Front_ejector_shoot_position);
             Back_ejector.setPosition(config.Back_ejector_shoot_position);
-        }
-        else{
-            Front_ejector.setPosition(config.Front_ejector_noshoot_position);
-            Back_ejector.setPosition(config.Back_ejector_noshoot_position);
-        }
-        if (shoot){
             Back_wall.setPosition(config.Back_wall_spin_position);
             Front_wall.setPosition(config.Front_wall_spin_position);
         }
         else{
+            Front_ejector.setPosition(config.Front_ejector_noshoot_position);
+            Back_ejector.setPosition(config.Back_ejector_noshoot_position);
             Back_wall.setPosition(config.Back_wall_nospin_position);
             Front_wall.setPosition(config.Front_wall_nospin_position);
+        }
+        if (shoot){
+            Front_ejector.setPosition(config.Front_ejector_shoot_position);
+            Back_ejector.setPosition(config.Back_ejector_noshoot_position);
+            Back_wall.setPosition(config.Back_wall_spin_position);
+            Front_wall.setPosition(config.Front_wall_spin_position);
+        }
+        else{
+
         }
     }
 }

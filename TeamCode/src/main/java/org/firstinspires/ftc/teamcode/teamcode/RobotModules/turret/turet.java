@@ -98,7 +98,7 @@ public class turet {
             double discriminant = Math.pow(velocity,4) - 9.8  * (9.8 * yDist* yDist + 2 * 38.5* Math.pow(velocity,2));
 
             double sqrtDisc = Math.sqrt(discriminant);
-            double tanTheta = (Math.pow(velocity,2) - sqrtDisc) / (9.8 * yDist);
+            double tanTheta = (Math.pow(velocity,2) + sqrtDisc) / (9.8 * yDist);
 
             double angle =Math.atan(tanTheta);
 
