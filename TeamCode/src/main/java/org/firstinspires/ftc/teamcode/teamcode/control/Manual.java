@@ -78,22 +78,17 @@ public class Manual extends OpModeFramework {
             dash.addData("x", BR.getCurrentPosition());
             dash.addData("y", BL.getCurrentPosition());
             dash.update();
-//            if(gamepad1.dpad_right){
-//                s1.setPosition(0.53);
-//            }
-//            else{
-//                s1.setPosition(0.1);
-//            }
 
 
-//            if (gamepad2.right_trigger > 0) {
-//                sbros.setPosition(gamepad2.right_trigger + 0);
-//            }
-//            if (gamepad1.right_bumper) {
-//                sbros.setPosition(gamepad1.right_trigger + 0);
-//            }
 
-            spindexer.setPosition(gamepad1.left_trigger);
+
+            spindexer.setPower(-gamepad2.left_trigger+gamepad2.right_trigger);
+            front_wall.setPosition(gamepad2.right_stick_y);
+            back_wall.setPosition(gamepad2.left_stick_y);
+            front_ejector.setPosition(gamepad2.right_stick_x);
+            back_ejector.setPosition(gamepad2.left_stick_x);
+
+
             if (gamepad1.left_bumper || gamepad2.left_bumper) {
                 gamepad1.rumble(3000);
                 gamepad2.rumble(3000);

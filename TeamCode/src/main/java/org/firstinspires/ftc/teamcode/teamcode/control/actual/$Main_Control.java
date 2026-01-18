@@ -27,8 +27,6 @@ public class $Main_Control extends OpModeFramework {
     GamepadBinds gamepadBinds = new GamepadBinds();
     Drive_system drive_system = new Drive_system();
     Telemetry_manage telemetry_manage = new Telemetry_manage();
-    Claw_controll claw_controll = new Claw_controll();
-    FactoryClass factory_class = new FactoryClass();
     PID_setting pid_setting = new PID_setting();
     // extention
     boolean simple_ext = true;
@@ -46,30 +44,10 @@ public class $Main_Control extends OpModeFramework {
 
         boolean drive_base_accel_move_bind = false;
         boolean drive_base_accel_turn_bind = false;
-    // Extention binds
-        double ext_pos_change_bind = 0;
-        boolean ext_up_button_bind = false;
-        boolean ext_down_button_bind = false;
 
-        boolean home_extention_bind = false;
-        boolean top_extention_pos_bind = false;
-        boolean preset_extention_pos_bind = false;
-        double extention_speed_mult_bind = 0;
-    //Claw binds
-        boolean claw_alt_key_bind = false;
-        boolean claw_toggle_bind = false;
-        double claw_pos_controll_bind = 0;
-    //Container grabber binds
-        boolean grab_toggle_bind = false;
-    //Sbros_binds
-        double sbros_bind = 0;
-        double sbros_with_alt_pos_bind = 0;
     //Silly binds
         boolean dual_rumble_bind = false;
 
-        double factory_bind = 0;
-        double first_vila_bind = 0;
-        double second_vila_bind = 0;
     //end
     // Reset
         ElapsedTime presed_reset_ang_timer = new ElapsedTime();
@@ -78,18 +56,8 @@ public class $Main_Control extends OpModeFramework {
 
 
 
-    double extr_zero = 0, extl_zero = 0;
-    double extr_max = 5681, extl_max = 4055;
-    double ext_range = 5000;
+
     double currentAngle = 0;
-    double exterR,exterL,extpowerR,extpowerL,extrlR,extrlL;
-    double extr_pos, extl_pos;
-    double extr_raw_pos, extl_raw_pos;
-
-    boolean simple_ext_homing_state = false;
-    boolean simple_ext_top_condition = false;
-
-
 
     double Multiply = 0;
 
@@ -102,15 +70,7 @@ public class $Main_Control extends OpModeFramework {
     boolean is_snap_turned_recent = false;
     double snap_180_mode = 0;
 
-    double turnDrift = 0;
-        double turnDrift_acel_seconds = 0.3;
-        double turnDrift_decel_seconds = 0.1;
-    double forwardDrift = 0;
-        double forwardDrift_acel_seconds = 0.3;
-        double forwardDrift_decel_seconds = 0.1;
-    double sideDrift = 0;
-        double sideDrift_acel_seconds = 0.3;
-        double sideDrift_decel_seconds = 0.1;
+
 
     double min_drive_power = 0.2;
     double driftRate = 30;
@@ -122,19 +82,12 @@ public class $Main_Control extends OpModeFramework {
     boolean ignore_axel = false;
     double turnErr = 0, turnErrL = 0;
     double deltaHed = 0, deltaHedL = 0;
-    double ext_pos_calk = 0;
     double gamepad_summ = 0;
     boolean presed_reset_ang = false;
-    boolean ext_press=false;
-    boolean is_homed_ever = false;
-    boolean is_grab_pressed = false;
-    boolean grab_toggle = false;
+
     boolean claw_toggle = false;
-    boolean claw_press = false;
     double claw_poz = 0;
-    double claw_grab_poz = 1;
-    double claw_open_poz = 0.52;
-    double claw_trigger_mult = 1;
+
 
 
     double sbros_pos_open = 0.6;
@@ -193,7 +146,6 @@ public class $Main_Control extends OpModeFramework {
         gamepadBinds.start();
         drive_system.start();
         telemetry_manage.start();
-        claw_controll.start();
 
 
 
@@ -209,11 +161,6 @@ public class $Main_Control extends OpModeFramework {
         simple_ext_top_shortcut_timer.reset();
         simple_ext_homing_timer.reset();
         while (opModeIsActive()) {
-            // varing
-            extr_pos =  -Normolaze_Enc(FL.getCurrentPosition(),extr_zero,extr_max,ext_range);
-            extl_pos =  Normolaze_Enc(FR.getCurrentPosition(),extl_zero,extl_max,ext_range);
-            extr_raw_pos = FL.getCurrentPosition();
-            extl_raw_pos = FR.getCurrentPosition();
 
             motors.class_tick();
 
@@ -221,256 +168,11 @@ public class $Main_Control extends OpModeFramework {
 
 
 
-
-
-//            if(gamepad2.back){ //disabled cuz usless not delete
-//                hanging_state = true;
-//            }
-
-            if(hanging_state == false) {
-                if (sbros_bind > 0) {
-                    sbros.setPosition((sbros_pos_open + sbros_bind*(1-sbros_pos_open)));
-                    continious_timer.reset();
-                } else {
-                    if (continious_timer.seconds() < 0.5) {
-                        sbros.setPosition(sbros_pos_open);
-                    } else {
-                        sbros.setPosition(sbros_pos_open);
-                    }
-                }
-
-            }
-            else{
-//                sbros.setPosition(0);
-                if(simple_ext = true) {
-                    extl.setPower(0.5);
-                    extr.setPower(0.5);
-                }
-                if(gamepad2.start){
-                    hanging_state = false;
-                }
-            }
-
-
             if(dual_rumble_bind){
                 gamepad1.rumble(3000);
                 gamepad2.rumble(3000);
 
             }
-            if(color_pulse_timer.milliseconds()>1000) {
-                color_pulse_timer.reset();
-                color_pulse += 1;
-                if(color_pulse>1){
-                    color_pulse=0;
-                    if(color_pulse==0){
-                        gamepad2.setLedColor(1,0,0,100);
-                        gamepad1.setLedColor(0,0,1,100);
-
-                    }
-                    else{
-                        gamepad2.setLedColor(0.80,0.40,0,100);
-                        gamepad1.setLedColor(0,0.50,1,100);
-                    }
-                }
-
-            }
-
-
-
-
-
-
-
-
-            if (grab_toggle_bind) {
-                if (!is_grab_pressed) {
-                    grab_toggle = !grab_toggle;
-                    claw_toggle = false;
-                }
-                is_grab_pressed = true;
-            } else {
-                is_grab_pressed = false;
-            }
-            if (grab_toggle) {
-                grabr.setPosition(0.05);
-                grabl.setPosition(0.75);
-            } else {
-                grabr.setPosition(0.5);
-                grabl.setPosition(0.2);
-            }
-
-
-
-
-
-            if(simple_ext == false) {
-
-
-
-
-                if (is_homed_ever) {
-                    if (top_extention_pos_bind) {
-                        pos = 5080;
-                    } else if (preset_extention_pos_bind) {
-                        pos = 3600;
-                    }
-                }
-                if (home_extention_bind) {
-                    if(presed_reset_extencion_timer.milliseconds()>300) {
-                        pos = -10000;
-                    }
-                }
-                else{
-                    presed_reset_extencion_timer.reset();
-                }
-
-                ext_pos_calk = ext_button_miltyply + ext_mult_speed_up * extention_speed_mult_bind;
-                if (ext_up_button_bind && (!ext_press || ext_timer.milliseconds() >= ext_button_sleep_time_ms)) {
-                    ext_timer.reset();
-                    pos += ext_pos_calk;
-                    ext_press = true;
-                } else if (ext_down_button_bind && (!ext_press || ext_timer.milliseconds() >= ext_button_sleep_time_ms)) {
-                    ext_timer.reset();
-                    pos -= ext_pos_calk;
-                    ext_press = true;
-                } else {
-                    if (!ext_down_button_bind && !ext_up_button_bind) {
-                        ext_press = false;
-                    }
-                }
-
-                if (ext_pos_change_bind != 0) {
-                    if (extention_time.milliseconds() > extention_time_interval) {
-                        extention_time.reset();
-                        pos -= ((ext_pos_change_bind) * extention_speed_multiply);
-                    }
-                }
-
-
-
-                exterL = -(pos + extl_pos); //left nigativ
-                extpowerL = exterL * pid_setting.extpL + (exterL - extrlL) * pid_setting.extdL;
-                extrlL = exterL;
-
-//        exterR = pos - extr_pos;
-                exterR = -(pos + extr_pos);//right positive
-
-                extpowerR = exterR * pid_setting.extpR + (exterR - extrlR) * pid_setting.extdR;
-                extrlR = exterR;
-
-                extpowerR = SmartMin(extpowerR, 1);
-                extpowerL = SmartMin(extpowerL, 1);
-
-
-
-                if (ch0.getState() || extpowerR <= 0) {
-                    if (extr_pos <= 5100 || extpowerR >= 0) {
-                        extr.setPower(extpowerR);
-                    } else {
-                        extr.setPower(0);
-//                        extpowerR = 0;
-                    }
-                } else {
-                    extr.setPower(0);
-//                    extpowerR = 0;
-                }
-                if (ch1.getState() || extpowerL <= 0) {
-                    if (extl_pos >= -5100 || extpowerL >= 0) {
-                        extl.setPower(extpowerL);
-                    } else {
-                        extl.setPower(0);
-                        extpowerL = 0;
-                    }
-                } else {
-                    extl.setPower(0);
-                    extpowerL = 0;
-                }
-                if (pos > 5150) {
-                    pos = 5150;
-                }
-
-                if (pos < -7000 && ch0.getState()) {
-                    extpowerR = 1;
-                    extr.setPower(1);
-                }
-                if (pos < -7000 && ch1.getState()) {
-                    extpowerL = 1;
-                    extl.setPower(1);
-                }
-
-                if ((!ch0.getState()) && (!ch1.getState())) {
-//                    FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//                    FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//                    FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//                    FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    if (pos <= 0) {
-                        pos = 0;
-//                        gamepad2.rumble(500);
-                    }
-                    is_homed_ever = true;
-
-                }
-            }
-            else{
-                if (ext_down_button_bind){
-                    setExtRightPower(0.9);
-                    setExtLeftPower(0.9);
-
-                    claw_toggle = false;
-                    simple_ext_homing_state = false;
-                    simple_ext_homing_timer.reset();
-                    simple_ext_top_shortcut_timer.reset();
-                    simple_ext_top_condition = false;
-                }
-                else if(ext_up_button_bind){
-
-                    setExtRightPower(-0.9);
-                    setExtLeftPower(-0.9);
-
-                    claw_toggle = false;
-                    simple_ext_homing_state = false;
-                    simple_ext_homing_timer.reset();
-                    simple_ext_top_shortcut_timer.reset();
-                    simple_ext_top_condition = false;
-
-                }
-                else{
-                    if(ext_pos_change_bind!=0) {
-                        setExtRightPower(ext_pos_change_bind);
-                        setExtLeftPower(ext_pos_change_bind);
-                        if (ext_pos_change_bind != 0) {
-                            claw_toggle = false;
-                        }
-                        simple_ext_homing_state = false;
-                        simple_ext_homing_timer.reset();
-                        simple_ext_top_shortcut_timer.reset();
-                        simple_ext_top_condition = false;
-                    }
-                    else if(simple_ext_homing_state&&(simple_ext_homing_timer.seconds()<4)){
-                        setExtRightPower(0.9);
-                        setExtLeftPower(0.9);
-                    }
-                    else if ((simple_ext_top_shortcut_timer.seconds()<4)&&simple_ext_top_condition){
-                        setExtRightPower(-0.9);
-                        setExtLeftPower(-0.9);
-                    }
-                    else {
-                        setExtRightPower(0);
-                        setExtLeftPower(0);
-//                        simple_ext_top_shortcut_timer.reset();
-                        simple_ext_top_condition = false;
-                        simple_ext_homing_state = false;
-                        simple_ext_homing_timer.reset();
-                    }
-
-                }
-            }
-
-//        else{
-//            FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//            FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//            pos = 0;
-//        }
 
 
 
@@ -492,26 +194,16 @@ public class $Main_Control extends OpModeFramework {
                 presed_reset_ang =false;
             }
 
-            /*
-            factory
-             */
-            factory_class.run();
+
 
 
         }
 
-    }
-    public class FactoryClass{
-        public void run(){
-            factory_ext.setPower(factory_bind);
-            vila_r.setPosition(first_vila_bind);
-            vila_l.setPosition(second_vila_bind);
-        }
     }
     public class GamepadBinds extends Thread{
         public void run() {
             while (opModeIsActive()) {
-                alt_profile();
+                default_profile();
             }
         }
         public void default_profile(){
@@ -527,113 +219,14 @@ public class $Main_Control extends OpModeFramework {
                 snap_180_mode = isAwayFronZero(gamepad1.right_stick_y, 0.5);
             }
 
-            claw_alt_key_bind = !gamepad1.right_bumper;
-
-            claw_pos_controll_bind = statement_double(gamepad1.right_trigger,!claw_alt_key_bind);
-
-            sbros_with_alt_pos_bind= gamepad1.right_trigger;
-
-            sbros_bind = Math.max(gamepad2.right_trigger,statement_double(sbros_with_alt_pos_bind,claw_alt_key_bind));
-
-            ext_pos_change_bind = gamepad2.left_stick_y+gamepad2.right_stick_y;
-            ext_up_button_bind = gamepad1.dpad_up || gamepad2.dpad_up;
-            ext_down_button_bind = gamepad1.dpad_down || gamepad2.dpad_down;
-            if(!simple_ext) {
-                home_extention_bind = gamepad1.x || gamepad2.a;
-                top_extention_pos_bind = gamepad1.y || gamepad2.y;
-                preset_extention_pos_bind = gamepad2.x;
-                extention_speed_mult_bind = Math.max(gamepad1.left_trigger, gamepad2.left_trigger);
-            }
-            else {
-                if(gamepad1.x||gamepad2.x){
-                    simple_ext_homing_state = true;
-                    simple_ext_homing_timer.reset();
-                }
-                if(gamepad1.y||gamepad2.y){
-                    simple_ext_top_shortcut_timer.reset();
-                    simple_ext_top_condition = true;
-                    simple_ext_homing_state = false;
-                }
-            }
-            claw_toggle_bind = (gamepad1.a||gamepad2.right_bumper)&&(!gamepad1.start);
-
             pos_reset_bind = gamepad1.dpad_left||gamepad1.ps;
 
             gamepad_summ = gamepad1.left_stick_x+gamepad1.left_stick_y+gamepad1.right_stick_x+gamepad1.left_stick_y;
 
             dual_rumble_bind = gamepad1.left_bumper||gamepad2.left_bumper;
 
-            grab_toggle_bind = gamepad1.b;
-
-            simple_ext = true;
-
         }
-        public void alt_profile(){
-            if(!gamepad1.left_bumper) {
-                turn_stick_axis = gamepad1.right_stick_x;
-                forward_stick_axis = gamepad1.left_stick_y;
-            }else {
-                turn_stick_axis = 0;
-                forward_stick_axis = 0;
-            }
-            side_stick_axis = gamepad1.left_stick_x;
-            speed_controll_axis = gamepad1.left_trigger;
-            drive_base_accel_move_bind = gamepad1.left_stick_button;
-            drive_base_accel_turn_bind = gamepad1.right_stick_button;
 
-            angle_snap_bind = is_greater(Math.abs(gamepad1.right_stick_y),0.9);
-            if(angle_snap_bind) {
-                snap_180_mode = isAwayFronZero(gamepad1.right_stick_y, 0.5);
-            }
-
-            claw_alt_key_bind = !gamepad1.right_bumper;
-
-            claw_pos_controll_bind = statement_double(gamepad1.right_trigger,!claw_alt_key_bind);
-
-            sbros_with_alt_pos_bind= gamepad1.right_trigger;
-
-            sbros_bind = Math.max(gamepad2.right_trigger,statement_double(sbros_with_alt_pos_bind,claw_alt_key_bind));
-
-
-            factory_bind = gamepad2.left_stick_x;
-            if (gamepad2.left_bumper) {
-                first_vila_bind = gamepad2.left_trigger;
-                second_vila_bind = gamepad2.right_trigger;
-            }
-
-            ext_pos_change_bind = gamepad2.right_stick_y;
-            ext_up_button_bind = gamepad1.dpad_up || gamepad2.dpad_up;
-            ext_down_button_bind = gamepad1.dpad_down || gamepad2.dpad_down;
-            if(!simple_ext) {
-                home_extention_bind = gamepad1.x || gamepad2.a;
-                top_extention_pos_bind = gamepad1.y || gamepad2.y;
-                preset_extention_pos_bind = gamepad2.x;
-                extention_speed_mult_bind = Math.max(gamepad1.left_trigger, gamepad2.left_trigger);
-            }
-            else {
-                if(gamepad1.x||gamepad2.x){
-                    simple_ext_homing_state = true;
-                    simple_ext_homing_timer.reset();
-                }
-                if(gamepad1.y||gamepad2.y){
-                    simple_ext_top_shortcut_timer.reset();
-                    simple_ext_top_condition = true;
-                    simple_ext_homing_state = false;
-                }
-            }
-            claw_toggle_bind = (gamepad1.a||gamepad2.right_bumper)&&(!gamepad1.start);
-
-            pos_reset_bind = gamepad1.dpad_left||gamepad1.ps;
-
-            gamepad_summ = gamepad1.left_stick_x+gamepad1.left_stick_y+gamepad1.right_stick_x+gamepad1.left_stick_y;
-
-//            dual_rumble_bind = gamepad2.left_bumper;
-
-            grab_toggle_bind = gamepad1.b;
-
-            simple_ext = true;
-
-        }
         public double statement_double(double value, boolean condition){
             if(condition) {
                 return value;
@@ -676,25 +269,10 @@ public class $Main_Control extends OpModeFramework {
                 } else {
                     addToBothTelemetry("Accel", "No data!");
                 }
-                addToBothTelemetry("-----|Extention|-----"," ");
-                addToBothTelemetry("Target position", pos);
-                addToBothTelemetry("extR position", Normolaze_Enc(extr_raw_pos,extr_zero,extr_max,ext_range));
-                addToBothTelemetry("extL position", Normolaze_Enc(extl_raw_pos,extl_zero,extl_max,ext_range));
-                addToBothTelemetry("ch0 state", ch0.getState());
-                addToBothTelemetry("ch1 state", ch1.getState());
-                addToBothTelemetry("Homed ever", is_homed_ever);
-                if(simple_ext) {
-                    addToBothTelemetry("Top timer",simple_ext_top_shortcut_timer.seconds());
-                    addToBothTelemetry("Top condition",simple_ext_top_condition);
-                    addToBothTelemetry("Is going Down",simple_ext_homing_state);
-                    addToBothTelemetry("Is Down timer",simple_ext_homing_timer.seconds());
-                }
-                addToBothTelemetry("-----------------------------"," ");
-
                 addToBothTelemetry("-----|Drive Base|-----"," ");
-                addToBothTelemetry("DriftF",forwardDrift);
-                addToBothTelemetry("DriftS",sideDrift);
-                addToBothTelemetry("DriftT",turnDrift);
+                addToBothTelemetry("DriftF",drive_system.forwardDrift);
+                addToBothTelemetry("DriftS",drive_system.sideDrift);
+                addToBothTelemetry("DriftT",drive_system.turnDrift);
                 addToBothTelemetry("BL Encoder",BL.getCurrentPosition());
                 addToBothTelemetry("BR Encoder",BR.getCurrentPosition());
                 addToBothTelemetry("Drift Calculation",(1/(1000/driftRate))/((3)));
@@ -704,7 +282,6 @@ public class $Main_Control extends OpModeFramework {
                 addToBothTelemetry("Target Angle", targAngle);
                 addToBothTelemetry("-----------------------------"," ");
                 addToBothTelemetry("-----|Binds|-----"," ");
-                addToBothTelemetry("Alt_claw", claw_alt_key_bind);
                 addToBothTelemetry("-----------------------------"," ");
 
                 telemetry.addData("tog", claw_toggle);
@@ -761,61 +338,20 @@ public class $Main_Control extends OpModeFramework {
 
     }
 
-    public class Claw_controll extends Thread{
-        public void run() {
-            while (opModeIsActive()) {
 
-                if (claw_toggle_bind) {
-                    if (!claw_press) {
-                        claw_press = true;
-                        claw_need_reset.reset();
-                        claw_toggle = !claw_toggle;
-
-                    }
-                    if (claw_toggle) {
-                        claw_poz = claw_grab_poz;
-                    } else {
-                        claw_poz = claw_open_poz;
-                    }
-                } else {
-                    claw_press = false;
-                }
-
-                if (claw_alt_key_bind == true) {
-                    claw_last_alt.reset();
-                }
-
-
-                if ((last_controlled_drive_base.seconds() > 20) && (claw_need_reset.seconds() > 30)) {
-                    claw_toggle = false;
-                }
-                if (claw_last_alt.seconds() > 1) {
-                    if (claw_pos_controll_bind > 0) {
-                        claw_need_reset.reset();
-                        if (claw_toggle == false) {
-                            claw_poz = (((claw_pos_controll_bind * claw_trigger_mult) * (1 - claw_open_poz)) + claw_open_poz) * claw_grab_poz;
-                        } else {
-                            claw_poz = (((1 - (claw_pos_controll_bind * claw_pos_controll_bind)) * (1 - claw_open_poz)) + claw_open_poz) * claw_grab_poz;
-                        }
-                    } else {
-                        set_claw_pos_state();
-                    }
-                } else {
-                    set_claw_pos_state();
-                }
-                claw.setPosition(claw_poz);
-
-            }
-        }
-        public void set_claw_pos_state(){
-            if(claw_toggle) {
-                claw_poz = claw_grab_poz;
-            }else {
-                claw_poz = claw_open_poz;
-            }
-        }
-    }
     public class Drive_system extends Thread {
+        double turnDrift = 0;
+        double turnDrift_acel_seconds = 0.3;
+        double turnDrift_decel_seconds = 0.1;
+        double forwardDrift = 0;
+        double forwardDrift_acel_seconds = 0.3;
+        double forwardDrift_decel_seconds = 0.1;
+        double sideDrift = 0;
+        double sideDrift_acel_seconds = 0.3;
+        double sideDrift_decel_seconds = 0.1;
+        public Drive_system(){
+
+        }
         public void run() {
             while (opModeIsActive()) {
                 acceleration = gyro.Axel();
@@ -984,9 +520,6 @@ public class $Main_Control extends OpModeFramework {
                 public void onError(int errorCode) {
                 }
             });
-                String[] passord = new String[4];
-                passord[0]="a";
-
         }
     }
     public double Angle() {
