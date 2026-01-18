@@ -12,6 +12,8 @@ import com.pedropathing.paths.PathChain;
 import com.google.common.hash.Hashing;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /** This is the ErrorCalculator.
  * It is in charge of taking the Poses and Velocity produced by the PoseTracker and determining and returning the errors.
@@ -22,11 +24,18 @@ public class ErrorCalculator {
 
     private static class CachedErrors {
         long poseHash;
-        double headingError;
         Vector translationalError;
+        double headingError;
         double driveError;
     }
-    private CachedErrors errorCache = new CachedErrors();
+
+    private final LinkedHashMap<Long, CachedErrors> errorCache = new LinkedHashMap<Long, CachedErrors>(32, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<Long, CachedErrors> eldest) {
+            return size() > 20;  // LRU кэш на 20 записей
+        }
+    };
+
     private FollowerConstants constants;
     private KalmanFilter driveKalmanFilter;
     private Pose closestPose, currentPose;
@@ -39,17 +48,21 @@ public class ErrorCalculator {
     private Double driveError;
     private Vector velocityVector = new Vector();
     private double headingGoal;
-    
+    private long lastTranslationalHash = 0;
+    private long lastHeadingHash = 0;
+
     public ErrorCalculator(FollowerConstants constants) {
         this.constants = constants;
-        
+
         KalmanFilterParameters driveKalmanFilterParameters = new KalmanFilterParameters(
                 10,
                 1);
 
         driveKalmanFilter = new KalmanFilter(driveKalmanFilterParameters);
-
+        driveErrors = new double[2];
     }
+
+
     private long hashPoseAndGoal(Pose pose, double goal) {
         return Hashing.murmur3_128().newHasher()
                 .putDouble(Math.round(pose.getX() * 100) / 100.0)
@@ -59,7 +72,26 @@ public class ErrorCalculator {
                 .hash().asLong();
     }
 
-    public void update(Pose currentPose, Path currentPath, PathChain currentPathChain, boolean followingPathChain, Pose closestPose, Vector velocity, int chainIndex, double xMovement, double yMovement, double headingGoal) {
+    private long hashTranslationalState(Pose current, Pose closest) {
+        return Hashing.murmur3_128().newHasher()
+                .putDouble(Math.round(current.getX() * 100) / 100.0)
+                .putDouble(Math.round(current.getY() * 100) / 100.0)
+                .putDouble(Math.round(closest.getX() * 100) / 100.0)
+                .putDouble(Math.round(closest.getY() * 100) / 100.0)
+                .hash().asLong();
+    }
+
+    private long hashDriveState(double distanceToGoal, double velocityMagnitude, double headingDiff) {
+        return Hashing.murmur3_128().newHasher()
+                .putDouble(Math.round(distanceToGoal * 100) / 100.0)
+                .putDouble(Math.round(velocityMagnitude * 100) / 100.0)
+                .putDouble(Math.round(headingDiff * 1000) / 1000.0)
+                .hash().asLong();
+    }
+
+    public void update(Pose currentPose, Path currentPath, PathChain currentPathChain,
+                       boolean followingPathChain, Pose closestPose, Vector velocity,
+                       int chainIndex, double xMovement, double yMovement, double headingGoal) {
         this.currentPose = currentPose;
         this.velocityVector = velocity;
         this.currentPath = currentPath;
@@ -70,7 +102,7 @@ public class ErrorCalculator {
         this.xVelocity = xMovement;
         this.yVelocity = yMovement;
         this.headingGoal = headingGoal;
-        driveError = null;
+        driveError = null;  // Инвалидируем кэш drive ошибки
     }
 
     /**
@@ -79,22 +111,31 @@ public class ErrorCalculator {
      * @return This returns the raw translational error as a Vector.
      */
     public Vector getTranslationalError() {
-        if (closestPose == null) return new Vector();
+        if (closestPose == null || currentPose == null) return new Vector();
 
-        long hash = Hashing.murmur3_128().newHasher()
-                .putDouble(Math.round(currentPose.getX() * 100) / 100.0)
-                .putDouble(Math.round(currentPose.getY() * 100) / 100.0)
-                .putDouble(Math.round(closestPose.getX() * 100) / 100.0)
-                .putDouble(Math.round(closestPose.getY() * 100) / 100.0)
-                .hash().asLong();
+        long hash = hashTranslationalState(currentPose, closestPose);
 
-        if (errorCache.poseHash == hash && errorCache.translationalError != null) {
-            return errorCache.translationalError.copy();
+
+        if (hash == lastTranslationalHash && errorCache.containsKey(hash)) {
+            CachedErrors cached = errorCache.get(hash);
+            if (cached.translationalError != null) {
+                return cached.translationalError.copy();
+            }
         }
+
+
         Vector error = new Vector();
         double x = closestPose.getX() - currentPose.getX();
         double y = closestPose.getY() - currentPose.getY();
         error.setOrthogonalComponents(x, y);
+
+
+        CachedErrors cached = errorCache.getOrDefault(hash, new CachedErrors());
+        cached.poseHash = hash;
+        cached.translationalError = error.copy();
+        errorCache.put(hash, cached);
+
+        lastTranslationalHash = hash;
         return error;
     }
 
@@ -104,19 +145,28 @@ public class ErrorCalculator {
      * @return This returns the raw heading error as a double.
      */
     public double getHeadingError() {
-
-        if (currentPath == null) {
+        if (currentPath == null || currentPose == null) {
             return 0;
         }
 
-
         long hash = hashPoseAndGoal(currentPose, headingGoal);
 
-        if (errorCache.poseHash == hash) {
-            return errorCache.headingError;
+
+        if (hash == lastHeadingHash && errorCache.containsKey(hash)) {
+            CachedErrors cached = errorCache.get(hash);
+            return cached.headingError;
         }
 
+
         headingError = MathFunctions.getTurnDirection(currentPose.getHeading(), headingGoal) * MathFunctions.getSmallestAngleDifference(currentPose.getHeading(), headingGoal);
+
+
+        CachedErrors cached = errorCache.getOrDefault(hash, new CachedErrors());
+        cached.poseHash = hash;
+        cached.headingError = headingError;
+        errorCache.put(hash, cached);
+
+        lastHeadingHash = hash;
         return headingError;
     }
 
@@ -126,11 +176,10 @@ public class ErrorCalculator {
      *
      * @return returns the projected velocity.
      */
-    private double getDriveVelocityError(double distanceToGoal,double distanse) {
+    private double getDriveVelocityError(double distanceToGoal, double totalDistance) {
         if (currentPath == null) {
             return 0;
         }
-
 
         Vector tangent = currentPath.getClosestPointTangentVector().normalize();
         Vector distanceToGoalVector = tangent.times(distanceToGoal);
@@ -139,37 +188,14 @@ public class ErrorCalculator {
         Vector forwardHeadingVector = new Vector(1.0, currentPose.getHeading());
         double forwardVelocity = forwardHeadingVector.dot(velocity);
         double forwardDistanceToGoal = forwardHeadingVector.dot(distanceToGoalVector);
-        double  forwardacs = Math.signum(forwardDistanceToGoal)*Math.sqrt(Math.abs(forwardDistanceToGoal*constants.forwardZeroPowerAcceleration));
-        double forwardVelocityGoal = Kinematics.getVelocityToStopWithDeceleration(
-            forwardDistanceToGoal,
-            constants.forwardZeroPowerAcceleration
-                * (currentPath.getBrakingStrength() * 4)
-        );
-        double forwardVelocityZeroPowerDecay = forwardVelocity -
-                Kinematics.getFinalVelocityAtDistance(
-                        forwardVelocity,
-                        constants.forwardZeroPowerAcceleration,
-                        forwardDistanceToGoal
-                );
-
+        double forwardacs = Math.signum(forwardDistanceToGoal) *
+                Math.sqrt(Math.abs(forwardDistanceToGoal * constants.forwardZeroPowerAcceleration));
 
         Vector lateralHeadingVector = new Vector(1.0, currentPose.getHeading() - Math.PI / 2);
         double lateralVelocity = lateralHeadingVector.dot(velocity);
         double lateralDistanceToGoal = lateralHeadingVector.dot(distanceToGoalVector);
-        double lateracs =  Math.signum(lateralDistanceToGoal)*Math.sqrt(Math.abs(lateralDistanceToGoal*constants.lateralZeroPowerAcceleration));
-        double lateralVelocityGoal = Kinematics.getVelocityToStopWithDeceleration(
-            lateralDistanceToGoal,
-            constants.lateralZeroPowerAcceleration
-                * (currentPath.getBrakingStrength() * 4)
-        );
-        double lateralVelocityZeroPowerDecay = lateralVelocity -
-            Kinematics.getFinalVelocityAtDistance(
-                lateralVelocity,
-                constants.lateralZeroPowerAcceleration,
-                lateralDistanceToGoal
-            );
-
-
+        double lateracs = Math.signum(lateralDistanceToGoal) *
+                Math.sqrt(Math.abs(lateralDistanceToGoal * constants.lateralZeroPowerAcceleration));
 
         Vector forwardVelocityError = new Vector(forwardacs, forwardHeadingVector.getTheta());
         Vector lateralVelocityError = new Vector(lateracs, lateralHeadingVector.getTheta());
@@ -178,28 +204,29 @@ public class ErrorCalculator {
         previousRawDriveError = rawDriveError;
         rawDriveError = velocityErrorVector.getMagnitude() * Math.signum(velocityErrorVector.dot(tangent));
 
-        double projection = Kinematics.predictNextLoopVelocity(driveErrors[1], driveErrors[0]);
+        if (driveErrors != null && driveErrors.length >= 2) {
+            double projection = Kinematics.predictNextLoopVelocity(driveErrors[1], driveErrors[0]);
+            driveKalmanFilter.update(rawDriveError - previousRawDriveError, projection);
 
-        driveKalmanFilter.update(rawDriveError - previousRawDriveError, projection);
-
-        for (int i = 0; i < driveErrors.length - 1; i++) {
-            driveErrors[i] = driveErrors[i + 1];
+            // Циклический сдвиг массива
+            driveErrors[0] = driveErrors[1];
+            driveErrors[1] = driveKalmanFilter.getState();
         }
-
-        driveErrors[1] = driveKalmanFilter.getState();
 
         return driveKalmanFilter.getState();
     }
 
     public double getDriveError() {
+
         if (driveError != null) return driveError;
 
-        double distanceToGoal;
-        double distance=0;
-
         if (currentPath == null) {
+            driveError = 0.0;
             return 0;
         }
+
+        double distanceToGoal;
+        double totalDistance = 0;
 
         if (!currentPath.isAtParametricEnd()) {
             if (followingPathChain) {
@@ -219,28 +246,47 @@ public class ErrorCalculator {
                     Vector forwardTheoreticalHeadingVector = new Vector(1.0, headingGoal);
 
                     double stoppingDistance = Kinematics.getStoppingDistance(
-                            yVelocity + (xVelocity - yVelocity) * forwardTheoreticalHeadingVector.dot(tangent), constants.forwardZeroPowerAcceleration
+                            yVelocity + (xVelocity - yVelocity) * forwardTheoreticalHeadingVector.dot(tangent),
+                            constants.forwardZeroPowerAcceleration
                     );
                     if (distanceToGoal >= stoppingDistance * currentPath.getBrakingStartMultiplier()) {
+                        driveError = -1.0;
                         return -1;
                     }
-                } else if ((type == PathChain.DecelerationType.LAST_PATH && chainIndex < currentPathChain.size() - 1) || type == PathChain.DecelerationType.NONE) {
+                } else if ((type == PathChain.DecelerationType.LAST_PATH && chainIndex < currentPathChain.size() - 1) ||
+                        type == PathChain.DecelerationType.NONE) {
+                    driveError = -1.0;
                     return -1;
                 } else {
                     distanceToGoal = currentPath.getDistanceRemaining();
                 }
             } else {
                 distanceToGoal = currentPath.getDistanceRemaining();
-                distance = currentPath.getDistanceTraveled()+currentPath.getDistanceRemaining();
-
-
+                totalDistance = currentPath.getDistanceTraveled() + currentPath.getDistanceRemaining();
             }
         } else {
             Vector offset = currentPath.getLastControlPoint().minus(currentPose).getAsVector();
             distanceToGoal = currentPath.getEndTangent().dot(offset);
         }
 
-        driveError = getDriveVelocityError(distanceToGoal,distance);
+
+        double velocityMagnitude = velocityVector.getMagnitude();
+        double headingDiff = MathFunctions.getSmallestAngleDifference(currentPose.getHeading(), headingGoal);
+        long driveHash = hashDriveState(distanceToGoal, velocityMagnitude, headingDiff);
+
+        if (errorCache.containsKey(driveHash)) {
+            CachedErrors cached = errorCache.get(driveHash);
+            driveError = cached.driveError;
+            return driveError;
+        }
+
+
+        driveError = getDriveVelocityError(distanceToGoal, totalDistance);
+
+
+        CachedErrors cached = errorCache.getOrDefault(driveHash, new CachedErrors());
+        cached.driveError = driveError;
+        errorCache.put(driveHash, cached);
 
         return driveError;
     }
@@ -261,6 +307,9 @@ public class ErrorCalculator {
         driveErrors = new double[2];
         Arrays.fill(driveErrors, 0);
         driveKalmanFilter.reset();
+        errorCache.clear();  // Очищаем все кэши
+        lastTranslationalHash = 0;
+        lastHeadingHash = 0;
     }
 
     public void setConstants(FollowerConstants constants) {
@@ -268,12 +317,14 @@ public class ErrorCalculator {
     }
 
     public String debugString() {
-        return "Current Pose: " + currentPose.toString() + "\n" +
-               "Closest Pose: " + closestPose.toString() + "\n" +
-               "Current Path: " + (currentPath != null ? currentPath.toString() : "null") + "\n" + "Following Path Chain: " + followingPathChain + "\n" +
-               "Chain Index: " + chainIndex + "\n" +
-               "Drive Error: " + getDriveError() + "\n" +
-               "Heading Error: " + getHeadingError() + "\n" +
-               "Raw Drive Error: " + getRawDriveError();
+        return "Current Pose: " + (currentPose != null ? currentPose.toString() : "null") + "\n" +
+                "Closest Pose: " + (closestPose != null ? closestPose.toString() : "null") + "\n" +
+                "Current Path: " + (currentPath != null ? currentPath.toString() : "null") + "\n" +
+                "Following Path Chain: " + followingPathChain + "\n" +
+                "Chain Index: " + chainIndex + "\n" +
+                "Drive Error: " + getDriveError() + "\n" +
+                "Heading Error: " + getHeadingError() + "\n" +
+                "Raw Drive Error: " + getRawDriveError() + "\n" +
+                "Cache Size: " + errorCache.size();
     }
 }
