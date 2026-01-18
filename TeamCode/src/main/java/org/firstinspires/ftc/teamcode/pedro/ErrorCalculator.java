@@ -9,6 +9,7 @@ import com.pedropathing.math.MathFunctions;
 import com.pedropathing.math.Vector;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
+import com.google.common.hash.Hashing;
 
 import java.util.Arrays;
 
@@ -18,6 +19,14 @@ import java.util.Arrays;
  * @author Baron Henderson - 20077 The Indubitables
  */
 public class ErrorCalculator {
+
+    private static class CachedErrors {
+        long poseHash;
+        double headingError;
+        Vector translationalError;
+        double driveError;
+    }
+    private CachedErrors errorCache = new CachedErrors();
     private FollowerConstants constants;
     private KalmanFilter driveKalmanFilter;
     private Pose closestPose, currentPose;
@@ -41,6 +50,14 @@ public class ErrorCalculator {
         driveKalmanFilter = new KalmanFilter(driveKalmanFilterParameters);
 
     }
+    private long hashPoseAndGoal(Pose pose, double goal) {
+        return Hashing.murmur3_128().newHasher()
+                .putDouble(Math.round(pose.getX() * 100) / 100.0)
+                .putDouble(Math.round(pose.getY() * 100) / 100.0)
+                .putDouble(Math.round(pose.getHeading() * 1000) / 1000.0)
+                .putDouble(Math.round(goal * 1000) / 1000.0)
+                .hash().asLong();
+    }
 
     public void update(Pose currentPose, Path currentPath, PathChain currentPathChain, boolean followingPathChain, Pose closestPose, Vector velocity, int chainIndex, double xMovement, double yMovement, double headingGoal) {
         this.currentPose = currentPose;
@@ -62,6 +79,18 @@ public class ErrorCalculator {
      * @return This returns the raw translational error as a Vector.
      */
     public Vector getTranslationalError() {
+        if (closestPose == null) return new Vector();
+
+        long hash = Hashing.murmur3_128().newHasher()
+                .putDouble(Math.round(currentPose.getX() * 100) / 100.0)
+                .putDouble(Math.round(currentPose.getY() * 100) / 100.0)
+                .putDouble(Math.round(closestPose.getX() * 100) / 100.0)
+                .putDouble(Math.round(closestPose.getY() * 100) / 100.0)
+                .hash().asLong();
+
+        if (errorCache.poseHash == hash && errorCache.translationalError != null) {
+            return errorCache.translationalError.copy();
+        }
         Vector error = new Vector();
         double x = closestPose.getX() - currentPose.getX();
         double y = closestPose.getY() - currentPose.getY();
@@ -75,8 +104,16 @@ public class ErrorCalculator {
      * @return This returns the raw heading error as a double.
      */
     public double getHeadingError() {
+
         if (currentPath == null) {
             return 0;
+        }
+
+
+        long hash = hashPoseAndGoal(currentPose, headingGoal);
+
+        if (errorCache.poseHash == hash) {
+            return errorCache.headingError;
         }
 
         headingError = MathFunctions.getTurnDirection(currentPose.getHeading(), headingGoal) * MathFunctions.getSmallestAngleDifference(currentPose.getHeading(), headingGoal);

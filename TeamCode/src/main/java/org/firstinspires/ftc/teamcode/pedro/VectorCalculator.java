@@ -16,18 +16,39 @@ import java.util.LinkedHashMap;
 import java.util.ArrayList;
 import java.util.Map;
 
+
 /** This is the VectorCalculator.
  * It is in charge of taking the errors produced by the ErrorCalculator and determining and returning drive + corrective vectors
  *
  * @author Baron Henderson - 20077 The Indubitables
  */
 public class VectorCalculator {
+
+    private final LinkedHashMap<Long, Vector> translationalCache = new LinkedHashMap<Long, Vector>(16, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<Long, Vector> eldest) {
+            return size() > 10;
+        }
+    };
     private final LinkedHashMap<Long, Vector[]> teleopCache =
             new LinkedHashMap<Long, Vector[]>(32, 0.75f, true) {
                 protected boolean removeEldestEntry(Map.Entry<Long, Vector[]> eldest) {
                     return size() > 20;
                 }
             };
+    private final LinkedHashMap<Long, Vector> driveVectorCache = new LinkedHashMap<Long, Vector>(16, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<Long, Vector> eldest) {
+            return size() > 10;
+        }
+    };
+
+    private final LinkedHashMap<Long, Vector> headingVectorCache = new LinkedHashMap<Long, Vector>(16, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<Long, Vector> eldest) {
+            return size() > 10;
+        }
+    };
 
     private long lastTeleopHash = 0;
     private FollowerConstants constants;
@@ -82,6 +103,22 @@ public class VectorCalculator {
         translationalIntegral = new PIDFController(constants.integralTranslational);
         secondaryTranslationalIntegral = new PIDFController(constants.integralSecondaryTranslational);
         updateConstants();
+    }
+    private long hashState(double driveErr, double headingErr, double maxPower) {
+        return Hashing.murmur3_128().newHasher()
+                .putDouble(Math.round(driveErr * 1000) / 1000.0)
+                .putDouble(Math.round(headingErr * 1000) / 1000.0)
+                .putDouble(Math.round(maxPower * 100) / 100.0)
+                .hash().asLong();
+    }
+    private long hashTranslationalState(Vector translationalError, double distanceToClosest, double maxPower) {
+        return Hashing.murmur3_128().newHasher()
+                .putDouble(Math.round(translationalError.getXComponent() * 100) / 100.0)
+                .putDouble(Math.round(translationalError.getYComponent() * 100) / 100.0)
+                .putDouble(Math.round(distanceToClosest * 100) / 100.0)
+                .putDouble(Math.round(maxPower * 100) / 100.0)
+                .putBoolean(currentPath != null && !currentPath.isAtParametricEnd() && !currentPath.isAtParametricStart())
+                .hash().asLong();
     }
     
     public void updateConstants() {
@@ -183,7 +220,15 @@ public class VectorCalculator {
     public Vector getDriveVector() {
         if (!useDrive) return new Vector();
 
+        long hash = hashState(driveError, 0, maxPowerScaling);
+
+        if (driveVectorCache.containsKey(hash)) {
+            return driveVectorCache.get(hash).copy();
+        }
+        if (!useDrive) return new Vector();
+
         if (followingPathChain && ((chainIndex < currentPathChain.size() - 1 && currentPathChain.getDecelerationType() == PathChain.DecelerationType.LAST_PATH) || currentPathChain.getDecelerationType() == PathChain.DecelerationType.NONE)) {
+            driveVectorCache.put(hash, new Vector(maxPowerScaling, currentPath.getClosestPointTangentVector().getTheta()).copy());
             return new Vector(maxPowerScaling, currentPath.getClosestPointTangentVector().getTheta());
         }
 
@@ -195,12 +240,14 @@ public class VectorCalculator {
             secondaryDrivePIDF.updateFeedForwardInput(Math.signum(driveError));
             secondaryDrivePIDF.updateError(driveError);
             driveVector = new Vector(MathFunctions.clamp(secondaryDrivePIDF.run(), -maxPowerScaling, maxPowerScaling), tangent.getTheta());
+            driveVectorCache.put(hash, driveVector.copy());
             return driveVector.copy();
         }
 
         drivePIDF.updateFeedForwardInput(Math.signum(driveError));
         drivePIDF.updateError(driveError);
         driveVector = new Vector(MathFunctions.clamp(drivePIDF.run(), -maxPowerScaling, maxPowerScaling), tangent.getTheta());
+        driveVectorCache.put(hash, driveVector.copy());
         return driveVector.copy();
     }
 
@@ -215,16 +262,25 @@ public class VectorCalculator {
      * @return returns the heading vector.
      */
     public Vector getHeadingVector() {
+
         if (!useHeading) return new Vector();
+        long hash = hashState(0, headingError, maxPowerScaling);
+
+        if (headingVectorCache.containsKey(hash)) {
+            return headingVectorCache.get(hash).copy();
+        }
+
         if (Math.abs(headingError) < headingPIDFSwitch && useSecondaryHeadingPID) {
             secondaryHeadingPIDF.updateFeedForwardInput(MathFunctions.getTurnDirection(currentPose.getHeading(), headingGoal));
             secondaryHeadingPIDF.updateError(headingError);
             headingVector = new Vector(MathFunctions.clamp(secondaryHeadingPIDF.run(), -maxPowerScaling, maxPowerScaling), currentPose.getHeading());
+            headingVectorCache.put(hash, headingVector.copy());
             return headingVector.copy();
         }
         headingPIDF.updateFeedForwardInput(MathFunctions.getTurnDirection(currentPose.getHeading(), headingGoal));
         headingPIDF.updateError(headingError);
         headingVector = new Vector(MathFunctions.clamp(headingPIDF.run(), -maxPowerScaling, maxPowerScaling), currentPose.getHeading());
+        headingVectorCache.put(hash, headingVector.copy());
         return headingVector.copy();
     }
 
@@ -260,28 +316,53 @@ public class VectorCalculator {
      */
     public Vector getTranslationalCorrection() {
         if (!useTranslational) return new Vector();
+        double distanceToClosest = currentPose != null && closestPose != null ?
+                currentPose.distanceFrom(closestPose) : 0;
+
+        long hash = hashTranslationalState(translationalError, distanceToClosest, maxPowerScaling);
         Vector translationalVector = translationalError.copy();
 
         if (!(currentPath.isAtParametricEnd() || currentPath.isAtParametricStart())) {
-            translationalVector = translationalVector.minus(new Vector(translationalVector.dot(currentPath.getClosestPointTangentVector().normalize()), currentPath.getClosestPointTangentVector().getTheta()));
+            Vector tangent = currentPath.getClosestPointTangentVector().normalize();
+            translationalVector = translationalVector.minus(new Vector(translationalVector.dot(tangent), tangent.getTheta()));
 
-            secondaryTranslationalIntegralVector = secondaryTranslationalIntegralVector.minus(new Vector(secondaryTranslationalIntegralVector.dot(currentPath.getClosestPointTangentVector().normalize()), currentPath.getClosestPointTangentVector().getTheta()));
-            translationalIntegralVector = translationalIntegralVector.minus(new Vector(translationalIntegralVector.dot( currentPath.getClosestPointTangentVector().normalize()), currentPath.getClosestPointTangentVector().getTheta()));
+            if (secondaryTranslationalIntegralVector != null) {
+                secondaryTranslationalIntegralVector = secondaryTranslationalIntegralVector.minus(
+                        new Vector(secondaryTranslationalIntegralVector.dot(tangent), tangent.getTheta()));
+            }
+            if (translationalIntegralVector != null) {
+                translationalIntegralVector = translationalIntegralVector.minus(
+                        new Vector(translationalIntegralVector.dot(tangent), tangent.getTheta()));
+            }
         }
 
-        if (currentPose.distanceFrom(closestPose) < translationalPIDFSwitch && useSecondaryTranslationalPID) {
+        boolean useSecondary = distanceToClosest < translationalPIDFSwitch && useSecondaryTranslationalPID;
+
+        if (useSecondary) {
+            if (secondaryTranslationalIntegralVector == null) {
+                secondaryTranslationalIntegralVector = new Vector();
+            }
+
             secondaryTranslationalIntegral.updateError(translationalVector.getMagnitude());
-            secondaryTranslationalIntegralVector = secondaryTranslationalIntegralVector.plus(new Vector(secondaryTranslationalIntegral.run() - previousSecondaryTranslationalIntegral, translationalVector.getTheta()));
-            previousSecondaryTranslationalIntegral = secondaryTranslationalIntegral.run();
+            double integralRun = secondaryTranslationalIntegral.run();
+            secondaryTranslationalIntegralVector = secondaryTranslationalIntegralVector.plus(
+                    new Vector(integralRun - previousSecondaryTranslationalIntegral, translationalVector.getTheta()));
+            previousSecondaryTranslationalIntegral = integralRun;
 
             secondaryTranslationalPIDF.updateFeedForwardInput(1);
             secondaryTranslationalPIDF.updateError(translationalVector.getMagnitude());
             translationalVector.setMagnitude(secondaryTranslationalPIDF.run());
             translationalVector = translationalVector.plus(secondaryTranslationalIntegralVector);
         } else {
+            if (translationalIntegralVector == null) {
+                translationalIntegralVector = new Vector();
+            }
+
             translationalIntegral.updateError(translationalVector.getMagnitude());
-            translationalIntegralVector = translationalIntegralVector.plus(new Vector(translationalIntegral.run() - previousTranslationalIntegral, translationalVector.getTheta()));
-            previousTranslationalIntegral = translationalIntegral.run();
+            double integralRun = translationalIntegral.run();
+            translationalIntegralVector = translationalIntegralVector.plus(
+                    new Vector(integralRun - previousTranslationalIntegral, translationalVector.getTheta()));
+            previousTranslationalIntegral = integralRun;
 
             translationalPIDF.updateFeedForwardInput(1);
             translationalPIDF.updateError(translationalVector.getMagnitude());
@@ -289,12 +370,21 @@ public class VectorCalculator {
             translationalVector = translationalVector.plus(translationalIntegralVector);
         }
 
-        translationalVector.setMagnitude(MathFunctions.clamp(translationalVector.getMagnitude(), 0, maxPowerScaling));
+
+        double magnitude = translationalVector.getMagnitude();
+        if (magnitude > maxPowerScaling) {
+            translationalVector.setMagnitude(maxPowerScaling);
+        } else if (magnitude < 0) {
+            translationalVector.setMagnitude(0);
+        }
 
         this.translationalVector = translationalVector.copy();
 
+
+        translationalCache.put(hash, translationalVector.copy());
+
         return translationalVector;
-    }
+        }
 
     /**
      * This returns a Vector in the direction the robot must go to account for only centripetal
