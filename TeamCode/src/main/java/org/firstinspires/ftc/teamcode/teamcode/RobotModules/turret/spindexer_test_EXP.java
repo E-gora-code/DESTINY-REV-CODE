@@ -57,7 +57,7 @@ public class spindexer_test_EXP extends OpModeFramework {
             telemetry.addData("Position Degrees",
                     (spindexerModule.getSpindexerPosition()) * 360);
             telemetry.update();
-
+            tickAll();
         }
     }
 }
