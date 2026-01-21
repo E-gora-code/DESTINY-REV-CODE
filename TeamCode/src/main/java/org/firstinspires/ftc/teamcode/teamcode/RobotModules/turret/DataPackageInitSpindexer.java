@@ -8,7 +8,8 @@ import org.firstinspires.ftc.teamcode.generic_classes.RobotHardware;
 public class DataPackageInitSpindexer {
     public HardwareMap TEMP_HardwareMap;
     public RobotHardware.Motors.BasicServo spindexer;
-    public RobotHardware.Motors.BasicServo Front_ejector,Back_ejector,Back_wall,Front_wall;;
+    public RobotHardware.Motors.BasicServo Front_ejector,Back_ejector,Back_wall,Front_wall;
+    public RobotHardware.Motors.DCMotor Front_intake,Back_intake;
 
     public RobotHardware.Motors.DCMotor shooterL;
     public RobotHardware.Motors.DCMotor shooterR;

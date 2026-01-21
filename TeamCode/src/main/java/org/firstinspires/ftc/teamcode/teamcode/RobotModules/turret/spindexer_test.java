@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.generic_classes.OpModeFramework;
 
@@ -25,6 +23,8 @@ public class spindexer_test extends OpModeFramework {
         InitPackage.Back_wall = back_wall;
         InitPackage.Front_ejector = front_ejector;
         InitPackage.Back_ejector = back_ejector;
+        InitPackage.Front_intake = front_intake;
+        InitPackage.Back_intake = back_intake;
         spindexerModule = new spindexer(InitPackage);
         telemetry.addData("Position", "%.2f revs", spindexerModule.getSpindexerPosition());
         telemetry.update();
@@ -49,7 +49,9 @@ public class spindexer_test extends OpModeFramework {
 
 
 
-            spindexerModule.update(shooting, ready,false);
+//            spindexerModule.pos_from_config();
+            spindexerModule.front_intaking(gamepad1.right_trigger);
+            spindexer.setPower(gamepad1.right_stick_x);
 
 
             telemetry.addData("Shooting", shooting ? "YES" : "NO");

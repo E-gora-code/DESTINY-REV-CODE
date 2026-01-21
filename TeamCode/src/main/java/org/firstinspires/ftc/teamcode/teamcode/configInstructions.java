@@ -13,7 +13,7 @@ public class configInstructions extends OpModeFramework {
         selfInit();
         initAllSystems();
         while (opModeIsActive()) {
-            List<String> configServ = motors.getMotorsConfigNames();
+            List<String> configServ = motors.getMotorsCorrectNames();
             for (String line : configServ) {
                 printTelemetry("- ",line);
             }

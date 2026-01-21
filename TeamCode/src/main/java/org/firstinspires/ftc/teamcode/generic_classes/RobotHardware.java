@@ -384,6 +384,30 @@ public class RobotHardware{
             }
             return output;
         }
+        public List<String> getMotorsCorrectNames(){
+            List<String> output = new ArrayList<>();
+            for (Map.Entry<String, InternalServo> servo_entry : servos.entrySet()) {
+                InternalServo servo_component = servo_entry.getValue();
+                if(servo_component.AttachedComponent!=null) {
+                    output.add("Servo ok: " + servo_entry.getKey() + " -+> " + servo_component.AttachedComponentName);
+                }
+                if(servo_component.AttachedEncoderName != null) {
+                    if (servo_component.AttachedEncoder != null) {
+                        output.add("Analog encoder ok: " + servo_entry.getKey() + " -+> " + servo_component.AttachedEncoderName);
+
+                    }
+                }
+            }
+            for (Map.Entry<String, InternalMotorDC> dc_entry : motorsDC.entrySet()) {
+                InternalMotorDC dc_component = dc_entry.getValue();
+                if(dc_component.AttachedComponent!=null){
+                    output.add("DC motor ok: "+dc_entry.getKey()+" -+> "+dc_component.AttachedComponentName);
+//                if(dc_component.AttachedEncoderName != null) {
+//                    output.add("Analog encoder: " + dc_entry.getKey() + " --> " + dc_component.AttachedEncoderName);
+                }
+            }
+            return output;
+        }
 
         public boolean is_inited(){
             return is_components_inited;
