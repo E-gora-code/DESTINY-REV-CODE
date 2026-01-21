@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret;
 
 import com.acmerobotics.dashboard.config.Config;
 
+import org.firstinspires.ftc.teamcode.generic_classes.RobotHardware;
+
 @Config
 public class config{
     public static double Front_ejector_shoot_position = 1,Front_ejector_noshoot_position =0;
@@ -15,5 +17,7 @@ public class config{
     public static double yawKp = 0.002;
     public static double yawKi = 0.0000001;
     public static double yawKd = 0.0001;
+
+    public static double pos_front_ejector =0.5,pos_back_ejector =0.5,pos_back_wall =0.5,pos_front_wall =0.5, pos_spindexer =0.5;
 
 }
