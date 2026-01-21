@@ -33,16 +33,12 @@ public class spindexer {
     public void front_intaking(double mult1,double mult2){
         back_ejector.setPosition(0.75);
         back_wall.setPosition(0);
-        front_ejector.setPosition(0.7-(mult2/4));
+        front_ejector.setPosition(0.7);
         front_wall.setPosition(1);
 
         Shooter1.setPower(-mult2);
         Shooter2.setPower(mult2);
-        if(mult2==0) {
-            Front_intake.setPower(mult1);
-        }else {
-            Front_intake.setPower(0);
-        }
+        Front_intake.setPower(mult1);
         Back_intake.setPower(mult1);
     }
 }
