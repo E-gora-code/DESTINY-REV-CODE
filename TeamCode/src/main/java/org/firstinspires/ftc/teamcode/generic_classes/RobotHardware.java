@@ -306,6 +306,8 @@ public class RobotHardware{
             public class motorDCNameKeys {
                 public final static String front_intake = "Front_intake";
                 public final static String back_intake = "Back_intake";
+                public final static String shooter_left = "shooter_left";
+                public final static String shooter_right = "shooter_right";
             }
         }
 
@@ -321,6 +323,8 @@ public class RobotHardware{
 
             motorsDC.put(NameKeys.motorDCNameKeys.front_intake,new InternalMotorDC("Fin"));
             motorsDC.put(NameKeys.motorDCNameKeys.back_intake,new InternalMotorDC("Bin"));
+            motorsDC.put(NameKeys.motorDCNameKeys.shooter_left,new InternalMotorDC("shooterLeft"));
+            motorsDC.put(NameKeys.motorDCNameKeys.shooter_right,new InternalMotorDC("shooterRight"));
 
             //Old preserved because there is a lot of use in programs
 //            servos.put(NameKeys.servoNameKeys.hidden_claw_module,new InternalServo("sbkr"));

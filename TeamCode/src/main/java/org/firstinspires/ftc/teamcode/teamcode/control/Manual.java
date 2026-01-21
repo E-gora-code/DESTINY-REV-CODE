@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import org.firstinspires.ftc.teamcode.generic_classes.OpModeFramework;
+import org.firstinspires.ftc.teamcode.generic_classes.ToggleHelper;
 
 @TeleOp
 public class Manual extends OpModeFramework {
@@ -18,6 +19,14 @@ public class Manual extends OpModeFramework {
 
     boolean independent_drive = false;
     boolean independent_drive_press = false;
+
+    public void front_up(){
+        front_wall.setPosition(1);
+    }
+    public void front_down(){
+        front_wall.setPosition(0);
+    }
+    ToggleHelper front_wall_toggle = new ToggleHelper(this::front_up,this::front_down);
 //    Servo s1;
 
     Telemetry dash = FtcDashboard.getInstance().getTelemetry();
@@ -87,9 +96,12 @@ public class Manual extends OpModeFramework {
 
 
             spindexer.setPower((-gamepad2.left_trigger+gamepad2.right_trigger)*0.5);
-            front_wall.setPosition(1-gamepad2.right_stick_y);
+//            front_wall.setPosition(1-gamepad2.right_stick_y);
             back_wall.setPosition(gamepad2.left_stick_y);
             back_ejector.setPosition(1-gamepad2.right_stick_x);
+
+            front_wall_toggle.acceptIn(gamepad2.a);
+
             front_ejector.setPosition(gamepad2.left_stick_x);
             double power_of_intake = 0.6;
             if(gamepad2.dpad_right) {
@@ -106,6 +118,14 @@ public class Manual extends OpModeFramework {
             }else{
                 back_intake.setPower(0);
             }
+            if(gamepad2.left_bumper){
+                shooter_right.setPower(-1);
+                shooter_left.setPower(1);
+            }else {
+                shooter_right.setPower(0);
+                shooter_left.setPower(0);
+            }
+
 
             if (gamepad1.left_bumper || gamepad2.left_bumper) {
                 gamepad1.rumble(3000);
@@ -163,6 +183,7 @@ public class Manual extends OpModeFramework {
         }
 //
     }
+
 
 
 

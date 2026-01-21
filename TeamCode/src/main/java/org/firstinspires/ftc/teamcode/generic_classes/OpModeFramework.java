@@ -18,7 +18,7 @@ public abstract class OpModeFramework extends LinearOpMode {
     protected RobotHardware.Motors.BasicServo spindexer,front_ejector,back_ejector,front_wall,back_wall;
     protected RobotHardware.Motors.DCMotor extr, extl,factory_ext;
 
-    protected RobotHardware.Motors.DCMotor front_intake, back_intake;
+    protected RobotHardware.Motors.DCMotor front_intake, back_intake,shooter_left,shooter_right;
     protected RobotHardware robotHardware;
     protected GamepadDriver controllerDriver_1;
     protected GamepadDriver controllerDriver_2;
@@ -59,6 +59,8 @@ public abstract class OpModeFramework extends LinearOpMode {
 
         front_intake = motors.new DCMotor(motors, RobotHardware.Motors.NameKeys.motorDCNameKeys.front_intake);
         back_intake = motors.new DCMotor(motors, RobotHardware.Motors.NameKeys.motorDCNameKeys.back_intake);
+        shooter_right = motors.new DCMotor(motors, RobotHardware.Motors.NameKeys.motorDCNameKeys.shooter_right);
+        shooter_left = motors.new DCMotor(motors, RobotHardware.Motors.NameKeys.motorDCNameKeys.shooter_left);
 
 
 
