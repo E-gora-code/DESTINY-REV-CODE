@@ -16,8 +16,9 @@ public class shooter_test extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        turret = new turet(hardwareMap);
-        turret.reset();
+
+        turret = new turet(hardwareMap,5);
+
 
         waitForStart();
 
@@ -33,6 +34,7 @@ public class shooter_test extends LinearOpMode {
             telemetry.addData("Ready", turret.ready());
             telemetry.addData("Current Pose", turret.get_current_turret_pose());
 
+
             dash.addData("Target RPM", turret.getTargetRpm());
             dash.addData("Filtered Tx", turret.getFiltTx());
             dash.addData("Filtered Ty", turret.getFiltTy());
@@ -42,11 +44,13 @@ public class shooter_test extends LinearOpMode {
             dash.addData("b", droch);
             dash.addData("leftrpm",turret.currRpmL());
             dash.addData("rightrpm",turret.currRpmR());
+            dash.addData("distance",turret.get_distance());
+            dash.addData("222",turret.sbros());
 
             dash.update();
             telemetry.update();
         }
 
-        turret.stop();
+
     }
 }

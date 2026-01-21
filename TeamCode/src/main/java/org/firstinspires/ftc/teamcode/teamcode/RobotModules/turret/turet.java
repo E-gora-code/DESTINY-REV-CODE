@@ -43,7 +43,7 @@ public class turet {
 
 
 
-    public turet(HardwareMap hw) {
+    public turet(HardwareMap hw,double pipeline) {
         voltageSensor = hw.voltageSensor.iterator().next();
         limelight = hw.get(Limelight3A.class, "limelight");
         yaw = hw.get(CRServo.class, "servoX");
@@ -63,6 +63,7 @@ public class turet {
         yawPid.setCoefficients(new PIDFCoefficients(0.0035, 0.0001, 0.0005, 0));
         shooterLOutPid.setCoefficients(new PIDFCoefficients(0.0015, 0.0000001, 0.00006,0));
         shooterROutPid.setCoefficients(new PIDFCoefficients(0.0015, 0.0000001, 0.00006,0));
+        limelight.pipelineSwitch((int) pipeline);
     }
 
     public void reset() {
@@ -74,6 +75,7 @@ public class turet {
         yawPid.setCoefficients(new PIDFCoefficients(config.yawKp, config.yawKi, config.yawKd, 0));
         shooterLOutPid.setCoefficients(new PIDFCoefficients(config.shooterKp, config.shooterKi, config.shooterKd, 0));
         shooterROutPid.setCoefficients(new PIDFCoefficients(config.shooterKp*10/9, config.shooterKi, config.shooterKd, 0));
+
         LLResult r = limelight.getLatestResult();
         if (r != null && r.isValid()) {
             double tx = r.getTx();
@@ -89,7 +91,7 @@ public class turet {
                 power = -Math.signum(yawPower)*1;
             }
             else{
-                yaw.setPower(Math.abs(filtTx) < 0.5 ? 0 : yawPower);
+                yaw.setPower(clamp(power,-0.1,0.1));
             }
 
 
@@ -162,7 +164,7 @@ public class turet {
 
             }
 
-            yaw.setPower(power);
+            yaw.setPower(clamp(power,-0.1,0.1));
             if (Math.abs(get_current_turret_pose() - point_of_potuga) < 0.1){
                  power = - power;
             }
@@ -197,12 +199,13 @@ public class turet {
         if (lastVoltage > 3.0 && v < 0.3) revCount++;
         if (lastVoltage < 0.3 && v > 3.0) revCount--;
         lastVoltage = v;
-        if (!shooter_zero.getState()) {
-            return Math.max(revCount + (v / 3.3)-shoter_zero,7-(revCount + (v / 3.3)-shoter_zero));
+
+        if (shooter_zero.getState()) {
+            return revCount + (v)-shoter_zero;
         }
         else{
             revCount = 0;
-            shoter_zero = v / 3.3;
+            shoter_zero = v;
             return 0;
         }
 
@@ -219,5 +222,16 @@ public class turet {
     }
     public double getFiltTy() {
         return filtTy;
+    }
+    public double get_distance(){return limelight.getLatestResult().getTa();}
+    public boolean sbros(){
+
+        return shooter_zero.getState();
+    }
+
+    public double distance_svo(double ta) {
+        double sceal = 30665.5;
+        double distance = (sceal / ta);
+        return distance;
     }
 }
