@@ -21,19 +21,20 @@ public class spindexerRobotModule_EXP {
 
     public void update(boolean shoot,boolean ready,boolean intaking) {
         if (intaking){
-            Front_intake.setPower(1);
-            Back_intake.setPower(1);
+//            Front_intake.setPower(1);
+//            Back_intake.setPower(1);
         }
         if (ready){
             Front_ejector.setPosition(config.Front_ejector_noshoot_position);
             Back_ejector.setPosition(config.Back_ejector_shoot_position);
             spindexer.setPower(1);
-            Front_intake.setPower(1);
-            Back_intake.setPower(1);
+//            Front_intake.setPower(1);
+//            Back_intake.setPower(1);
         }
         else{
             Front_ejector.setPosition(config.Front_ejector_noshoot_position);
             Back_ejector.setPosition(config.Back_ejector_noshoot_position);
+            spindexer.setPower(0);
         }
         if (shoot){
             Back_wall.setPosition(config.Back_wall_spin_position);

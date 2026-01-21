@@ -37,7 +37,7 @@ public class spindexer_test extends LinearOpMode {
 
             spindexerPower = gamepad1.right_trigger;
 
-//            spindexerModule.update(shooting, ready);
+            spindexerModule.update(shooting, ready);
 
 
             telemetry.addData("Shooting", shooting ? "YES" : "NO");

@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret;
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import org.firstinspires.ftc.teamcode.generic_classes.OpModeFramework;
 
-//@TeleOp(name = "Spindexer Test", group = "Test")
+@TeleOp(name = "Spindexer EXP", group = "EXP")
 public class spindexer_test_EXP extends OpModeFramework {
     private DataPackageInitSpindexer InitPackage;
     private spindexerRobotModule_EXP spindexerModule;
@@ -13,6 +15,8 @@ public class spindexer_test_EXP extends OpModeFramework {
 
     @Override
     public void runOpMode() {
+        selfInit();
+        initAllSystems();
         InitPackage = new DataPackageInitSpindexer(hardwareMap);
         InitPackage.spindexer = spindexer;
         InitPackage.Front_wall = front_wall;
@@ -43,7 +47,7 @@ public class spindexer_test_EXP extends OpModeFramework {
 
 
 
-//            spindexerModule.update(shooting, ready);
+            spindexerModule.update(shooting, ready,false);
 
 
             telemetry.addData("Shooting", shooting ? "YES" : "NO");

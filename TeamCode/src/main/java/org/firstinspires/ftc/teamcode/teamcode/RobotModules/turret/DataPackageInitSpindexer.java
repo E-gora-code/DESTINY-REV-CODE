@@ -10,8 +10,8 @@ public class DataPackageInitSpindexer {
     public RobotHardware.Motors.BasicServo spindexer;
     public RobotHardware.Motors.BasicServo Front_ejector,Back_ejector,Back_wall,Front_wall;;
 
-//    public RobotHardware.Motors.DCMotor shooterL;
-//    public RobotHardware.Motors.DCMotor shooterR;
+    public RobotHardware.Motors.DCMotor shooterL;
+    public RobotHardware.Motors.DCMotor shooterR;
 
     public DataPackageInitSpindexer(HardwareMap hardware){
         this.TEMP_HardwareMap =hardware;
