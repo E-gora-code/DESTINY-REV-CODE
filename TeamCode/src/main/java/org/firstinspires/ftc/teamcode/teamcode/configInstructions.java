@@ -13,9 +13,14 @@ public class configInstructions extends OpModeFramework {
         selfInit();
         initAllSystems();
         while (opModeIsActive()) {
-            List<String> configServ = motors.getServoConfigNames();
+            List<String> configServ = motors.getMotorsConfigNames();
             for (String line : configServ) {
                 printTelemetry("- ",line);
+            }
+            printTelemetry("","---------");
+            List<String> configMiss = motors.getMotorsMissingNames();
+            for (String line : configMiss) {
+                printTelemetry("-! ",line);
             }
             telemetry.update();
         }

@@ -5,23 +5,22 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.generic_classes.OpModeFramework;
+
 
 @TeleOp
-public class test extends LinearOpMode {
-    Servo Rotation,changeangle;
+public class test extends OpModeFramework {
 
 
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Rotation =hardwareMap.servo.get("rotation");
-        changeangle = hardwareMap.servo.get("changeangle");
-
+        selfInit();
+        initAllSystems();
         waitForStart();
         while (opModeIsActive()) {
-            Rotation.setPosition(gamepad1.left_stick_x);
-            changeangle.setPosition(gamepad1.right_stick_y);
-
+            back_ejector.setPosition(gamepad2.right_stick_x);
+            tickAll();
         }
     }
 

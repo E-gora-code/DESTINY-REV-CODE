@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import org.firstinspires.ftc.teamcode.generic_classes.CucleHelper;
 import org.firstinspires.ftc.teamcode.generic_classes.GamepadDriver;
 import org.firstinspires.ftc.teamcode.generic_classes.OpModeFramework;
 import org.firstinspires.ftc.teamcode.generic_classes.ToggleHelper;
@@ -28,6 +29,53 @@ public class Manual extends OpModeFramework {
         front_wall.setPosition(0);
     }
     ToggleHelper front_wall_toggle = new ToggleHelper(this::front_up,this::front_down,true);
+
+    void blankFunc(){}
+    ToggleHelper manual_spindex_toggle = new ToggleHelper(this::blankFunc,this::blankFunc,false);
+    public void ejector_up(){
+        back_ejector.setPosition(1);
+    }
+    public void ejector_down(){
+        back_ejector.setPosition(0);
+    }
+    void setSpindexState(int state){
+        if(state ==0){
+            front_up();
+            ejector_up();
+            front_intake.setPower(0);
+            back_intake.setPower(0);
+            shooter_right.setPower(0);
+            shooter_left.setPower(0);
+        }
+        if(state ==1){
+            front_up();
+            ejector_up();
+            front_intake.setPower(0.8);
+            back_intake.setPower(0);
+            shooter_right.setPower(0);
+            shooter_left.setPower(0);
+        }
+        if(state ==2){
+            front_down();
+            ejector_up();
+            front_intake.setPower(0);
+            back_intake.setPower(1);
+
+
+        }
+        if(state ==3){
+            front_down();
+            ejector_down();
+            front_intake.setPower(0);
+            back_intake.setPower(1);
+            shooter_right.setPower(-1);
+            shooter_left.setPower(1);
+
+
+        }
+    }
+
+    CucleHelper spindex_cucle = new CucleHelper(this::setSpindexState,4);
 //    Servo s1;
 
     Telemetry dash = FtcDashboard.getInstance().getTelemetry();
@@ -95,38 +143,44 @@ public class Manual extends OpModeFramework {
 
 
 
-
+            manual_spindex_toggle.acceptIn(gamepad2.dpad_up);
             spindexer.setPower((-gamepad2.left_trigger+gamepad2.right_trigger)*0.5);
-//            front_wall.setPosition(1-gamepad2.right_stick_y);
-            back_wall.setPosition(gamepad2.left_stick_y);
-            back_ejector.setPosition(1-gamepad2.right_stick_x);
-
-            front_wall_toggle.acceptIn(gamepad2.a);
-
             turret_x.setPower(controllerDriver_2.internal_touchpad.touchpad1_X);
 
-            front_ejector.setPosition(gamepad2.left_stick_x);
-            double power_of_intake = 0.6;
-            if(gamepad2.dpad_right) {
-                front_intake.setPower(power_of_intake);
-            }else if(gamepad2.dpad_left){
-                front_intake.setPower(-power_of_intake);
+            if(manual_spindex_toggle.state) {
+//            front_wall.setPosition(1-gamepad2.right_stick_y);
+                back_wall.setPosition(gamepad2.left_stick_y);
+                back_ejector.setPosition(1 - gamepad2.right_stick_x);
+
+                front_wall_toggle.acceptIn(gamepad2.a);
+
+
+
+                front_ejector.setPosition(gamepad2.left_stick_x);
+                double power_of_intake = 0.6;
+                if (gamepad2.dpad_right) {
+                    front_intake.setPower(power_of_intake);
+                } else if (gamepad2.dpad_left) {
+                    front_intake.setPower(-power_of_intake);
+                } else {
+                    front_intake.setPower(0);
+                }
+                if (gamepad2.dpad_up) {
+                    back_intake.setPower(power_of_intake);
+                } else if (gamepad2.dpad_down) {
+                    back_intake.setPower(-power_of_intake);
+                } else {
+                    back_intake.setPower(0);
+                }
+                if (gamepad2.left_bumper) {
+                    shooter_right.setPower(-1);
+                    shooter_left.setPower(1);
+                } else {
+                    shooter_right.setPower(0);
+                    shooter_left.setPower(0);
+                }
             }else{
-                front_intake.setPower(0);
-            }
-            if(gamepad2.dpad_up) {
-                back_intake.setPower(power_of_intake);
-            }else if(gamepad2.dpad_down){
-                back_intake.setPower(-power_of_intake);
-            }else{
-                back_intake.setPower(0);
-            }
-            if(gamepad2.left_bumper){
-                shooter_right.setPower(-1);
-                shooter_left.setPower(1);
-            }else {
-                shooter_right.setPower(0);
-                shooter_left.setPower(0);
+                spindex_cucle.acceptIn(gamepad2.x);
             }
 
 

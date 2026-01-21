@@ -40,48 +40,48 @@ tredtest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        FL = hardwareMap.dcMotor.get("FL");
-        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        FL = hardwareMap.dcMotor.get("FL");
+//        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//
+//        FR = hardwareMap.dcMotor.get("FR");
+//        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//
+//        BL = hardwareMap.dcMotor.get("BL");
+//        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//
+//        BR = hardwareMap.dcMotor.get("BR");
+//        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        ch0 = hardwareMap.digitalChannel.get("0");
+//        ch1 = hardwareMap.digitalChannel.get("1");
+//        ch0.setMode(DigitalChannel.Mode.INPUT);
+//        ch1.setMode(DigitalChannel.Mode.INPUT);
 
-        FR = hardwareMap.dcMotor.get("FR");
-        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        BL = hardwareMap.dcMotor.get("BL");
-        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        BR = hardwareMap.dcMotor.get("BR");
-        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        ch0 = hardwareMap.digitalChannel.get("0");
-        ch1 = hardwareMap.digitalChannel.get("1");
-        ch0.setMode(DigitalChannel.Mode.INPUT);
-        ch1.setMode(DigitalChannel.Mode.INPUT);
-
-        sbkr = hardwareMap.servo.get("sbkr");
-        sbros = hardwareMap.servo.get("sbros");
-        grabl = hardwareMap.servo.get("grabl");
-        grabr = hardwareMap.servo.get("grabr");
-//        s1 = hardwareMap.servo.get("servo2");
-//        s2 = hardwareMap.servo.get("servo3");
-        extl = hardwareMap.crservo.get("extl");
-        extr = hardwareMap.crservo.get("extr");
-
-
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-
-        Gyro = hardwareMap.get(BNO055IMU.class, "imu");
+        sbkr = hardwareMap.servo.get("Bej");
+//        sbros = hardwareMap.servo.get("sbros");
+//        grabl = hardwareMap.servo.get("grabl");
+//        grabr = hardwareMap.servo.get("grabr");
+////        s1 = hardwareMap.servo.get("servo2");
+////        s2 = hardwareMap.servo.get("servo3");
+//        extl = hardwareMap.crservo.get("extl");
+//        extr = hardwareMap.crservo.get("extr");
 
 
-        Gyro.initialize(parameters);
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+//        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+//
+//        Gyro = hardwareMap.get(BNO055IMU.class, "imu");
+
+
+//        Gyro.initialize(parameters);
 //        OpenCvCamera webcam;
 //        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 //        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -102,8 +102,9 @@ tredtest extends LinearOpMode {
         tred__1.start();
         while (opModeIsActive()) {
             var1 += 1;
-
+            sbkr.setPosition(gamepad2.right_stick_x);
         }
+
 
     }
     public void Tel(){

@@ -53,8 +53,6 @@ IMPORTANT: THE SYSTEM IS "kinda" EXPERIMENTAL, so don`t implement it in main fil
 
 
 
-import android.icu.util.Output;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -331,7 +329,7 @@ public class RobotHardware{
             motorsDC.put(NameKeys.motorDCNameKeys.shooter_right,new InternalMotorDC("shooterRight"));
 
             //Old preserved because there is a lot of use in programs
-//            servos.put(NameKeys.servoNameKeys.hidden_claw_module,new InternalServo("sbkr"));
+//            servos.put("eeaeaea",new InternalServo("sbkr"));
 //            servos.put(NameKeys.servoNameKeys.container_grab_module.leftServo,new InternalServo("grabl"));
 //            servos.put(NameKeys.servoNameKeys.container_grab_module.rightServo,new InternalServo("grabr"));
 //
@@ -344,13 +342,44 @@ public class RobotHardware{
 //            motorsDC.put(NameKeys.motorDCNameKeys.extention_left,new InternalMotorDC("extl",-1));
 //            motorsDC.put(NameKeys.motorDCNameKeys.factory_extention,new InternalMotorDC("zavoz",-1));
         }
-        public List<String> getServoConfigNames(){
+        public List<String> getMotorsConfigNames(){
             List<String> output = new ArrayList<>();
             for (Map.Entry<String, InternalServo> servo_entry : servos.entrySet()) {
                 InternalServo servo_component = servo_entry.getValue();
                 output.add("Servo: "+servo_entry.getKey()+" --> "+servo_component.AttachedComponentName);
                 if(servo_component.AttachedEncoderName != null) {
                     output.add("Analog encoder: " + servo_entry.getKey() + " --> " + servo_component.AttachedEncoderName);
+                }
+            }
+            for (Map.Entry<String, InternalMotorDC> dc_entry : motorsDC.entrySet()) {
+                InternalMotorDC dc_component = dc_entry.getValue();
+                output.add("DC motor: "+dc_entry.getKey()+" --> "+dc_component.AttachedComponentName);
+//                if(dc_component.AttachedEncoderName != null) {
+//                    output.add("Analog encoder: " + dc_entry.getKey() + " --> " + dc_component.AttachedEncoderName);
+//                }
+            }
+            return output;
+        }
+        public List<String> getMotorsMissingNames(){
+            List<String> output = new ArrayList<>();
+            for (Map.Entry<String, InternalServo> servo_entry : servos.entrySet()) {
+                InternalServo servo_component = servo_entry.getValue();
+                if(servo_component.AttachedComponent==null) {
+                    output.add("NO Servo: " + servo_entry.getKey() + " -!> " + servo_component.AttachedComponentName);
+                }
+                if(servo_component.AttachedEncoderName != null) {
+                    if (servo_component.AttachedEncoder == null) {
+                        output.add("NO Analog encoder: " + servo_entry.getKey() + " -!> " + servo_component.AttachedEncoderName);
+
+                    }
+                }
+            }
+            for (Map.Entry<String, InternalMotorDC> dc_entry : motorsDC.entrySet()) {
+                InternalMotorDC dc_component = dc_entry.getValue();
+                if(dc_component.AttachedComponent==null){
+                output.add("NO DC motor: "+dc_entry.getKey()+" -!> "+dc_component.AttachedComponentName);
+//                if(dc_component.AttachedEncoderName != null) {
+//                    output.add("Analog encoder: " + dc_entry.getKey() + " --> " + dc_component.AttachedEncoderName);
                 }
             }
             return output;
@@ -535,11 +564,14 @@ public class RobotHardware{
             public double encoder = 0;
             public double power_multiplier = 1;
             public final DcMotor AttachedComponent;
+            public final  String AttachedComponentName;
             public InternalMotorDC(String attachedComponentName){
                 this.AttachedComponent = getMotorDCFunction(attachedComponentName);
+                this.AttachedComponentName = attachedComponentName;
             }
             public InternalMotorDC(String attachedComponentName,double power_mult){
                 this.AttachedComponent = getMotorDCFunction(attachedComponentName);
+                this.AttachedComponentName = attachedComponentName;
                 this.power_multiplier = power_mult;
             }
         }
