@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.generic_classes.OpModeFramework;
 @TeleOp(name = "Spindexer Test", group = "Test")
 public class spindexer_test extends OpModeFramework {
     private DataPackageInitSpindexer InitPackage;
-    private spindexer spindexerModule;
+    private spindexerRobotModule spindexerModule;
     private boolean lastA = false;
     private boolean lastB = false;
     private boolean shooting = false;
@@ -15,13 +15,16 @@ public class spindexer_test extends OpModeFramework {
 
     @Override
     public void runOpMode() {
+        selfInit();
+        initAllSystems();
+
         InitPackage = new DataPackageInitSpindexer(hardwareMap);
         InitPackage.spindexer = spindexer;
         InitPackage.Front_wall = front_wall;
         InitPackage.Back_wall = back_wall;
         InitPackage.Front_ejector = front_ejector;
         InitPackage.Back_ejector = back_ejector;
-        spindexerModule = new spindexer(InitPackage);
+        spindexerModule = new spindexerRobotModule(InitPackage);
         telemetry.addData("Position", "%.2f revs", spindexerModule.getSpindexerPosition());
         telemetry.update();
 
@@ -46,7 +49,7 @@ public class spindexer_test extends OpModeFramework {
             spindexerModule.spindexer.setPower(spindexerPower);
 
 
-//            spindexerModule.update(shooting, ready);
+            spindexerModule.update(shooting, ready,false);
 
 
             telemetry.addData("Shooting", shooting ? "YES" : "NO");

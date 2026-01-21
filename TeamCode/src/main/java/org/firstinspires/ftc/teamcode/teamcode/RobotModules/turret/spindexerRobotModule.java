@@ -1,18 +1,13 @@
 package org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret;
 
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.AnalogInput;
-
 import org.firstinspires.ftc.teamcode.generic_classes.RobotHardware;
 
-public class spindexer {
+public class spindexerRobotModule {
     private RobotHardware.Motors.BasicServo Front_ejector,Back_ejector,Back_wall,Front_wall;
     public RobotHardware.Motors.BasicServo spindexer;
     private RobotHardware.Motors.DCMotor Front_intake,Back_intake;
 
-    public spindexer(DataPackageInitSpindexer pack) {
+    public spindexerRobotModule(DataPackageInitSpindexer pack) {
         this.spindexer = pack.spindexer;
         this.Front_ejector = pack.Front_ejector;
         this.Back_ejector = pack.Back_ejector;
@@ -30,11 +25,8 @@ public class spindexer {
             Back_intake.setPower(1);
         }
         if (ready){
-            Front_ejector.setPosition(config.Front_ejector_noshoot_position);
+            Front_ejector.setPosition(config.Front_ejector_shoot_position);
             Back_ejector.setPosition(config.Back_ejector_shoot_position);
-            spindexer.setPower(1);
-            Front_intake.setPower(1);
-            Back_intake.setPower(1);
         }
         else{
             Front_ejector.setPosition(config.Front_ejector_noshoot_position);

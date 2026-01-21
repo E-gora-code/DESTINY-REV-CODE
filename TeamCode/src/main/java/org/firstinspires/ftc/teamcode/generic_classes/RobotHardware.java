@@ -304,6 +304,8 @@ public class RobotHardware{
             public class SparkMiniNameKeys{
             }
             public class motorDCNameKeys {
+                public final static String front_intake = "Front_intake";
+                public final static String back_intake = "Back_intake";
             }
         }
 
@@ -317,7 +319,8 @@ public class RobotHardware{
             servos.put(NameKeys.servoNameKeys.front_wall,new InternalServo("Fwall"));
             servos.put(NameKeys.servoNameKeys.back_wall,new InternalServo("Bwall"));
 
-
+            motorsDC.put(NameKeys.motorDCNameKeys.front_intake,new InternalMotorDC("Front_intake"));
+            motorsDC.put(NameKeys.motorDCNameKeys.back_intake,new InternalMotorDC("Back_intake"));
 
             //Old preserved because there is a lot of use in programs
 //            servos.put(NameKeys.servoNameKeys.hidden_claw_module,new InternalServo("sbkr"));
@@ -329,7 +332,7 @@ public class RobotHardware{
 //
 //            servos.put(NameKeys.servoNameKeys.factory_lift,new InternalServo("reika",true, true));
 //
-//            motorsDC.put(NameKeys.motorDCNameKeys.extention_right,new InternalMotorDC("extr"));
+
 //            motorsDC.put(NameKeys.motorDCNameKeys.extention_left,new InternalMotorDC("extl",-1));
 //            motorsDC.put(NameKeys.motorDCNameKeys.factory_extention,new InternalMotorDC("zavoz",-1));
         }
