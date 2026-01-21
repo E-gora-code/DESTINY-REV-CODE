@@ -53,7 +53,11 @@ public class Manual extends OpModeFramework {
             extr_pos = FL.getCurrentPosition();
             extl_pos = FR.getCurrentPosition();
             telemetry.addData("spindexer", spindexer.getEncoderPosition());
-            telemetry.addData("spindexer_tst", spindexer.getSentPosition());
+            telemetry.addData("spindexer_pos", spindexer.getSentPosition());
+            telemetry.addData("front_ejector_pos", front_ejector.getSentPosition());
+            telemetry.addData("back_ejector_pos", back_ejector.getSentPosition());
+            telemetry.addData("front_wall_pos", front_wall.getSentPosition());
+            telemetry.addData("back_wall_pos", back_wall.getSentPosition());
             telemetry.addData("alt", independent_drive);
             telemetry.addData("PS5", gamepad1.touchpad_finger_1);
             telemetry.addData("PSx", gamepad1.touchpad_finger_1_x);
