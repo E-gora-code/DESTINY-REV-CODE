@@ -103,6 +103,8 @@ public class Manual extends OpModeFramework {
 
             front_wall_toggle.acceptIn(gamepad2.a);
 
+            turret_x.setPower(controllerDriver_2.internal_touchpad.touchpad1_X);
+
             front_ejector.setPosition(gamepad2.left_stick_x);
             double power_of_intake = 0.6;
             if(gamepad2.dpad_right) {
