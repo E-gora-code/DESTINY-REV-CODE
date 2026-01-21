@@ -143,7 +143,7 @@ public class Manual extends OpModeFramework {
 
 
 
-            manual_spindex_toggle.acceptIn(gamepad2.dpad_up);
+            manual_spindex_toggle.acceptIn(gamepad2.back);
             spindexer.setPower((-gamepad2.left_trigger+gamepad2.right_trigger)*0.5);
             turret_x.setPower(controllerDriver_2.internal_touchpad.touchpad1_X);
 
