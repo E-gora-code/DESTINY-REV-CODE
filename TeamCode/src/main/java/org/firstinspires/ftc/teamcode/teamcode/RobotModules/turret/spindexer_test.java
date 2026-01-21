@@ -25,6 +25,8 @@ public class spindexer_test extends OpModeFramework {
         InitPackage.Back_ejector = back_ejector;
         InitPackage.Front_intake = front_intake;
         InitPackage.Back_intake = back_intake;
+        InitPackage.Shooter1 = shooter_right;
+        InitPackage.Shooter2 = shooter_left;
         spindexerModule = new spindexer(InitPackage);
         telemetry.addData("Position", "%.2f revs", spindexerModule.getSpindexerPosition());
         telemetry.update();
@@ -50,8 +52,9 @@ public class spindexer_test extends OpModeFramework {
 
 
 //            spindexerModule.pos_from_config();
-            spindexerModule.front_intaking(gamepad1.right_trigger);
+            spindexerModule.front_intaking(gamepad1.right_trigger,gamepad1.left_trigger);
             spindexer.setPower(gamepad1.right_stick_x);
+
 
 
             telemetry.addData("Shooting", shooting ? "YES" : "NO");
