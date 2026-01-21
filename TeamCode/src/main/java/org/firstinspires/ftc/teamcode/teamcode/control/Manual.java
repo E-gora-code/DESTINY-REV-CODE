@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import org.firstinspires.ftc.teamcode.generic_classes.GamepadDriver;
 import org.firstinspires.ftc.teamcode.generic_classes.OpModeFramework;
 import org.firstinspires.ftc.teamcode.generic_classes.ToggleHelper;
 
@@ -26,7 +27,7 @@ public class Manual extends OpModeFramework {
     public void front_down(){
         front_wall.setPosition(0);
     }
-    ToggleHelper front_wall_toggle = new ToggleHelper(this::front_up,this::front_down);
+    ToggleHelper front_wall_toggle = new ToggleHelper(this::front_up,this::front_down,true);
 //    Servo s1;
 
     Telemetry dash = FtcDashboard.getInstance().getTelemetry();
@@ -68,9 +69,9 @@ public class Manual extends OpModeFramework {
             telemetry.addData("front_wall_pos", front_wall.getSentPosition());
             telemetry.addData("back_wall_pos", back_wall.getSentPosition());
             telemetry.addData("alt", independent_drive);
-            telemetry.addData("PS5", gamepad1.touchpad_finger_1);
-            telemetry.addData("PSx", gamepad1.touchpad_finger_1_x);
-            telemetry.addData("PSy", gamepad1.touchpad_finger_1_y);
+            telemetry.addData("PS5", gamepad2.touchpad_finger_1);
+            telemetry.addData("PSx", controllerDriver_2.internal_touchpad.getX());
+            telemetry.addData("PSy", controllerDriver_2.internal_touchpad.getY());
             telemetry.addData("Angle X", gyro.Angle().firstAngle);
             telemetry.addData("Angle Y", gyro.Angle().secondAngle);
             telemetry.addData("Angle Z", gyro.Angle().thirdAngle);

@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.generic_classes;
 
 public class ToggleHelper {
-    boolean state = false;
+    public boolean state = false;
     boolean trigger_in = false;
     boolean last_in = false;
 
@@ -11,6 +11,11 @@ public class ToggleHelper {
         this.func_on = on;
         this.func_off = off;
 
+    }
+    public ToggleHelper(Runnable on, Runnable off, boolean init_state){
+        this.func_on = on;
+        this.func_off = off;
+        this.state = init_state;
     }
     public void acceptIn(boolean st){
         this.trigger_in = st;

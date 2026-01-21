@@ -79,6 +79,8 @@ public abstract class OpModeFramework extends LinearOpMode {
         driveBase.class_tick();
         motors.class_tick();
         sensors.class_tick();
+        controllerDriver_1.class_tick();
+        controllerDriver_2.class_tick();
     }
     public void printTelemetry(String caption, Object value){
         telemetry.addData(caption,value);
