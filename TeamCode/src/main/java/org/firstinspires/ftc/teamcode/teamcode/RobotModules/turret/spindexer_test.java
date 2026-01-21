@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.firstinspires.ftc.teamcode.generic_classes.OpModeFramework;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 @TeleOp(name = "Spindexer Test", group = "Test")
-public class spindexer_test extends OpModeFramework {
-    private DataPackageInitSpindexer InitPackage;
-    private spindexerRobotModule spindexerModule;
+public class spindexer_test extends LinearOpMode {
+
+    private spindexer spindexerModule;
     private boolean lastA = false;
     private boolean lastB = false;
     private boolean shooting = false;
@@ -15,16 +15,7 @@ public class spindexer_test extends OpModeFramework {
 
     @Override
     public void runOpMode() {
-        selfInit();
-        initAllSystems();
-
-        InitPackage = new DataPackageInitSpindexer(hardwareMap);
-        InitPackage.spindexer = spindexer;
-        InitPackage.Front_wall = front_wall;
-        InitPackage.Back_wall = back_wall;
-        InitPackage.Front_ejector = front_ejector;
-        InitPackage.Back_ejector = back_ejector;
-        spindexerModule = new spindexerRobotModule(InitPackage);
+        spindexerModule = new spindexer(hardwareMap);
         telemetry.addData("Position", "%.2f revs", spindexerModule.getSpindexerPosition());
         telemetry.update();
 
@@ -46,10 +37,7 @@ public class spindexer_test extends OpModeFramework {
 
             spindexerPower = gamepad1.right_trigger;
 
-            spindexerModule.spindexer.setPower(spindexerPower);
-
-
-            spindexerModule.update(shooting, ready,false);
+//            spindexerModule.update(shooting, ready);
 
 
             telemetry.addData("Shooting", shooting ? "YES" : "NO");
