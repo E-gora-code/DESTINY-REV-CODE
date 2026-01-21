@@ -3,12 +3,20 @@ package org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret;
 import org.firstinspires.ftc.teamcode.generic_classes.RobotHardware;
 
 public class spindexerRobotModule_EXP {
-    public double Front_ejector,Back_ejector,Back_wall,Front_wall;
-    public double spindexer;
+    private RobotHardware.Motors.BasicServo Front_ejector,Back_ejector,Back_wall,Front_wall;
+    public RobotHardware.Motors.BasicServo spindexer;
     private RobotHardware.Motors.DCMotor Front_intake,Back_intake;
 
     public spindexerRobotModule_EXP(DataPackageInitSpindexer pack) {
+        this.spindexer = pack.spindexer;
+        this.Front_ejector = pack.Front_ejector;
+        this.Back_ejector = pack.Back_ejector;
+        this.Back_wall = pack.Back_wall;
+        this.Front_wall = pack.Front_wall;
 
+    }
+    public double getSpindexerPosition(){
+        return  spindexer.getEncoderPosition();
     }
 
     public void update(boolean shoot,boolean ready,boolean intaking) {
@@ -17,20 +25,23 @@ public class spindexerRobotModule_EXP {
             Back_intake.setPower(1);
         }
         if (ready){
-            Front_ejector = (config.Front_ejector_shoot_position);
-            Back_ejector = (config.Back_ejector_shoot_position);
+            Front_ejector.setPosition(config.Front_ejector_noshoot_position);
+            Back_ejector.setPosition(config.Back_ejector_shoot_position);
+            spindexer.setPower(1);
+            Front_intake.setPower(1);
+            Back_intake.setPower(1);
         }
         else{
-            Front_ejector = (config.Front_ejector_noshoot_position);
-            Back_ejector = (config.Back_ejector_noshoot_position);
+            Front_ejector.setPosition(config.Front_ejector_noshoot_position);
+            Back_ejector.setPosition(config.Back_ejector_noshoot_position);
         }
         if (shoot){
-            Back_wall = (config.Back_wall_spin_position);
-            Front_wall = (config.Front_wall_spin_position);
+            Back_wall.setPosition(config.Back_wall_spin_position);
+            Front_wall.setPosition(config.Front_wall_spin_position);
         }
         else{
-            Back_wall = (config.Back_wall_nospin_position);
-            Front_wall = (config.Front_wall_nospin_position);
+            Back_wall.setPosition(config.Back_wall_nospin_position);
+            Front_wall.setPosition(config.Front_wall_nospin_position);
         }
     }
 }

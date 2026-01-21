@@ -26,8 +26,8 @@ public class spindexer {
         Front_wall = hw.get(Servo.class, "Fwall");
         spindexer = hw.get(Servo.class, "SP");
         spindexerPos = hw.get(AnalogInput.class, "SP_POS");
-        Left_intake = hw.get(DcMotorEx.class, "Left_intake");
-        Rignt_intake = hw.get(DcMotorEx.class, "Right_intake");
+        Left_intake = hw.get(DcMotorEx.class, "Front_intake");
+        Rignt_intake = hw.get(DcMotorEx.class, "Back_intake");
         Left_intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         Rignt_intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         Left_intake.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);

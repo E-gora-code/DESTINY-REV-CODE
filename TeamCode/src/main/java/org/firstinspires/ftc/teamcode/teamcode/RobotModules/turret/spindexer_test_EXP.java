@@ -13,9 +13,6 @@ public class spindexer_test_EXP extends OpModeFramework {
 
     @Override
     public void runOpMode() {
-        selfInit();
-        initAllSystems();
-
         InitPackage = new DataPackageInitSpindexer(hardwareMap);
         InitPackage.spindexer = spindexer;
         InitPackage.Front_wall = front_wall;
@@ -23,7 +20,7 @@ public class spindexer_test_EXP extends OpModeFramework {
         InitPackage.Front_ejector = front_ejector;
         InitPackage.Back_ejector = back_ejector;
         spindexerModule = new spindexerRobotModule_EXP(InitPackage);
-        telemetry.addData("Position", "%.2f revs", spindexer.getEncoderPosition());
+        telemetry.addData("Position", "%.2f revs", spindexerModule.getSpindexerPosition());
         telemetry.update();
 
         waitForStart();
@@ -46,23 +43,16 @@ public class spindexer_test_EXP extends OpModeFramework {
 
 
 
-            spindexerModule.update(shooting, ready,false);
+//            spindexerModule.update(shooting, ready);
 
 
             telemetry.addData("Shooting", shooting ? "YES" : "NO");
             telemetry.addData("Ready", ready ? "YES" : "NO");
             telemetry.addData("Spindexer Power", "%.2f", spindexerPower);
-            telemetry.addData("Spindexer Position",  spindexer.getEncoderPosition());
+            telemetry.addData("Spindexer Position",  spindexerModule.getSpindexerPosition());
             telemetry.addData("Position Degrees",
-                    (spindexer.getEncoderPosition()) * 360);
+                    (spindexerModule.getSpindexerPosition()) * 360);
             telemetry.update();
-
-
-            spindexer.setPower(spindexerModule.spindexer);
-            front_wall.setPosition(spindexerModule.Front_wall);
-            back_wall.setPosition(spindexerModule.Back_wall);
-            front_ejector.setPosition(spindexerModule.Front_ejector);
-            back_ejector.setPosition(spindexerModule.Back_ejector);
 
         }
     }
