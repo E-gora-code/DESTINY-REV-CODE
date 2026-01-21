@@ -89,19 +89,20 @@ public class Manual extends OpModeFramework {
             spindexer.setPower((-gamepad2.left_trigger+gamepad2.right_trigger)*0.5);
             front_wall.setPosition(1-gamepad2.right_stick_y);
             back_wall.setPosition(gamepad2.left_stick_y);
-            front_ejector.setPosition(1-gamepad2.right_stick_x);
-            back_ejector.setPosition(1-gamepad2.left_stick_x);
+            back_ejector.setPosition(1-gamepad2.right_stick_x);
+            front_ejector.setPosition(gamepad2.left_stick_x);
+            double power_of_intake = 0.6;
             if(gamepad2.dpad_right) {
-                front_intake.setPower(1);
+                front_intake.setPower(power_of_intake);
             }else if(gamepad2.dpad_left){
-                front_intake.setPower(-1);
+                front_intake.setPower(-power_of_intake);
             }else{
                 front_intake.setPower(0);
             }
             if(gamepad2.dpad_up) {
-                back_intake.setPower(1);
+                back_intake.setPower(power_of_intake);
             }else if(gamepad2.dpad_down){
-                back_intake.setPower(-1);
+                back_intake.setPower(-power_of_intake);
             }else{
                 back_intake.setPower(0);
             }
