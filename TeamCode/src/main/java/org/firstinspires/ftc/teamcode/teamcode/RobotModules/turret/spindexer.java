@@ -56,13 +56,13 @@ public class spindexer {
              spindexer.setPower(spin);
          }
          else if (back_shoot){
-             back_ejector.setPosition(0.75);
+             back_ejector.setPosition(1);
              Front_intake.setPower(1);
              Back_intake.setPower(1);
              spindexer.setPower(spin);
          }
          else if (front_shoot){
-             front_ejector.setPosition(0.7);
+             front_ejector.setPosition(1);
              Front_intake.setPower(1);
              Back_intake.setPower(1);
              spindexer.setPower(spin);

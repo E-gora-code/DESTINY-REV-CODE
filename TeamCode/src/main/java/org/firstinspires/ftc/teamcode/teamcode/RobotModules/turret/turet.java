@@ -31,6 +31,7 @@ public class turet {
 
     private double filtTx = 0, filtTy = 0;
     private double point_of_potuga = 2;
+    private double angle;
 
 
     private double targetRpm = 240;
@@ -90,7 +91,7 @@ public class turet {
             yawPid.run();
 
             double power = yawPid.run();
-            velocity = Math.abs(shooterL.getVelocity() * 60.0 / 560)*0.8;
+            velocity = Math.abs(shooterL.getVelocity() * 60.0 / 560)*10;
 
 
             setServoSpeed(yaw,clamp((power),-0.6,0.6));
@@ -98,13 +99,13 @@ public class turet {
 
 
 
-            yDist =Math.pow((faund()*faund()-5329),0.5);
-            double discriminant = Math.pow(velocity,4) - 9.8  * (9.8 * yDist* yDist + 2 * 73* Math.pow(velocity,2));
+            yDist =Math.pow((faund()*faund()-1600),0.5);
+            double discriminant = Math.pow(velocity,4) - 9.8  * (9.8 * yDist* yDist + 2 * 40* Math.pow(velocity,2));
 
             double sqrtDisc = Math.sqrt(Math.abs(discriminant));
             tanTheta = (Math.pow(velocity,2) + sqrtDisc) / (9.8 * yDist);
 
-            double angle =Math.toDegrees(Math.atan(tanTheta));
+            angle =Math.toDegrees(Math.atan(tanTheta));
 
             pitchPos = angle*0.006875;
             pitchPos = clamp(pitchPos, 0.0, 1.0);
@@ -134,8 +135,8 @@ public class turet {
                 shooterR.setPower(1);
             }
             else{
-                shooterL.setPower(0);
-                shooterR.setPower(0);
+                shooterL.setPower(1);
+                shooterR.setPower(1);
 
             }
         }
@@ -158,13 +159,13 @@ public class turet {
 
                 shooterL.setPower(powerleft*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
                 shooterR.setPower(powerright*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
-                shooterR.setPower(-1);
+                shooterR.setPower(1);
                 shooterR.setPower(1);
 
             }
             else{
-                shooterL.setPower(0);
-                shooterR.setPower(0);
+                shooterL.setPower(1);
+                shooterR.setPower(1);
 
             }
 
@@ -243,6 +244,6 @@ public class turet {
 
     }
     public double dist (){
-        return pitchPos;
+        return angle;
     }
 }

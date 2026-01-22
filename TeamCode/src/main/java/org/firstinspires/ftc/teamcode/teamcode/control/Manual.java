@@ -58,12 +58,13 @@ public class Manual extends OpRobotSystemsFramework {
 //             varing
             extr_pos = FL.getCurrentPosition();
             extl_pos = FR.getCurrentPosition();
-            telemetry.addData("spindexer", spindexer.getEncoderPosition());
-            telemetry.addData("spindexer_pos", spindexer.getSentPosition());
-            telemetry.addData("front_ejector_pos", front_ejector.getSentPosition());
-            telemetry.addData("back_ejector_pos", back_ejector.getSentPosition());
-            telemetry.addData("front_wall_pos", front_wall.getSentPosition());
-            telemetry.addData("back_wall_pos", back_wall.getSentPosition());
+            printTelemetry("Spin_pos", spindexer.getEncoderPosition());
+//            telemetry.addData("spindexer", spindexer.getEncoderPosition());
+//            telemetry.addData("spindexer_pos", spindexer.getSentPosition());
+//            telemetry.addData("front_ejector_pos", front_ejector.getSentPosition());
+//            telemetry.addData("back_ejector_pos", back_ejector.getSentPosition());
+//            telemetry.addData("front_wall_pos", front_wall.getSentPosition());
+//            telemetry.addData("back_wall_pos", back_wall.getSentPosition());
             telemetry.addData("alt", independent_drive);
             telemetry.addData("PS5", gamepad2.touchpad_finger_1);
             telemetry.addData("PSx", controllerDriver_2.internal_touchpad.getX());
@@ -79,14 +80,14 @@ public class Manual extends OpRobotSystemsFramework {
 //            telemetry.addData("extL", extl_pos);
 //            telemetry.addData("BL", BL.getCurrentPosition());
 //            telemetry.addData("BR", BR.getCurrentPosition());
-            telemetry.addData("Start_press", (gamepad1.start || gamepad2.start));
-            telemetry.addData("A_press", (gamepad1.a || gamepad2.a));
+//            telemetry.addData("Start_press", (gamepad1.start || gamepad2.start));
+//            telemetry.addData("A_press", (gamepad1.a || gamepad2.a));
 //            dash.addData("angle",currentAngle);
 //            dash.addData("angletarg",targAngle);
 //            dash.addData("Angle", Angle());
             telemetry.update();
-            dash.addData("x", BR.getCurrentPosition());
-            dash.addData("y", BL.getCurrentPosition());
+//            dash.addData("x", BR.getCurrentPosition());
+//            dash.addData("y", BL.getCurrentPosition());
             dash.update();
 
             spindexerModule.front_intaking = gamepad2.dpad_down||gamepad1.dpad_down;
