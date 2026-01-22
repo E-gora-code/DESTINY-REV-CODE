@@ -18,6 +18,7 @@ public class OpRobotSystemsFramework extends OpModeFramework{
         InitPackage.Back_intake = back_intake;
         InitPackage.Shooter1 = shooter_right;
         InitPackage.Shooter2 = shooter_left;
+        InitPackage.colorSensor = cv0;
         spindexerModule = new spindexer(InitPackage,hardwareMap);
     }
 
@@ -28,7 +29,7 @@ public class OpRobotSystemsFramework extends OpModeFramework{
     }
     @Override
     public void tickAll(){
-        spindexerModule.update_1ball();
+        spindexerModule.update_2ball();
         super.tickAll();
     }
 
