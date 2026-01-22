@@ -9,10 +9,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.generic_classes.CucleHelper;
 import org.firstinspires.ftc.teamcode.generic_classes.GamepadDriver;
 import org.firstinspires.ftc.teamcode.generic_classes.OpModeFramework;
+import org.firstinspires.ftc.teamcode.generic_classes.OpRobotSystemsFramework;
 import org.firstinspires.ftc.teamcode.generic_classes.ToggleHelper;
 
 @TeleOp
-public class Manual extends OpModeFramework {
+public class Manual extends OpRobotSystemsFramework {
 
     double extr_pos, extl_pos;
     double Multiply = 0.6;
@@ -88,7 +89,13 @@ public class Manual extends OpModeFramework {
             dash.addData("y", BL.getCurrentPosition());
             dash.update();
 
+            spindexerModule.front_intaking = gamepad2.dpad_down||gamepad1.dpad_down;
+            spindexerModule.front_shoot = gamepad2.dpad_left||gamepad1.dpad_left;
+            spindexerModule.spin = gamepad2.right_stick_y+gamepad1.right_stick_y;
 
+            turret_x.setPower(controllerDriver_2.internal_touchpad.getX()+gamepad2.left_stick_y);
+            shooter_left.setPower(gamepad2.left_trigger);
+            shooter_right.setPower(-gamepad2.left_trigger);
 
             spindexer.setPower((-gamepad2.left_trigger+gamepad2.right_trigger)*0.5);
             turret_x.setPower(controllerDriver_2.internal_touchpad.touchpad1_X);
@@ -99,25 +106,7 @@ public class Manual extends OpModeFramework {
                 gamepad2.rumble(3000);
 
             }
-//
-//
-//
-//
-//            i
-//
-//            i
-//
-//            if(gamepad2.dpad_up){
-//                reika.setPower(1);
-//            }
-//            else if(gamepad2.dpad_down){
-//                reika.setPower(-1);
-//            }
-//            else {
-//                reika.setPower(0);
-//            }
-//            ;
-//
+
 
             if(gamepad1.dpad_up){
                 if(independent_drive_press==false){
