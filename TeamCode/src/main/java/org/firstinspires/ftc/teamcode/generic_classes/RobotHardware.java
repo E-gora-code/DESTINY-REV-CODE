@@ -631,6 +631,9 @@ public class RobotHardware{
             public double getEncoderPosition(){
                 return reversePosCheck(attached_servo.encoderPosition+attached_servo.encoderRevolutionCount*3);
             }
+            public int getEncoderRevolutions(){
+                return attached_servo.encoderRevolutionCount;
+            }
             public double getEncoderVoltage(){
                 return reversePosCheck(attached_servo.encoderVoltage);
             }
