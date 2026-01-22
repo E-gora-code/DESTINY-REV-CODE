@@ -45,7 +45,7 @@ public class turet {
 
 
     public void setServoSpeed(Servo servo, double speed){
-        servo.setPosition(speed/2-0.5);
+        servo.setPosition(speed/2+0.5);
     }
     public turet(HardwareMap hw,double pipeline) {
         voltageSensor = hw.voltageSensor.iterator().next();
