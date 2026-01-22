@@ -250,7 +250,7 @@ public class spindexer {
                 this.rotate_to(1.4, 0.1);
             }else if(input_count == 2){
                 Back_intake.setPower(0.6);
-                this.rotate_to(2.4, 0.2);
+                this.rotate_to(2.4, 0.4);
 
             }else {
                 front_wall.setPosition(0.1);
@@ -271,23 +271,32 @@ public class spindexer {
                 Shooter1.setPower(-1);
                 spindexer.setPower(0);
 
-            }else if(shooting_time.seconds()<4.5) {
+            }else if(shooting_time.seconds()<4) {
                 Shooter2.setPower(1);
                 Shooter1.setPower(-1);
                 Front_intake.setPower(1);
                 Back_intake.setPower(1);
                 spindexer.setPower(0);
             }
-            else if(shooting_time.seconds()<10) {
+            else if(shooting_time.seconds()<17) {
                 back_ejector.setPosition(0.65);
                 Shooter2.setPower(1);
                 Shooter1.setPower(-1);
                 Front_intake.setPower(1);
                 Back_intake.setPower(1);
-                spindexer.setPower(-1);
+                if((shooting_time.seconds()<5.3)&&(shooting_time.seconds()>5)) {
+                    spindexer.setPower(-1);
+                }else if((shooting_time.seconds()<9.6)&&(shooting_time.seconds()>9)) {
+                    spindexer.setPower(-1);
+                }
+                else if((shooting_time.seconds()<16)&&(shooting_time.seconds()>13)) {
+                    spindexer.setPower(-1);
+                }else {
+                    spindexer.setPower(0);
+                }
                 force_front = false;
             }
-            else if(shooting_time.seconds()>12){
+            else if(shooting_time.seconds()>18){
                 back_ejector.setPosition(0.65);
                 Front_intake.setPower(0);
                 Back_intake.setPower(0);
