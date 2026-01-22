@@ -94,8 +94,8 @@ public class Manual extends OpRobotSystemsFramework {
             spindexerModule.spin = gamepad2.right_stick_y+gamepad1.right_stick_y;
 
             turret_x.setPower(controllerDriver_2.internal_touchpad.getX()+gamepad2.left_stick_y);
-            shooter_left.setPower(gamepad2.left_trigger);
-            shooter_right.setPower(-gamepad2.left_trigger);
+            shooter_left.setPower(gamepad2.left_trigger+gamepad1.right_trigger);
+            shooter_right.setPower(-gamepad2.left_trigger-gamepad1.right_trigger);
 
             spindexer.setPower((-gamepad2.left_trigger+gamepad2.right_trigger)*0.5);
             turret_x.setPower(controllerDriver_2.internal_touchpad.touchpad1_X);

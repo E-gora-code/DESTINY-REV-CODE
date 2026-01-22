@@ -113,23 +113,25 @@ public class turet {
 
 
             if (shoot) {
-                double currRpmL = shooterL.getVelocity() * 60.0 / 560;
-                shooterLOutPid.updateError(targetRpm-currRpmL);
-                double shooterOutL = shooterLOutPid.run();
-                double powerleft = (1.0/300) * targetRpm + shooterOutL;
-                powerleft = clamp(powerleft, 0.0, 1.0);
-                if (targetRpm <= 0) powerleft = 0;
-                double currRpmR = -shooterR.getVelocity() * 60.0 / 560;
-                shooterROutPid.updateError(targetRpm-currRpmR);
-                double shooterOutR = shooterLOutPid.run();
-                double powerright = (1.0/300) * targetRpm + shooterOutR;
-                powerright = clamp(powerright, 0.0, 1.0);
-                if (targetRpm <= 0) powerright = 0;
-                voltage = voltageSensor.getVoltage();
-
-
-                shooterL.setPower(powerleft*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
-                shooterR.setPower(powerright*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
+//                double currRpmL = shooterL.getVelocity() * 60.0 / 560;
+//                shooterLOutPid.updateError(targetRpm-currRpmL);
+//                double shooterOutL = shooterLOutPid.run();
+//                double powerleft = (1.0/300) * targetRpm + shooterOutL;
+//                powerleft = clamp(powerleft, 0.0, 1.0);
+//                if (targetRpm <= 0) powerleft = 0;
+//                double currRpmR = -shooterR.getVelocity() * 60.0 / 560;
+//                shooterROutPid.updateError(targetRpm-currRpmR);
+//                double shooterOutR = shooterLOutPid.run();
+//                double powerright = (1.0/300) * targetRpm + shooterOutR;
+//                powerright = clamp(powerright, 0.0, 1.0);
+//                if (targetRpm <= 0) powerright = 0;
+//                voltage = voltageSensor.getVoltage();
+//
+//
+//                shooterL.setPower(powerleft*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
+//                shooterR.setPower(powerright*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
+                shooterL.setPower(1);
+                shooterR.setPower(1);
             }
             else{
                 shooterL.setPower(0);
