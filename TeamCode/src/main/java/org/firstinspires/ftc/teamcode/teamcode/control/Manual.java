@@ -32,7 +32,7 @@ public class Manual extends OpRobotSystemsFramework {
     public void runOpMode() throws InterruptedException {
         selfInit();
         initAllSystems();
-        motors.is_motors_enabled = false;
+//        motors.is_motors_enabled = false;
 //          s1 = hardwareMap.servo.get("s1");
 ////        s2 = hardwareMap.servo.get("servo3");
 //

@@ -22,6 +22,7 @@ public class spindexer {
     private boolean color_last = false;
 
     public int input_count = 0;
+    public boolean force_front = false;
 
     public spindexer(DataPackageInitSpindexer pack, HardwareMap hw) {
         this.spindexer = pack.spindexer;
@@ -55,7 +56,7 @@ public class spindexer {
         if(((sensor_ball.green()-32)>(sensor_ball.red()))){
             return true;
         }
-        if(((sensor_ball.green()-10)>(sensor_ball.red()))&&((sensor_ball.blue()-5)>(sensor_ball.red()))){
+        if(((sensor_ball.green()-5)>(sensor_ball.red()))&&((sensor_ball.blue()-5)>(sensor_ball.red()))){
             return true;
         }
 
@@ -182,7 +183,7 @@ public class spindexer {
                 Shooter1.setPower(-1);
                 Front_intake.setPower(1);
                 Back_intake.setPower(1);
-                spindexer.setPower(-1);
+                spindexer.setPower(1);
             }
             else if(shooting_time.seconds()>10){
                 back_ejector.setPosition(0.65);
@@ -215,15 +216,20 @@ public class spindexer {
 
         if (front_intaking){
             back_ejector.setPosition(0.8);
+            if(force_front){
+                front_wall.setPosition(0.1);
+            }else {
+                front_wall.setPosition(1);
+            }
             back_wall.setPosition(0);
-            front_ejector.setPosition(0.9);
-            front_wall.setPosition(1);
+            front_ejector.setPosition(0.8);
+
             Front_intake.setPower(intake_speed);
             Back_intake.setPower(intake_speed);
             if(checkColor()) {
                 if (color_time.seconds() > 1) {
                     if((color_last!=checkColor())&&checkColor()) {
-                        if (input_count < 2) {
+                        if (input_count < 3) {
                             input_count += 1;
                         }
 
@@ -242,9 +248,13 @@ public class spindexer {
                 this.rotate_to(0.2, 0.1);
             }else if(input_count==1){
                 this.rotate_to(1.4, 0.1);
+            }else if(input_count == 2){
+                Back_intake.setPower(0.6);
+                this.rotate_to(2.4, 0.2);
+
             }else {
-                Back_intake.setPower(0.3);
-                this.rotate_to(2.6, 0.2);
+                front_wall.setPosition(0.1);
+                force_front = true;
             }
             last_intaked.reset();
             shooting_time.reset();
@@ -272,9 +282,10 @@ public class spindexer {
                 Shooter1.setPower(-1);
                 Front_intake.setPower(1);
                 Back_intake.setPower(1);
-                spindexer.setPower(-1);
+                spindexer.setPower(1);
+                force_front = false;
             }
-            else if(shooting_time.seconds()>10){
+            else if(shooting_time.seconds()>15){
                 back_ejector.setPosition(0.65);
                 Front_intake.setPower(0);
                 Back_intake.setPower(0);
@@ -285,7 +296,7 @@ public class spindexer {
             Front_intake.setPower(0);
             Back_intake.setPower(0);
             if(spin==0) {
-                this.rotate_to(1.8, Math.max(0.3-last_intaked.seconds(),0)+0.1);
+                this.rotate_to(2.6, Math.max(0.3-last_intaked.seconds(),0)+0.1);
             }else {
                 spindexer.setPower(spin);
             }
