@@ -40,7 +40,6 @@ public class shooter_test extends OpModeFramework {
             boolean shoot = gamepad2.a;
             boolean droch = gamepad2.b;
 
-            turret.update(shoot, droch);
 
             spindexerModule.front_intaking = gamepad2.dpad_down;
             spindexerModule.front_shoot = gamepad2.dpad_left;

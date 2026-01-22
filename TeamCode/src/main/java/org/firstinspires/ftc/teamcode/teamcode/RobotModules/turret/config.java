@@ -17,6 +17,7 @@ public class config{
     public static double yawKp = 0.002;
     public static double yawKi = 0.0000001;
     public static double yawKd = 0.0001;
+    public static double rpm = 150,pos = 0.6;
 
     public static double pos_front_ejector =0.5,pos_back_ejector =0.5,pos_back_wall =0.5,pos_front_wall =0.5, pos_spindexer =0.5;
 

@@ -76,107 +76,29 @@ public class turet {
         limelight.start();
     }
 
-    public void update(boolean shoot,boolean droch) {
+    public void update(boolean shoot,double turn) {
         yawPid.setCoefficients(new PIDFCoefficients(config.yawKp, config.yawKi, config.yawKd, 0));
         shooterLOutPid.setCoefficients(new PIDFCoefficients(config.shooterKp, config.shooterKi, config.shooterKd, 0));
         shooterROutPid.setCoefficients(new PIDFCoefficients(config.shooterKp*10/9, config.shooterKi, config.shooterKd, 0));
-
-        LLResult r = limelight.getLatestResult();
-        if (r != null && r.isValid()) {
-            double tx = r.getTx();
-            double ty = r.getTy();
-            filtTx = 0.35 * tx + 0.65 * filtTx;
-            filtTy = 0.35 * ty + 0.65 * filtTy;
-            yawPid.updateError(filtTx);
-            yawPid.run();
-
-            double power = yawPid.run();
-            velocity = Math.abs(shooterL.getVelocity() * 60.0 / 560)*10;
-
-
-            setServoSpeed(yaw,clamp((power),-0.6,0.6));
-
-
-
-
-            yDist =Math.pow((faund()*faund()-1600),0.5);
-            double discriminant = Math.pow(velocity,4) - 9.8  * (9.8 * yDist* yDist + 2 * 40* Math.pow(velocity,2));
-
-            double sqrtDisc = Math.sqrt(Math.abs(discriminant));
-            tanTheta = (Math.pow(velocity,2) - sqrtDisc) / (9.8 * yDist);
-
-            angle =Math.toDegrees(Math.atan(tanTheta));
-
-            pitchPos = angle*0.006875;
-            pitchPos = clamp(pitchPos, 0.0, 1.0);
-            pitch.setPosition(pitchPos);
-
-
-
-            if (shoot) {
-//                double currRpmL = shooterL.getVelocity() * 60.0 / 560;
-//                shooterLOutPid.updateError(targetRpm-currRpmL);
-//                double shooterOutL = shooterLOutPid.run();
-//                double powerleft = (1.0/300) * targetRpm + shooterOutL;
-//                powerleft = clamp(powerleft, 0.0, 1.0);
-//                if (targetRpm <= 0) powerleft = 0;
-//                double currRpmR = -shooterR.getVelocity() * 60.0 / 560;
-//                shooterROutPid.updateError(targetRpm-currRpmR);
-//                double shooterOutR = shooterLOutPid.run();
-//                double powerright = (1.0/300) * targetRpm + shooterOutR;
-//                powerright = clamp(powerright, 0.0, 1.0);
-//                if (targetRpm <= 0) powerright = 0;
-//                voltage = voltageSensor.getVoltage();
-//
-//
-//                shooterL.setPower(powerleft*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
-//                shooterR.setPower(powerright*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
-                shooterL.setPower(0);
-                shooterR.setPower(0);
+        if (shoot){
+            targetRpm = config.rpm;
+            double currRpmR = shooterR.getVelocity() * 60.0 / 560;
+            shooterROutPid.updateError(targetRpm-currRpmR);
+            double powerright =  shooterLOutPid.run();
+            powerright = clamp(powerright, 0.0, 1.0);
+            if (targetRpm <= 0) powerright = 0;
+            voltage = voltageSensor.getVoltage();
+            shooterL.setPower(powerright*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
+            shooterR.setPower(powerright*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
             }
-            else{
-                shooterL.setPower(0);
-                shooterR.setPower(0);
-
-            }
-        }
         else{
-            if (shoot&&droch){
-                targetRpm = 240;
-                double currRpmL = shooterL.getVelocity() * 60.0 / 560;
-                shooterLOutPid.updateError(targetRpm-currRpmL);
-                double shooterOutL = shooterLOutPid.run();
-                double powerleft = (1.0/300) * targetRpm + shooterOutL;
-                powerleft = clamp(powerleft, 0.0, 1.0);
-                if (targetRpm <= 0) powerleft = 0;
-                double currRpmR = shooterR.getVelocity() * 60.0 / 560;
-                shooterROutPid.updateError(targetRpm-currRpmR);
-                double shooterOutR = shooterLOutPid.run();
-                double powerright = (1.0/270) * targetRpm + shooterOutR;
-                powerright = clamp(powerright, 0.0, 1.0);
-                if (targetRpm <= 0) powerright = 0;
-                voltage = voltageSensor.getVoltage();
-
-                shooterL.setPower(powerleft*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
-                shooterR.setPower(powerright*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
-                shooterR.setPower(0);
-                shooterR.setPower(0);
-
-            }
-            else{
                 shooterL.setPower(0);
                 shooterR.setPower(0);
-
-            }
-
-            setServoSpeed(yaw,clamp(power,-0.1,0.1));
-            if ((get_current_turret_pose() - point_of_potuga) < 0.1){
-                 power = clamp(power,1,1);
-            }
-            if ((get_current_turret_pose() + point_of_potuga) < 0.1){
-                power = clamp(power,-1,0);
-            }
         }
+        setServoSpeed(yaw,turn);
+        pitch.setPosition(config.pos);
+
+
     }
 
     public boolean ready() {
