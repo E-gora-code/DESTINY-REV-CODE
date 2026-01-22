@@ -29,6 +29,7 @@ public abstract class OpModeFramework extends LinearOpMode {
     protected RobotHardware.DriveBase.motor_classes motor_classes;
 
     protected RobotHardware.Sensors.BasicChannel ch0, ch1;
+    protected RobotHardware.Sensors.BasicColorSensor cv0, cv1;
 
     public void selfInit(){
         //Error processing settings
@@ -68,6 +69,8 @@ public abstract class OpModeFramework extends LinearOpMode {
 
         ch0 = sensors.new BasicChannel(sensors, RobotHardware.Sensors.NameKeys.channelsNameKeys.ch0);
         ch1 = sensors.new BasicChannel(sensors, RobotHardware.Sensors.NameKeys.channelsNameKeys.ch1);
+        cv0 = sensors.new BasicColorSensor(sensors, RobotHardware.Sensors.NameKeys.colorNameKeys.cv0);
+        cv1 = sensors.new BasicColorSensor(sensors, RobotHardware.Sensors.NameKeys.colorNameKeys.cv1);
 
     }
 

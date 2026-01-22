@@ -103,7 +103,7 @@ public class turet {
             double discriminant = Math.pow(velocity,4) - 9.8  * (9.8 * yDist* yDist + 2 * 40* Math.pow(velocity,2));
 
             double sqrtDisc = Math.sqrt(Math.abs(discriminant));
-            tanTheta = (Math.pow(velocity,2) + sqrtDisc) / (9.8 * yDist);
+            tanTheta = (Math.pow(velocity,2) - sqrtDisc) / (9.8 * yDist);
 
             angle =Math.toDegrees(Math.atan(tanTheta));
 
@@ -131,12 +131,12 @@ public class turet {
 //
 //                shooterL.setPower(powerleft*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
 //                shooterR.setPower(powerright*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
-                shooterL.setPower(1);
-                shooterR.setPower(1);
+                shooterL.setPower(0);
+                shooterR.setPower(0);
             }
             else{
-                shooterL.setPower(1);
-                shooterR.setPower(1);
+                shooterL.setPower(0);
+                shooterR.setPower(0);
 
             }
         }
@@ -159,13 +159,13 @@ public class turet {
 
                 shooterL.setPower(powerleft*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
                 shooterR.setPower(powerright*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
-                shooterR.setPower(1);
-                shooterR.setPower(1);
+                shooterR.setPower(0);
+                shooterR.setPower(0);
 
             }
             else{
-                shooterL.setPower(1);
-                shooterR.setPower(1);
+                shooterL.setPower(0);
+                shooterR.setPower(0);
 
             }
 

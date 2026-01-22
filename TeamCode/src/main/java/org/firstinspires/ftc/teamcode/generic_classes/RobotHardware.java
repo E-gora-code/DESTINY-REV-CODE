@@ -696,15 +696,20 @@ public class RobotHardware{
     public class Sensors {
         private boolean is_components_inited = false;
         public boolean is_channels_enabled = false;
+        public boolean is_color_sensors_enabled = false;
 
         private Map<String,InternalChannel> channels = new HashMap<>();
-        private Map<String,InternalChannel> color_sensors = new HashMap<>();
+        private Map<String,InternalColor> color_sensors = new HashMap<>();
 
         public class NameKeys {
             // Class for easy renaming purposes
             public class channelsNameKeys {
                 public final static String ch0 = "ch0";
                 public final static String ch1 = "ch1";
+            }
+            public class colorNameKeys {
+                public final static String cv0 = "cv0";
+                public final static String cv1 = "cv1";
             }
         }
 
@@ -714,6 +719,8 @@ public class RobotHardware{
             // Add motors HERE
             channels.put(NameKeys.channelsNameKeys.ch0,new InternalChannel("ch0"));
             channels.put(NameKeys.channelsNameKeys.ch1,new InternalChannel("ch1"));
+            color_sensors.put(NameKeys.colorNameKeys.cv0,new InternalColor("cv0",100));
+            color_sensors.put(NameKeys.colorNameKeys.cv1,new InternalColor("cv1"));
         }
 
 
@@ -721,13 +728,16 @@ public class RobotHardware{
             return is_components_inited;
         }
         public void init_all(){
-            init_all(true);
+            init_all(true,true);
         }
-        public void init_all(boolean enable_channels){
+        public void init_all(boolean enable_channels, boolean enable_color){
 
             is_components_inited = true;
             if (enable_channels) {
                 is_channels_enabled = enable_channels;
+            }
+            if(enable_color){
+                is_color_sensors_enabled = enable_color;
             }
         }
 
@@ -742,6 +752,17 @@ public class RobotHardware{
                     InternalChannel channel_component = channel_entry.getValue();
                     if ((channel_component.AttachedComponent != null)) {
                         channel_component.state =channel_component.AttachedComponent.getState();
+                    }
+                }
+            }
+            if(is_color_sensors_enabled) {
+                for (Map.Entry<String, InternalColor> channel_entry :  color_sensors.entrySet()) {
+                    InternalColor channel_component = channel_entry.getValue();
+                    if ((channel_component.AttachedComponent != null)) {
+                        channel_component.r =channel_component.AttachedComponent.red();
+                        channel_component.g =channel_component.AttachedComponent.green();
+                        channel_component.b =channel_component.AttachedComponent.blue();
+                        channel_component.sum = (channel_component.r+channel_component.g+channel_component.b);
                     }
                 }
             }
@@ -793,8 +814,14 @@ public class RobotHardware{
             public double g = 0;
             public double b = 0;
             public double sum = 0;
+            public int trigger_value = 9999999;
+            public boolean led = true;
             public InternalColor(String attachedComponentName){
                 this.AttachedComponent = getColorFunction(attachedComponentName);
+            }
+            public InternalColor(String attachedComponentName,int trigger_value){
+                this.AttachedComponent = getColorFunction(attachedComponentName);
+                this.trigger_value = trigger_value;
             }
 
 
@@ -803,14 +830,32 @@ public class RobotHardware{
         public class BasicColorSensor{
             public final String component_Key;
             public final Sensors parentClass;
-            private final InternalChannel attached_channel;
+            private final InternalColor attached_channel;
             public BasicColorSensor(Sensors parentClass, String Key){
                 this.component_Key = Key;
                 this.parentClass = parentClass;
-                this.attached_channel = parentClass.channels.get(component_Key);
+                this.attached_channel = parentClass.color_sensors.get(component_Key);
                 if(attached_channel == null){
                     throw new IllegalArgumentException(String.format("RobotHardware.Servo(%s): Key error, no object found!!!",component_Key));
                 }
+            }
+            public double red(){
+                return attached_channel.r;
+            }
+            public double green(){
+                return attached_channel.g;
+            }
+            public double blue(){
+                return attached_channel.b;
+            }
+            public double value(){
+                return attached_channel.sum;
+            }
+            public boolean bool(){
+                return (attached_channel.sum >= attached_channel.trigger_value);
+            }
+            public void enableLed(boolean enable){
+                attached_channel.led = enable;
             }
         }
 

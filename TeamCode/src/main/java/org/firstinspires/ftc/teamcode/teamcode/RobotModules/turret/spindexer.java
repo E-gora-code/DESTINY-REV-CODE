@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret;
 
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -9,11 +10,16 @@ public class spindexer {
     private RobotHardware.Motors.BasicServo front_ejector,back_ejector,back_wall,front_wall;
     public RobotHardware.Motors.BasicServo spindexer;
     private RobotHardware.Motors.DCMotor Front_intake,Back_intake, Shooter1, Shooter2;
+    private RobotHardware.Sensors.BasicColorSensor sensor_ball;
+    private boolean enabled_motors = false;
+    public boolean enabled = false;
 
     public boolean front_intaking, back_intaking, back_shoot, front_shoot;
     public double spin , intake_speed = 0.3;
     private ElapsedTime last_intaked = new ElapsedTime();
     private ElapsedTime shooting_time = new ElapsedTime();
+
+    private int input_count = 0;
 
     public spindexer(DataPackageInitSpindexer pack, HardwareMap hw) {
         this.spindexer = pack.spindexer;
@@ -25,6 +31,9 @@ public class spindexer {
         this.Back_intake = pack.Back_intake;
         this.Shooter1 = pack.Shooter1;
         this.Shooter2 = pack.Shooter2;
+        this.sensor_ball = pack.colorSensor;
+
+
         last_intaked.reset();
         shooting_time.reset();
     }
@@ -40,6 +49,10 @@ public class spindexer {
         spindexer.setPosition(config.pos_spindexer);
     }
     public void update_1ball(){
+        if(this.enabled){this.enabled_motors = true;}
+        if(!enabled_motors){return;}
+
+
          if (front_intaking){
              back_ejector.setPosition(0.75);
              back_wall.setPosition(0);
@@ -108,6 +121,9 @@ public class spindexer {
 
 
     public void update_2ball(){
+        if(this.enabled){this.enabled_motors = true;}
+        if(!enabled_motors){return;}
+
         if (front_intaking){
             back_ejector.setPosition(0.75);
             back_wall.setPosition(0);
@@ -115,28 +131,15 @@ public class spindexer {
             front_wall.setPosition(1);
             Front_intake.setPower(intake_speed);
             Back_intake.setPower(intake_speed);
-            this.rotate_to(0.2,0.1);
+            if(!sensor_ball.bool()) {
+                this.rotate_to(0.2, 0.1);
+            }else {
+                this.rotate_to(0.5, 0.1);
+            }
             last_intaked.reset();
             shooting_time.reset();
         }
-        else if (back_intaking){
-            back_ejector.setPosition(0.75);
-            back_wall.setPosition(0.8);
-            front_ejector.setPosition(1);
-            front_wall.setPosition(0);
-            Front_intake.setPower(intake_speed);
-            Back_intake.setPower(intake_speed);
-            spindexer.setPower(spin);
-            last_intaked.reset();
-            shooting_time.reset();
-        }
-        else if (back_shoot){
-            back_ejector.setPosition(1);
-            Front_intake.setPower(1);
-            Back_intake.setPower(1);
-            spindexer.setPower(spin);
-            shooting_time.reset();
-        }
+
         else if (front_shoot){
             front_ejector.setPosition(0.7);
             Front_intake.setPower(0);
@@ -169,6 +172,7 @@ public class spindexer {
             shooting_time.reset();
             Shooter2.setPower(0);
             Shooter1.setPower(0);
+            input_count = 0;
         }
 
 

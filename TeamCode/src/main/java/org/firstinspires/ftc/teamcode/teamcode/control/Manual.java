@@ -77,6 +77,8 @@ public class Manual extends OpRobotSystemsFramework {
 
             telemetry.addData("ch0", ch0.getState());
             telemetry.addData("ch1", ch1.getState());
+            telemetry.addData("cv0", cv0.value());
+            telemetry.addData("cv1", cv1.value());
 //            telemetry.addData("extR", extr_pos);
 //            telemetry.addData("extL", extl_pos);
 //            telemetry.addData("BL", BL.getCurrentPosition());
@@ -90,6 +92,8 @@ public class Manual extends OpRobotSystemsFramework {
 //            dash.addData("x", BR.getCurrentPosition());
 //            dash.addData("y", BL.getCurrentPosition());
             dash.update();
+
+            spindexerModule.enabled = gamepad2.dpad_down;
 
             spindexerModule.front_intaking = gamepad2.dpad_down||gamepad1.dpad_down;
             spindexerModule.front_shoot = gamepad2.dpad_left||gamepad1.dpad_left;
