@@ -49,15 +49,15 @@ public class spindexer_test extends OpModeFramework {
             double spindexerPower = 0;
 
             spindexerPower = gamepad1.right_trigger;
-
-           spindexerModule.front_intaking = gamepad2.dpad_down;
-           spindexerModule.front_shoot = gamepad2.dpad_left;
-           spindexerModule.spin = gamepad2.right_stick_y;
-           spindexerModule.update();
+//
+//           spindexerModule.front_intaking = gamepad2.dpad_down;
+//           spindexerModule.front_shoot = gamepad2.dpad_left;
+//           spindexerModule.spin = gamepad2.right_stick_y;
+            spindexerModule.to_zero();
+//           spindexerModule.update();
            turret_x.setPower(controllerDriver_2.internal_touchpad.getX()+gamepad2.left_stick_y);
            shooter_left.setPower(gamepad2.left_trigger);
            shooter_right.setPower(-gamepad2.left_trigger);
-
 
             telemetry.addData("Shooting", shooting ? "YES" : "NO");
             telemetry.addData("Ready", ready ? "YES" : "NO");

@@ -12,7 +12,6 @@ public class spindexer {
 
     public boolean front_intaking, back_intaking, back_shoot, front_shoot;
     public double spin , intake_speed = 0.7;
-    Servo pitch;
 
     public spindexer(DataPackageInitSpindexer pack, HardwareMap hw) {
         this.spindexer = pack.spindexer;
@@ -24,7 +23,6 @@ public class spindexer {
         this.Back_intake = pack.Back_intake;
         this.Shooter1 = pack.Shooter1;
         this.Shooter2 = pack.Shooter2;
-        pitch = hw.get(Servo.class, "servoY");
 
     }
     public double getSpindexerPosition(){
@@ -40,7 +38,6 @@ public class spindexer {
     }
     public void update(){
          if (front_intaking){
-             pitch.setPosition(config.Back_ejector_noshoot_position);
              back_ejector.setPosition(0.75);
              back_wall.setPosition(0);
              front_ejector.setPosition(0.8);
@@ -75,7 +72,21 @@ public class spindexer {
              Back_intake.setPower(0);
              spindexer.setPower(spin);
          }
+
     }
+    public void to_zero(){
+        if(spindexer.getEncoderPosition()>10){
+            spindexer.setPower(-0.1);
+
+        }else if(spindexer.getEncoderPosition()<170){
+            spindexer.setPower(0.1);
+
+        }
+        else {
+            spindexer.setPower(0);
+        }
+    }
+
 
 
 
