@@ -227,7 +227,7 @@ public class spindexer {
             Front_intake.setPower(intake_speed);
             Back_intake.setPower(intake_speed);
             if(checkColor()) {
-                if (color_time.seconds() > 1) {
+                if (color_time.seconds() > 0.3) {
                     if((color_last!=checkColor())&&checkColor()) {
                         if (input_count < 3) {
                             input_count += 1;
@@ -287,15 +287,23 @@ public class spindexer {
                 Shooter1.setPower(-1);
                 Front_intake.setPower(1);
                 Back_intake.setPower(1);
-                if((shooting_time.seconds()<5.4)&&(shooting_time.seconds()>5)) {
+                if((shooting_time.seconds()<5.3)&&(shooting_time.seconds()>5)) {
                     spindexer.setPower(-1);
-                }else if((shooting_time.seconds()<9.6)&&(shooting_time.seconds()>9)) {
+                    Front_intake.setPower(1);
+                    Back_intake.setPower(1);
+                }else if((shooting_time.seconds()<9.3)&&(shooting_time.seconds()>9)) {
                     spindexer.setPower(-1);
+                    Front_intake.setPower(1);
+                    Back_intake.setPower(1);
                 }
                 else if((shooting_time.seconds()<16)&&(shooting_time.seconds()>13)) {
                     spindexer.setPower(-1);
+                    Front_intake.setPower(1);
+                    Back_intake.setPower(1);
                 }else {
-                    spindexer.setPower(0);
+                    spindexer.setPower(-0.1);
+                    Front_intake.setPower(0);
+                    Back_intake.setPower(0);
                 }
                 force_front = false;
             }
