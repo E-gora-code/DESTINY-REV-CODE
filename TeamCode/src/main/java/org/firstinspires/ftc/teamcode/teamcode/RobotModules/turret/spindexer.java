@@ -19,8 +19,9 @@ public class spindexer {
     private ElapsedTime last_intaked = new ElapsedTime();
     private ElapsedTime shooting_time = new ElapsedTime();
     private ElapsedTime color_time = new ElapsedTime();
+    private boolean color_last = false;
 
-    private int input_count = 0;
+    public int input_count = 0;
 
     public spindexer(DataPackageInitSpindexer pack, HardwareMap hw) {
         this.spindexer = pack.spindexer;
@@ -49,6 +50,16 @@ public class spindexer {
         back_wall.setPosition(config.pos_back_wall);
         front_wall.setPosition(config.pos_front_wall);
         spindexer.setPosition(config.pos_spindexer);
+    }
+    public boolean checkColor(){
+        if(((sensor_ball.green()-32)>(sensor_ball.red()))){
+            return true;
+        }
+        if(((sensor_ball.green()-10)>(sensor_ball.red()))&&((sensor_ball.blue()-5)>(sensor_ball.red()))){
+            return true;
+        }
+
+        return false;
     }
     public void update_1ball(){
         if(this.enabled){this.enabled_motors = true;}
@@ -133,7 +144,7 @@ public class spindexer {
             front_wall.setPosition(1);
             Front_intake.setPower(intake_speed);
             Back_intake.setPower(intake_speed);
-            if(sensor_ball.bool()){
+            if(checkColor()){
                 if(color_time.seconds()>1){
                     input_count = 1;
                 }
@@ -203,27 +214,37 @@ public class spindexer {
         if(!enabled_motors){return;}
 
         if (front_intaking){
-            back_ejector.setPosition(0.6);
+            back_ejector.setPosition(0.8);
             back_wall.setPosition(0);
             front_ejector.setPosition(0.9);
             front_wall.setPosition(1);
             Front_intake.setPower(intake_speed);
             Back_intake.setPower(intake_speed);
-            if(sensor_ball.bool()){
-                if(color_time.seconds()>1){
-                    if(input_count<2) {
-                        input_count += 1;
+            if(checkColor()) {
+                if (color_time.seconds() > 1) {
+                    if((color_last!=checkColor())&&checkColor()) {
+                        if (input_count < 2) {
+                            input_count += 1;
+                        }
+
                     }
+                    color_last = checkColor();
                 }
+            }
+            if (checkColor()){
+
             }else {
                 color_time.reset();
+                color_last = false;
             }
+
             if(input_count==0) {
                 this.rotate_to(0.2, 0.1);
             }else if(input_count==1){
                 this.rotate_to(1.4, 0.1);
             }else {
-                this.rotate_to(2.6, 0.1);
+                Back_intake.setPower(0.3);
+                this.rotate_to(2.6, 0.2);
             }
             last_intaked.reset();
             shooting_time.reset();

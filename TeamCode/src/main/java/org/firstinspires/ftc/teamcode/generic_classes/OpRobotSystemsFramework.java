@@ -29,7 +29,7 @@ public class OpRobotSystemsFramework extends OpModeFramework{
     }
     @Override
     public void tickAll(){
-        spindexerModule.update_2ball();
+        spindexerModule.update_3ball();
         super.tickAll();
     }
 

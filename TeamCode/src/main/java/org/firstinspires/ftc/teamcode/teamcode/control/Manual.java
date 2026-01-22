@@ -32,6 +32,7 @@ public class Manual extends OpRobotSystemsFramework {
     public void runOpMode() throws InterruptedException {
         selfInit();
         initAllSystems();
+        motors.is_motors_enabled = false;
 //          s1 = hardwareMap.servo.get("s1");
 ////        s2 = hardwareMap.servo.get("servo3");
 //
@@ -79,6 +80,11 @@ public class Manual extends OpRobotSystemsFramework {
             telemetry.addData("ch1", ch1.getState());
             telemetry.addData("cv0", cv0.value());
             telemetry.addData("cv1", cv1.value());
+            telemetry.addData("cv0r", cv0.red());
+            telemetry.addData("cv0g", cv0.green());
+            telemetry.addData("cv0b", cv0.blue());
+            telemetry.addData("cv0COL", spindexerModule.checkColor());
+            telemetry.addData("pose", spindexerModule.input_count);
 //            telemetry.addData("extR", extr_pos);
 //            telemetry.addData("extL", extl_pos);
 //            telemetry.addData("BL", BL.getCurrentPosition());
