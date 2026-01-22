@@ -291,7 +291,12 @@ public class spindexer {
                     spindexer.setPower(-1);
                     Front_intake.setPower(1);
                     Back_intake.setPower(1);
-                }else if((shooting_time.seconds()<9.3)&&(shooting_time.seconds()>9)) {
+                }else if((shooting_time.seconds()<7.3)&&(shooting_time.seconds()>7)) {
+                    spindexer.setPower(-1);
+                    Front_intake.setPower(1);
+                    Back_intake.setPower(1);
+                }
+                else if((shooting_time.seconds()<9.3)&&(shooting_time.seconds()>9)) {
                     spindexer.setPower(-1);
                     Front_intake.setPower(1);
                     Back_intake.setPower(1);
