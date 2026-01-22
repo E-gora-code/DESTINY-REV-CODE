@@ -15,7 +15,7 @@ public class spindexer {
     public boolean enabled = false;
 
     public boolean front_intaking, back_intaking, back_shoot, front_shoot;
-    public double spin , intake_speed = 0.3;
+    public double spin , intake_speed = 0.7;
     private ElapsedTime last_intaked = new ElapsedTime();
     private ElapsedTime shooting_time = new ElapsedTime();
     private ElapsedTime color_time = new ElapsedTime();
@@ -215,7 +215,7 @@ public class spindexer {
         if(!enabled_motors){return;}
 
         if (front_intaking){
-            back_ejector.setPosition(0.8);
+//            back_ejector.setPosition(0.8);
             if(force_front){
                 front_wall.setPosition(0.1);
             }else {
@@ -246,11 +246,14 @@ public class spindexer {
 
             if(input_count==0) {
                 this.rotate_to(0.2, 0.1);
+                back_ejector.setPosition(0.8);
             }else if(input_count==1){
                 this.rotate_to(1.4, 0.1);
+                back_ejector.setPosition(0.7);
             }else if(input_count == 2){
                 Back_intake.setPower(0.6);
-                this.rotate_to(2.4, 0.4);
+                this.rotate_to(2.4, 0.2);
+                back_ejector.setPosition(0.6);
 
             }else {
                 front_wall.setPosition(0.1);
@@ -284,7 +287,7 @@ public class spindexer {
                 Shooter1.setPower(-1);
                 Front_intake.setPower(1);
                 Back_intake.setPower(1);
-                if((shooting_time.seconds()<5.3)&&(shooting_time.seconds()>5)) {
+                if((shooting_time.seconds()<5.4)&&(shooting_time.seconds()>5)) {
                     spindexer.setPower(-1);
                 }else if((shooting_time.seconds()<9.6)&&(shooting_time.seconds()>9)) {
                     spindexer.setPower(-1);
