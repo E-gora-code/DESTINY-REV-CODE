@@ -56,6 +56,7 @@ IMPORTANT: THE SYSTEM IS "kinda" EXPERIMENTAL, so don`t implement it in main fil
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -697,6 +698,7 @@ public class RobotHardware{
         public boolean is_channels_enabled = false;
 
         private Map<String,InternalChannel> channels = new HashMap<>();
+        private Map<String,InternalChannel> color_sensors = new HashMap<>();
 
         public class NameKeys {
             // Class for easy renaming purposes
@@ -760,6 +762,16 @@ public class RobotHardware{
             }
             return output;
         }
+        private ColorSensor getColorFunction(String name){
+            ColorSensor output;
+            try {
+                output = hardware.colorSensor.get(name);
+            }catch (Exception ex){
+                errorHandler.accept(ex,15);
+                output = null;
+            }
+            return output;
+        }
 
 
 
@@ -775,7 +787,32 @@ public class RobotHardware{
                 this.is_reverse = is_reverse;
             }
         }
+        private class InternalColor{
+            public final ColorSensor AttachedComponent;
+            public double r = 0;
+            public double g = 0;
+            public double b = 0;
+            public double sum = 0;
+            public InternalColor(String attachedComponentName){
+                this.AttachedComponent = getColorFunction(attachedComponentName);
+            }
 
+
+        }
+
+        public class BasicColorSensor{
+            public final String component_Key;
+            public final Sensors parentClass;
+            private final InternalChannel attached_channel;
+            public BasicColorSensor(Sensors parentClass, String Key){
+                this.component_Key = Key;
+                this.parentClass = parentClass;
+                this.attached_channel = parentClass.channels.get(component_Key);
+                if(attached_channel == null){
+                    throw new IllegalArgumentException(String.format("RobotHardware.Servo(%s): Key error, no object found!!!",component_Key));
+                }
+            }
+        }
 
 
 

@@ -2,12 +2,8 @@ package org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret;
 
 
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.generic_classes.OpModeFramework;
 
 @TeleOp(name = "Turret Test")
@@ -49,7 +45,7 @@ public class shooter_test extends OpModeFramework {
             spindexerModule.front_intaking = gamepad2.dpad_down;
             spindexerModule.front_shoot = gamepad2.dpad_left;
             spindexerModule.spin = gamepad2.right_stick_y;
-            spindexerModule.update();
+            spindexerModule.update_1ball();
 
 
 

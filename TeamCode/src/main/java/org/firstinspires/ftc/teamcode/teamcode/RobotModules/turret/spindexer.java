@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.generic_classes.RobotHardware;
@@ -40,7 +39,7 @@ public class spindexer {
         front_wall.setPosition(config.pos_front_wall);
         spindexer.setPosition(config.pos_spindexer);
     }
-    public void update(){
+    public void update_1ball(){
          if (front_intaking){
              back_ejector.setPosition(0.75);
              back_wall.setPosition(0);
@@ -106,6 +105,76 @@ public class spindexer {
 
 
     }
+
+
+    public void update_2ball(){
+        if (front_intaking){
+            back_ejector.setPosition(0.75);
+            back_wall.setPosition(0);
+            front_ejector.setPosition(0.9);
+            front_wall.setPosition(1);
+            Front_intake.setPower(intake_speed);
+            Back_intake.setPower(intake_speed);
+            this.rotate_to(0.2,0.1);
+            last_intaked.reset();
+            shooting_time.reset();
+        }
+        else if (back_intaking){
+            back_ejector.setPosition(0.75);
+            back_wall.setPosition(0.8);
+            front_ejector.setPosition(1);
+            front_wall.setPosition(0);
+            Front_intake.setPower(intake_speed);
+            Back_intake.setPower(intake_speed);
+            spindexer.setPower(spin);
+            last_intaked.reset();
+            shooting_time.reset();
+        }
+        else if (back_shoot){
+            back_ejector.setPosition(1);
+            Front_intake.setPower(1);
+            Back_intake.setPower(1);
+            spindexer.setPower(spin);
+            shooting_time.reset();
+        }
+        else if (front_shoot){
+            front_ejector.setPosition(0.7);
+            Front_intake.setPower(0);
+            Back_intake.setPower(0);
+            if(shooting_time.seconds()<2) {
+                spindexer.setPower(0);
+                Shooter2.setPower(1);
+                Shooter1.setPower(-1);
+            }else if(shooting_time.seconds()<3.5) {
+                Shooter2.setPower(1);
+                Shooter1.setPower(-1);
+                Front_intake.setPower(1);
+                Back_intake.setPower(1);
+                spindexer.setPower(-1);
+            }
+            else if(shooting_time.seconds()>6){
+                Front_intake.setPower(0);
+                Back_intake.setPower(0);
+                spindexer.setPower(0);
+            }
+        }
+        else {
+            Front_intake.setPower(0);
+            Back_intake.setPower(0);
+            if(spin==0) {
+                this.rotate_to(1.8, Math.max(1-last_intaked.seconds(),0)+0.1);
+            }else {
+                spindexer.setPower(spin);
+            }
+            shooting_time.reset();
+            Shooter2.setPower(0);
+            Shooter1.setPower(0);
+        }
+
+
+    }
+
+
     public boolean rotate_to(double pos,double power){
         double enc = spindexer.getEncoderPosition();
         if(Math.abs(pos-enc)>0.2) {
