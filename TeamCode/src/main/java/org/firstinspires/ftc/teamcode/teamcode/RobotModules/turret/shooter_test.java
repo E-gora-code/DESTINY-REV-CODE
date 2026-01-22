@@ -48,6 +48,7 @@ public class shooter_test extends LinearOpMode {
             dash.addData("rightrpm",turret.currRpmR());
             dash.addData("distance",turret.faund());
             dash.addData("222",turret.sbros());
+            dash.addData("dist",turret.dist());
 
 
             dash.update();

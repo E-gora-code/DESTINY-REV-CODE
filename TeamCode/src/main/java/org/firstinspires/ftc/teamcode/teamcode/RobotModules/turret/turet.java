@@ -18,6 +18,7 @@ public class turet {
     private CRServo yaw;
     private Servo pitch;
     private  VoltageSensor voltageSensor;
+    double pitchPos;
     private PIDFController shooterLOutPid = new PIDFController(new PIDFCoefficients(0.0035, 0.0001, 0.0005, 0)),
             yawPid = new PIDFController(new PIDFCoefficients(0.0035, 0.0001, 0.0005, 0)),
             shooterROutPid = new PIDFController(new PIDFCoefficients(0.0035, 0.0001, 0.0005, 0));
@@ -38,8 +39,9 @@ public class turet {
     private double voltage,shoter_zero=0;
     private double problem=0;
     private double lastVoltage = 0,revCount=0;
-    private double power= 1;
+    private double power= 1,tanTheta;
     private double velocity = 100;
+    double yDist = 0;
 
 
 
@@ -86,6 +88,7 @@ public class turet {
             yawPid.run();
 
             double power = yawPid.run();
+            velocity = Math.abs(shooterL.getVelocity() * 60.0 / 560)*0.8;
 
 
             yaw.setPower(clamp((power),-0.6,0.6));
@@ -93,15 +96,15 @@ public class turet {
 
 
 
-            double yDist = get_distance();
-            double discriminant = Math.pow(velocity,4) - 9.8  * (9.8 * yDist* yDist + 2 * 38.5* Math.pow(velocity,2));
+            yDist =Math.pow((faund()*faund()-5329),0.5);
+            double discriminant = Math.pow(velocity,4) - 9.8  * (9.8 * yDist* yDist + 2 * 73* Math.pow(velocity,2));
 
-            double sqrtDisc = Math.sqrt(discriminant);
-            double tanTheta = (Math.pow(velocity,2) + sqrtDisc) / (9.8 * yDist);
+            double sqrtDisc = Math.sqrt(Math.abs(discriminant));
+            tanTheta = (Math.pow(velocity,2) + sqrtDisc) / (9.8 * yDist);
 
-            double angle =Math.atan(tanTheta);
+            double angle =Math.toDegrees(Math.atan(tanTheta));
 
-            double pitchPos = angle*0.006875;
+            pitchPos = angle*0.006875;
             pitchPos = clamp(pitchPos, 0.0, 1.0);
             pitch.setPosition(pitchPos);
 
@@ -230,9 +233,12 @@ public class turet {
     }
 
     public double faund() {
-        double sceal = 30000;
+        double sceal = 280;
         double distancee = (sceal / limelight.getLatestResult().getTa());
         return distancee;
 
+    }
+    public double dist (){
+        return pitchPos;
     }
 }
