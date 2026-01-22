@@ -181,6 +181,86 @@ public class spindexer {
             }
         }
         else {
+            back_ejector.setPosition(0.65);
+            Front_intake.setPower(0);
+            Back_intake.setPower(0);
+            if(spin==0) {
+                this.rotate_to(1.8, Math.max(0.3-last_intaked.seconds(),0)+0.1);
+            }else {
+                spindexer.setPower(spin);
+            }
+            shooting_time.reset();
+            Shooter2.setPower(0);
+            Shooter1.setPower(0);
+            input_count = 0;
+            color_time.reset();
+        }
+
+
+    }
+    public void update_3ball(){
+        if(this.enabled){this.enabled_motors = true;}
+        if(!enabled_motors){return;}
+
+        if (front_intaking){
+            back_ejector.setPosition(0.6);
+            back_wall.setPosition(0);
+            front_ejector.setPosition(0.9);
+            front_wall.setPosition(1);
+            Front_intake.setPower(intake_speed);
+            Back_intake.setPower(intake_speed);
+            if(sensor_ball.bool()){
+                if(color_time.seconds()>1){
+                    if(input_count<2) {
+                        input_count += 1;
+                    }
+                }
+            }else {
+                color_time.reset();
+            }
+            if(input_count==0) {
+                this.rotate_to(0.2, 0.1);
+            }else if(input_count==1){
+                this.rotate_to(1.4, 0.1);
+            }else {
+                this.rotate_to(2.6, 0.1);
+            }
+            last_intaked.reset();
+            shooting_time.reset();
+        }
+
+        else if (front_shoot){
+            front_ejector.setPosition(0.7);
+            Front_intake.setPower(0);
+            Back_intake.setPower(0);
+            if(shooting_time.seconds()<6) {
+                back_ejector.setPosition(0.75);
+                this.rotate_to(2, 0.5);
+                Shooter2.setPower(1);
+                Shooter1.setPower(-1);
+
+            }else if(shooting_time.seconds()<4.5) {
+                Shooter2.setPower(1);
+                Shooter1.setPower(-1);
+                Front_intake.setPower(1);
+                Back_intake.setPower(1);
+            }
+            else if(shooting_time.seconds()<6.5) {
+                back_ejector.setPosition(0.65);
+                Shooter2.setPower(1);
+                Shooter1.setPower(-1);
+                Front_intake.setPower(1);
+                Back_intake.setPower(1);
+                spindexer.setPower(-1);
+            }
+            else if(shooting_time.seconds()>10){
+                back_ejector.setPosition(0.65);
+                Front_intake.setPower(0);
+                Back_intake.setPower(0);
+                spindexer.setPower(0);
+            }
+        }
+        else {
             Front_intake.setPower(0);
             Back_intake.setPower(0);
             if(spin==0) {
