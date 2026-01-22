@@ -12,6 +12,7 @@ public class configInstructions extends OpModeFramework {
     public void runOpMode() throws InterruptedException {
         selfInit();
         initAllSystems();
+        waitForStart();
         while (opModeIsActive()) {
             List<String> configServ = motors.getMotorsCorrectNames();
             for (String line : configServ) {
@@ -22,6 +23,7 @@ public class configInstructions extends OpModeFramework {
             for (String line : configMiss) {
                 printTelemetry("-! ",line);
             }
+            dash.update();
             telemetry.update();
         }
     }

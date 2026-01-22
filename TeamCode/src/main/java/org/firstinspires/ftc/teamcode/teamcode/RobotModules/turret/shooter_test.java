@@ -5,17 +5,34 @@ package org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.generic_classes.OpModeFramework;
 
 @TeleOp(name = "Turret Test")
-public class shooter_test extends LinearOpMode {
+public class shooter_test extends OpModeFramework {
     private turet turret;
-    Telemetry dash = FtcDashboard.getInstance().getTelemetry();
+
+    private DataPackageInitSpindexer InitPackage;
+    private spindexer spindexerModule;
 
 
     @Override
     public void runOpMode() {
+        selfInit();
+        initAllSystems();
+        InitPackage = new DataPackageInitSpindexer(hardwareMap);
+        InitPackage.spindexer = spindexer;
+        InitPackage.Front_wall = front_wall;
+        InitPackage.Back_wall = back_wall;
+        InitPackage.Front_ejector = front_ejector;
+        InitPackage.Back_ejector = back_ejector;
+        InitPackage.Front_intake = front_intake;
+        InitPackage.Back_intake = back_intake;
+        InitPackage.Shooter1 = shooter_right;
+        InitPackage.Shooter2 = shooter_left;
+        spindexerModule = new spindexer(InitPackage,hardwareMap);
 
         turret = new turet(hardwareMap,5);
 
@@ -24,10 +41,17 @@ public class shooter_test extends LinearOpMode {
         turret.reset();
 
         while (opModeIsActive()) {
-            boolean shoot = gamepad1.a;
-            boolean droch = gamepad1.b;
+            boolean shoot = gamepad2.a;
+            boolean droch = gamepad2.b;
 
             turret.update(shoot, droch);
+
+            spindexerModule.front_intaking = gamepad2.dpad_down;
+            spindexerModule.front_shoot = gamepad2.dpad_left;
+            spindexerModule.spin = gamepad2.right_stick_y;
+            spindexerModule.update();
+
+
 
             telemetry.addData("Target RPM", turret.getTargetRpm());
             telemetry.addData("Filtered Tx", turret.getFiltTx());
@@ -53,6 +77,7 @@ public class shooter_test extends LinearOpMode {
 
             dash.update();
             telemetry.update();
+            tickAll();
         }
 
 

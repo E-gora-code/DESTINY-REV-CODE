@@ -15,7 +15,7 @@ import com.pedropathing.control.PIDFController;
 
 public class turet {
     private Limelight3A limelight;
-    private CRServo yaw;
+    private Servo yaw;
     private Servo pitch;
     private  VoltageSensor voltageSensor;
     double pitchPos;
@@ -44,11 +44,13 @@ public class turet {
     double yDist = 0;
 
 
-
+    public void setServoSpeed(Servo servo, double speed){
+        servo.setPosition(speed/2-0.5);
+    }
     public turet(HardwareMap hw,double pipeline) {
         voltageSensor = hw.voltageSensor.iterator().next();
         limelight = hw.get(Limelight3A.class, "limelight");
-        yaw = hw.get(CRServo.class, "servoX");
+        yaw = hw.get(Servo.class, "servoX");
         pitch = hw.get(Servo.class, "servoY");
         shooterL = hw.get(DcMotorEx.class, "shooterLeft");
         shooterR = hw.get(DcMotorEx.class, "shooterRight");
@@ -91,7 +93,7 @@ public class turet {
             velocity = Math.abs(shooterL.getVelocity() * 60.0 / 560)*0.8;
 
 
-            yaw.setPower(clamp((power),-0.6,0.6));
+            setServoSpeed(yaw,clamp((power),-0.6,0.6));
 
 
 
@@ -164,7 +166,7 @@ public class turet {
 
             }
 
-            yaw.setPower(clamp(power,-0.1,0.1));
+            setServoSpeed(yaw,clamp(power,-0.1,0.1));
             if ((get_current_turret_pose() - point_of_potuga) < 0.1){
                  power = clamp(power,1,1);
             }
@@ -192,7 +194,7 @@ public class turet {
 
 
     public void stop() {
-        yaw.setPower(0);
+        setServoSpeed(yaw,0);
         shooterL.setPower(0);
         shooterR.setPower(0);
         limelight.stop();

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.generic_classes.GamepadDriver;
 import org.firstinspires.ftc.teamcode.generic_classes.OpModeFramework;
 
 @TeleOp(name = "Spindexer Test", group = "Test")
@@ -49,10 +50,13 @@ public class spindexer_test extends OpModeFramework {
 
             spindexerPower = gamepad1.right_trigger;
 
-
-
-           spindexerModule.update(gamepad1.right_bumper,gamepad1.left_bumper,gamepad1.x,false,gamepad1.right_stick_x);
-
+           spindexerModule.front_intaking = gamepad2.dpad_down;
+           spindexerModule.front_shoot = gamepad2.dpad_left;
+           spindexerModule.spin = gamepad2.right_stick_y;
+           spindexerModule.update();
+           turret_x.setPower(controllerDriver_2.internal_touchpad.getX()+gamepad2.left_stick_y);
+           shooter_left.setPower(gamepad2.left_trigger);
+           shooter_right.setPower(-gamepad2.left_trigger);
 
 
             telemetry.addData("Shooting", shooting ? "YES" : "NO");

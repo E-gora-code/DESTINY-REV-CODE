@@ -9,6 +9,9 @@ public class spindexer {
     private RobotHardware.Motors.BasicServo front_ejector,back_ejector,back_wall,front_wall;
     public RobotHardware.Motors.BasicServo spindexer;
     private RobotHardware.Motors.DCMotor Front_intake,Back_intake, Shooter1, Shooter2;
+
+    public boolean front_intaking, back_intaking, back_shoot, front_shoot;
+    public double spin , intake_speed = 0.7;
     Servo pitch;
 
     public spindexer(DataPackageInitSpindexer pack, HardwareMap hw) {
@@ -35,15 +38,15 @@ public class spindexer {
         front_wall.setPosition(config.pos_front_wall);
         spindexer.setPosition(config.pos_spindexer);
     }
-    public void update(boolean front_intaking,boolean back_intaking,boolean back_shoot,boolean front_shoot,double spin){
+    public void update(){
          if (front_intaking){
              pitch.setPosition(config.Back_ejector_noshoot_position);
              back_ejector.setPosition(0.75);
              back_wall.setPosition(0);
              front_ejector.setPosition(0.8);
              front_wall.setPosition(1);
-             Front_intake.setPower(0.3);
-             Back_intake.setPower(0.3);
+             Front_intake.setPower(intake_speed);
+             Back_intake.setPower(intake_speed);
              spindexer.setPower(spin);
          }
          else if (back_intaking){
@@ -51,20 +54,25 @@ public class spindexer {
              back_wall.setPosition(0.8);
              front_ejector.setPosition(1);
              front_wall.setPosition(0);
-             Front_intake.setPower(0.1);
-             Back_intake.setPower(0.1);
+             Front_intake.setPower(intake_speed);
+             Back_intake.setPower(intake_speed);
              spindexer.setPower(spin);
          }
          else if (back_shoot){
              back_ejector.setPosition(0.75);
-             Front_intake.setPower(0.1);
-             Back_intake.setPower(0.1);
+             Front_intake.setPower(1);
+             Back_intake.setPower(1);
              spindexer.setPower(spin);
          }
          else if (front_shoot){
              front_ejector.setPosition(0.7);
-             Front_intake.setPower(0.1);
-             Back_intake.setPower(0.1);
+             Front_intake.setPower(1);
+             Back_intake.setPower(1);
+             spindexer.setPower(spin);
+         }
+         else {
+             Front_intake.setPower(0);
+             Back_intake.setPower(0);
              spindexer.setPower(spin);
          }
     }
