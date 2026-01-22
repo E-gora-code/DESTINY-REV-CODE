@@ -98,9 +98,10 @@ public class Manual extends OpRobotSystemsFramework {
             spindexerModule.front_intaking = gamepad2.dpad_down||gamepad1.dpad_down;
             spindexerModule.front_shoot = gamepad2.dpad_left||gamepad1.dpad_left;
             spindexerModule.spin = gamepad2.right_stick_y+gamepad1.right_stick_y;
-
-            turret_x.setPower(controllerDriver_2.internal_touchpad.getX()+gamepad2.left_stick_y);
-            turret_y.setPosition(controllerDriver_2.internal_touchpad.getY()/2);
+            if(Math.abs(controllerDriver_2.internal_touchpad.getY())<0.1) {
+                turret_x.setPower(controllerDriver_2.internal_touchpad.getX() + gamepad2.left_stick_y);
+            }
+            turret_y.setPosition(controllerDriver_2.internal_touchpad.getY()/3);
 
 
             if (gamepad1.left_bumper || gamepad2.left_bumper) {
