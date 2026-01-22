@@ -29,7 +29,7 @@ public class turet {
     private DcMotorEx shooterL, shooterR;
 
     private double filtTx = 0, filtTy = 0;
-    private double point_of_potuga = 67;
+    private double point_of_potuga = 2;
 
 
     private double targetRpm = 240;
@@ -39,7 +39,7 @@ public class turet {
     private double problem=0;
     private double lastVoltage = 0,revCount=0;
     private double power= 1;
-    private double velocity = 1200;
+    private double velocity = 100;
 
 
 
@@ -63,7 +63,7 @@ public class turet {
         yawPid.setCoefficients(new PIDFCoefficients(0.0035, 0.0001, 0.0005, 0));
         shooterLOutPid.setCoefficients(new PIDFCoefficients(0.0015, 0.0000001, 0.00006,0));
         shooterROutPid.setCoefficients(new PIDFCoefficients(0.0015, 0.0000001, 0.00006,0));
-        limelight.pipelineSwitch((int) pipeline);
+        limelight.pipelineSwitch(5);
     }
 
     public void reset() {
@@ -85,18 +85,15 @@ public class turet {
             yawPid.updateError(filtTx);
             yawPid.run();
 
-            double yawPower = yawPid.run();
-            if (Math.abs(get_current_turret_pose() - point_of_potuga) < 0.1 || Math.signum(filtTx)== problem){
-                problem = Math.signum(filtTx);
-                power = -Math.signum(yawPower)*1;
-            }
-            else{
-                yaw.setPower(clamp(power,-0.1,0.1));
-            }
+            double power = yawPid.run();
+
+
+            yaw.setPower(clamp((power),-0.6,0.6));
 
 
 
-            double yDist = filtTy * 8.485;
+
+            double yDist = get_distance();
             double discriminant = Math.pow(velocity,4) - 9.8  * (9.8 * yDist* yDist + 2 * 38.5* Math.pow(velocity,2));
 
             double sqrtDisc = Math.sqrt(discriminant);
@@ -104,7 +101,7 @@ public class turet {
 
             double angle =Math.atan(tanTheta);
 
-            double pitchPos = 0.5 + angle / 180;
+            double pitchPos = angle*0.006875;
             pitchPos = clamp(pitchPos, 0.0, 1.0);
             pitch.setPosition(pitchPos);
 
@@ -165,8 +162,11 @@ public class turet {
             }
 
             yaw.setPower(clamp(power,-0.1,0.1));
-            if (Math.abs(get_current_turret_pose() - point_of_potuga) < 0.1){
-                 power = - power;
+            if ((get_current_turret_pose() - point_of_potuga) < 0.1){
+                 power = clamp(power,1,1);
+            }
+            if ((get_current_turret_pose() + point_of_potuga) < 0.1){
+                power = clamp(power,-1,0);
             }
         }
     }
@@ -196,8 +196,8 @@ public class turet {
     }
     public double get_current_turret_pose() {
         double v = shooterPos.getVoltage();
-        if (lastVoltage > 3.0 && v < 0.3) revCount++;
-        if (lastVoltage < 0.3 && v > 3.0) revCount--;
+        if (lastVoltage > 3.0 && v < 0.3) revCount+=3;
+        if (lastVoltage < 0.3 && v > 3.0) revCount-=3;
         lastVoltage = v;
 
         if (shooter_zero.getState()) {
@@ -229,9 +229,10 @@ public class turet {
         return shooter_zero.getState();
     }
 
-    public double distance_svo(double ta) {
-        double sceal = 30665.5;
-        double distance = (sceal / ta);
-        return distance;
+    public double faund() {
+        double sceal = 30000;
+        double distancee = (sceal / limelight.getLatestResult().getTa());
+        return distancee;
+
     }
 }

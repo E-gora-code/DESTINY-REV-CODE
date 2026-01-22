@@ -21,6 +21,7 @@ public class shooter_test extends LinearOpMode {
 
 
         waitForStart();
+        turret.reset();
 
         while (opModeIsActive()) {
             boolean shoot = gamepad1.a;
@@ -35,6 +36,7 @@ public class shooter_test extends LinearOpMode {
             telemetry.addData("Current Pose", turret.get_current_turret_pose());
 
 
+
             dash.addData("Target RPM", turret.getTargetRpm());
             dash.addData("Filtered Tx", turret.getFiltTx());
             dash.addData("Filtered Ty", turret.getFiltTy());
@@ -44,8 +46,9 @@ public class shooter_test extends LinearOpMode {
             dash.addData("b", droch);
             dash.addData("leftrpm",turret.currRpmL());
             dash.addData("rightrpm",turret.currRpmR());
-            dash.addData("distance",turret.get_distance());
+            dash.addData("distance",turret.faund());
             dash.addData("222",turret.sbros());
+
 
             dash.update();
             telemetry.update();

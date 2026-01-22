@@ -1,13 +1,17 @@
 package org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret;
 
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.teamcode.generic_classes.RobotHardware;
 
 public class spindexer {
     private RobotHardware.Motors.BasicServo front_ejector,back_ejector,back_wall,front_wall;
     public RobotHardware.Motors.BasicServo spindexer;
     private RobotHardware.Motors.DCMotor Front_intake,Back_intake, Shooter1, Shooter2;
+    Servo pitch;
 
-    public spindexer(DataPackageInitSpindexer pack) {
+    public spindexer(DataPackageInitSpindexer pack, HardwareMap hw) {
         this.spindexer = pack.spindexer;
         this.back_ejector = pack.Back_ejector;
         this.front_ejector = pack.Front_ejector;
@@ -17,6 +21,7 @@ public class spindexer {
         this.Back_intake = pack.Back_intake;
         this.Shooter1 = pack.Shooter1;
         this.Shooter2 = pack.Shooter2;
+        pitch = hw.get(Servo.class, "servoY");
 
     }
     public double getSpindexerPosition(){
@@ -30,15 +35,41 @@ public class spindexer {
         front_wall.setPosition(config.pos_front_wall);
         spindexer.setPosition(config.pos_spindexer);
     }
-    public void front_intaking(double mult1,double mult2){
-        back_ejector.setPosition(0.75);
-        back_wall.setPosition(0);
-        front_ejector.setPosition(0.7);
-        front_wall.setPosition(1);
-
-        Shooter1.setPower(-mult2);
-        Shooter2.setPower(mult2);
-        Front_intake.setPower(mult1);
-        Back_intake.setPower(mult1);
+    public void update(boolean front_intaking,boolean back_intaking,boolean back_shoot,boolean front_shoot,double spin){
+         if (front_intaking){
+             pitch.setPosition(config.Back_ejector_noshoot_position);
+             back_ejector.setPosition(0.75);
+             back_wall.setPosition(0);
+             front_ejector.setPosition(0.8);
+             front_wall.setPosition(1);
+             Front_intake.setPower(0.3);
+             Back_intake.setPower(0.3);
+             spindexer.setPower(spin);
+         }
+         else if (back_intaking){
+             back_ejector.setPosition(0.75);
+             back_wall.setPosition(0.8);
+             front_ejector.setPosition(1);
+             front_wall.setPosition(0);
+             Front_intake.setPower(0.1);
+             Back_intake.setPower(0.1);
+             spindexer.setPower(spin);
+         }
+         else if (back_shoot){
+             back_ejector.setPosition(0.75);
+             Front_intake.setPower(0.1);
+             Back_intake.setPower(0.1);
+             spindexer.setPower(spin);
+         }
+         else if (front_shoot){
+             front_ejector.setPosition(0.7);
+             Front_intake.setPower(0.1);
+             Back_intake.setPower(0.1);
+             spindexer.setPower(spin);
+         }
     }
+
+
+
+
 }
