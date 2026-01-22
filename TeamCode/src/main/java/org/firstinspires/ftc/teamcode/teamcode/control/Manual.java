@@ -23,7 +23,7 @@ public class Manual extends OpRobotSystemsFramework {
     boolean independent_drive = false;
     boolean independent_drive_press = false;
 
-
+    double turred_y_pos = 0;
 
 
     Telemetry dash = FtcDashboard.getInstance().getTelemetry();
@@ -100,11 +100,7 @@ public class Manual extends OpRobotSystemsFramework {
             spindexerModule.spin = gamepad2.right_stick_y+gamepad1.right_stick_y;
 
             turret_x.setPower(controllerDriver_2.internal_touchpad.getX()+gamepad2.left_stick_y);
-            shooter_left.setPower(gamepad2.left_trigger+gamepad1.right_trigger);
-            shooter_right.setPower(-gamepad2.left_trigger-gamepad1.right_trigger);
-
-            spindexer.setPower((-gamepad2.left_trigger+gamepad2.right_trigger)*0.5);
-            turret_x.setPower(controllerDriver_2.internal_touchpad.touchpad1_X);
+            turret_y.setPosition(controllerDriver_2.internal_touchpad.getY()/2);
 
 
             if (gamepad1.left_bumper || gamepad2.left_bumper) {

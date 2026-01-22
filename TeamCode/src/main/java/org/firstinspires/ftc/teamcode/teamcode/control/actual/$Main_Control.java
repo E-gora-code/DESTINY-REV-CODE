@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.generic_classes.OpRobotSystemsFramework;
 import org.firstinspires.ftc.teamcode.teamcode.PID_setting;
 import org.firstinspires.ftc.teamcode.teamcode.openCV.CameraOverlay;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -18,8 +19,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import org.firstinspires.ftc.teamcode.generic_classes.OpModeFramework;
 @TeleOp
-public class $Main_Control extends OpModeFramework {
-    Telemetry dash = FtcDashboard.getInstance().getTelemetry();
+public class $Main_Control extends OpRobotSystemsFramework {
     OpenCvCamera webcam;
     private Acceleration acceleration;
     Init_Utilites initUtilites = new Init_Utilites();
@@ -44,6 +44,10 @@ public class $Main_Control extends OpModeFramework {
 
         boolean drive_base_accel_move_bind = false;
         boolean drive_base_accel_turn_bind = false;
+
+    //Spindexter binds
+        boolean spindexter_intake_bind = false;
+        boolean spindexter_shoot_bind = false;
 
     //Silly binds
         boolean dual_rumble_bind = false;
@@ -503,23 +507,23 @@ public class $Main_Control extends OpModeFramework {
             initAllSystems();
 
 
-            int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-            webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-    //        webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-            CameraOverlay detector = new CameraOverlay();
-            webcam.setPipeline(detector);
-            webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-                @Override
-                public void onOpened() {
-                    webcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
-
-                    FtcDashboard.getInstance().startCameraStream(webcam, 16);
-                }
-
-                @Override
-                public void onError(int errorCode) {
-                }
-            });
+//            int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+//            webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+//    //        webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+//            CameraOverlay detector = new CameraOverlay();
+//            webcam.setPipeline(detector);
+//            webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+//                @Override
+//                public void onOpened() {
+//                    webcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
+//
+//                    FtcDashboard.getInstance().startCameraStream(webcam, 16);
+//                }
+//
+//                @Override
+//                public void onError(int errorCode) {
+//                }
+//            });
         }
     }
     public double Angle() {
