@@ -58,6 +58,7 @@ public class Manual extends OpRobotSystemsFramework {
 //             varing
             extr_pos = FL.getCurrentPosition();
             extl_pos = FR.getCurrentPosition();
+            printTelemetry("Spin_vol", spindexer.getEncoderVoltage());
             printTelemetry("Spin_pos", spindexer.getEncoderPosition());
 //            telemetry.addData("spindexer", spindexer.getEncoderPosition());
 //            telemetry.addData("spindexer_pos", spindexer.getSentPosition());

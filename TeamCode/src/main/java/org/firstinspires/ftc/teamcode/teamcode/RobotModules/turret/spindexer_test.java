@@ -13,6 +13,7 @@ public class spindexer_test extends OpModeFramework {
     private boolean lastB = false;
     private boolean shooting = false;
     private boolean ready = false;
+    double to_pos = 0;
 
     @Override
     public void runOpMode() {
@@ -52,8 +53,9 @@ public class spindexer_test extends OpModeFramework {
 //
 //           spindexerModule.front_intaking = gamepad2.dpad_down;
 //           spindexerModule.front_shoot = gamepad2.dpad_left;
-//           spindexerModule.spin = gamepad2.right_stick_y;
-            spindexerModule.to_zero();
+           spindexerModule.spin = gamepad2.right_stick_y;
+                to_pos = (gamepad2.right_trigger);
+                spindexerModule.rotate_to(to_pos,0.1);
 //           spindexerModule.update();
            turret_x.setPower(controllerDriver_2.internal_touchpad.getX()+gamepad2.left_stick_y);
            shooter_left.setPower(gamepad2.left_trigger);
@@ -62,7 +64,8 @@ public class spindexer_test extends OpModeFramework {
             telemetry.addData("Shooting", shooting ? "YES" : "NO");
             telemetry.addData("Ready", ready ? "YES" : "NO");
             telemetry.addData("Spindexer Power", "%.2f", spindexerPower);
-            telemetry.addData("Spindexer Position",  spindexerModule.getSpindexerPosition());
+            telemetry.addData("Spindexer PositionT",  to_pos);
+            telemetry.addData("Spindexer PositionT",  to_pos-spindexer.getEncoderPosition());
             telemetry.addData("Position Degrees",
                     (spindexerModule.getSpindexerPosition()) * 360);
             telemetry.update();

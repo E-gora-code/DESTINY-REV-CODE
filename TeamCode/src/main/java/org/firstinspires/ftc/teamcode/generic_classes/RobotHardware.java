@@ -471,10 +471,11 @@ public class RobotHardware{
                 InternalServo servo_component = servo_entry.getValue();
                 if (servo_component.AttachedEncoder != null) {
                     servo_component.encoderVoltage = servo_component.AttachedEncoder.getVoltage();
-//                    if (servo_component.encoderLastVoltage > 3.0 && servo_component.encoderVoltage < 0.3) servo_component.encoderRevolutionCount++;
-//                    if (servo_component.encoderLastVoltage < 0.3 && servo_component.encoderVoltage > 3.0) servo_component.encoderRevolutionCount--;
-//                    servo_component.encoderLastVoltage = servo_component.encoderVoltage;
-                    servo_component.encoderPosition = (servo_component.encoderVoltage-0.172)*121.539;
+                    if (servo_component.encoderLastVoltage > 3.0 && servo_component.encoderVoltage < 0.3) servo_component.encoderRevolutionCount++;
+                    if (servo_component.encoderLastVoltage < 0.3 && servo_component.encoderVoltage > 3.0) servo_component.encoderRevolutionCount--;
+                    servo_component.encoderLastVoltage = servo_component.encoderVoltage;
+//                    servo_component.encoderPosition = (servo_component.encoderVoltage)*121.539;
+                    servo_component.encoderPosition = (servo_component.encoderVoltage);
                 }
             }
         }
@@ -628,7 +629,10 @@ public class RobotHardware{
                 return reversePosCheck(attached_servo.position);
             }
             public double getEncoderPosition(){
-                return reversePosCheck(attached_servo.encoderPosition);
+                return reversePosCheck(attached_servo.encoderPosition+attached_servo.encoderRevolutionCount*3);
+            }
+            public double getEncoderVoltage(){
+                return reversePosCheck(attached_servo.encoderVoltage);
             }
             public void setPower(double power){
                 attached_servo.position = reversePosCheck((power/2)+0.5);

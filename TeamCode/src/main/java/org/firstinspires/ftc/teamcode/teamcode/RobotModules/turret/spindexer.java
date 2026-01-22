@@ -74,19 +74,21 @@ public class spindexer {
          }
 
     }
-    public void to_zero(){
-        if(spindexer.getEncoderPosition()>10){
-            spindexer.setPower(-0.1);
+    public boolean rotate_to(double pos,double power){
+        double enc = spindexer.getEncoderPosition();
+        if(Math.abs(pos-enc)>0.2) {
+            if (pos - enc >= 0) {
+                spindexer.setPower(-power);
 
-        }else if(spindexer.getEncoderPosition()<170){
-            spindexer.setPower(0.1);
-
+            } else {
+                spindexer.setPower(power);
+            }
         }
         else {
             spindexer.setPower(0);
         }
+        return false;
     }
-
 
 
 
