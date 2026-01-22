@@ -79,6 +79,8 @@ public class spindexer {
                  Shooter2.setPower(1);
                  Shooter1.setPower(-1);
              }else if(shooting_time.seconds()<3.5) {
+                 Shooter2.setPower(1);
+                 Shooter1.setPower(-1);
                  Front_intake.setPower(1);
                  Back_intake.setPower(1);
                  spindexer.setPower(-1);
