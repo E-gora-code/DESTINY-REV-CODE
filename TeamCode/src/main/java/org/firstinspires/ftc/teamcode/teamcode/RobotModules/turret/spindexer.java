@@ -267,21 +267,14 @@ public class spindexer {
             front_ejector.setPosition(0.7);
             Front_intake.setPower(0);
             Back_intake.setPower(0);
-            if(shooting_time.seconds()<6) {
+            if(shooting_time.seconds()<3) {
                 back_ejector.setPosition(0.75);
                 this.rotate_to(2, 0.5);
                 Shooter2.setPower(1);
                 Shooter1.setPower(-1);
                 spindexer.setPower(0);
 
-            }else if(shooting_time.seconds()<4) {
-                Shooter2.setPower(1);
-                Shooter1.setPower(-1);
-                Front_intake.setPower(1);
-                Back_intake.setPower(1);
-                spindexer.setPower(0);
-            }
-            else if(shooting_time.seconds()<17) {
+            }else if(shooting_time.seconds()<10) {
                 back_ejector.setPosition(0.65);
                 Shooter2.setPower(1);
                 Shooter1.setPower(-1);

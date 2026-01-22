@@ -199,6 +199,17 @@ public class $Main_Control extends OpRobotSystemsFramework {
             }
 
 
+            spindexerModule.enabled = gamepad2.dpad_down;
+
+            spindexerModule.front_intaking = gamepad2.dpad_down||gamepad1.left_bumper;
+            spindexerModule.front_shoot = gamepad2.dpad_left||gamepad1.right_bumper;
+            spindexerModule.spin = gamepad2.right_stick_y;
+
+            if(Math.abs(controllerDriver_2.internal_touchpad.getY())<0.1) {
+                turret_x.setPower(controllerDriver_2.internal_touchpad.getX() + gamepad2.left_stick_y);
+            }
+            turret_y.setPosition(controllerDriver_2.internal_touchpad.getY()/3);
+
 
 
         }
