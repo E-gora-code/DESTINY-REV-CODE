@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret.spindexer;
 import org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret.turet;
 import org.firstinspires.ftc.teamcode.teamcode.control.actual.$Main_Control;
-@TeleOp
+@TeleOp(name = "$BRATSK")
 public class teleop extends OpRobotSystemsFramework {
     public static Follower follower;
     Drive_train driveTrain = new Drive_train();
