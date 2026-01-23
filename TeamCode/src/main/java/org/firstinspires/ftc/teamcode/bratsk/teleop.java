@@ -52,10 +52,16 @@ public class teleop extends OpRobotSystemsFramework {
         public void run() {
             waitForStart();
             while (opModeIsActive()) {
-                turret.update((gamepad2.right_trigger>0.2),gamepad2.left_stick_x);
+//                turret.update((gamepad2.right_trigger>0.2),gamepad2.left_stick_x);
+                turret_x.setPower(controllerDriver_1.internal_touchpad.getX()+gamepad2.left_stick_x);
 
-                spindexerModule.front_intaking = gamepad1.right_bumper;
-                spindexerModule.front_shoot = gamepad1.right_trigger>0.2;
+                turret_y.setPosition((controllerDriver_1.internal_touchpad.getY()+gamepad2.left_stick_y)/3);
+                if(gamepad1.back||gamepad2.back) {
+                    spindexerModule.force_front = false;
+                }
+                spindexerModule.front_intaking = gamepad1.right_bumper||gamepad2.right_bumper;
+                spindexerModule.front_shoot = gamepad1.left_bumper||gamepad2.left_bumper;
+                spindexerModule.spin = gamepad2.right_stick_y*gamepad2.right_trigger;
                 spindexerModule.enabled = true;
             }
     }

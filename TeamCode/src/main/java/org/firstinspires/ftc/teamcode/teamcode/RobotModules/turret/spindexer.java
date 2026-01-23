@@ -103,10 +103,10 @@ public class spindexer {
              if(shooting_time.seconds()<2) {
                  spindexer.setPower(0);
                  Shooter2.setPower(1);
-                 Shooter1.setPower(-1);
+                 Shooter1.setPower(1);
              }else if(shooting_time.seconds()<3.5) {
                  Shooter2.setPower(1);
-                 Shooter1.setPower(-1);
+                 Shooter1.setPower(1);
                  Front_intake.setPower(1);
                  Back_intake.setPower(1);
                  spindexer.setPower(-1);
@@ -169,18 +169,18 @@ public class spindexer {
                 back_ejector.setPosition(0.75);
                 this.rotate_to(2, 0.5);
                 Shooter2.setPower(1);
-                Shooter1.setPower(-1);
+                Shooter1.setPower(1);
 
             }else if(shooting_time.seconds()<4.5) {
                 Shooter2.setPower(1);
-                Shooter1.setPower(-1);
+                Shooter1.setPower(1);
                 Front_intake.setPower(1);
                 Back_intake.setPower(1);
             }
             else if(shooting_time.seconds()<6.5) {
                 back_ejector.setPosition(0.65);
                 Shooter2.setPower(1);
-                Shooter1.setPower(-1);
+                Shooter1.setPower(1);
                 Front_intake.setPower(1);
                 Back_intake.setPower(1);
                 spindexer.setPower(-1);
@@ -271,13 +271,13 @@ public class spindexer {
                 back_ejector.setPosition(0.75);
                 this.rotate_to(2, 0.5);
                 Shooter2.setPower(1);
-                Shooter1.setPower(-1);
+                Shooter1.setPower(1);
                 spindexer.setPower(0);
 
             }else if(shooting_time.seconds()<10) {
                 back_ejector.setPosition(0.65);
                 Shooter2.setPower(1);
-                Shooter1.setPower(-1);
+                Shooter1.setPower(1);
                 Front_intake.setPower(1);
                 Back_intake.setPower(1);
                 if((shooting_time.seconds()<5.3)&&(shooting_time.seconds()>5)) {
