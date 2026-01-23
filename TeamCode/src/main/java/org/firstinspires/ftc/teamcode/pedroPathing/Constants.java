@@ -45,17 +45,17 @@ public class Constants {
             .MotorPower2(1)
             .MotorPower3(1)
             .MotorsScale(1)
-            .xVelocity(98.8741)
-            .yVelocity(82.7);
+            .xVelocity(64.8741)
+            .yVelocity(60.7);
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
 
-            .forwardPodY(-6.9)
+            .forwardPodY(6.19)
             .strafePodX(6.7)
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
-            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
+            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED)
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
 
     public static PathConstraints pathConstraints = new PathConstraints(

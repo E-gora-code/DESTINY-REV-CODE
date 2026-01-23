@@ -42,7 +42,16 @@ public class teleop extends OpRobotSystemsFramework {
             follower.startTeleopDrive();
             follower.update();
             while (opModeIsActive()) {
-                follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, false);
+                if(!gamepad1.ps) {
+                    follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, false);
+                }else {
+                    follower.setTeleOpDrive(-gamepad2.left_stick_y, -gamepad2.left_stick_x, -gamepad2.right_stick_x, false);
+                }
+                follower.update();
+            }
+            if (gamepad1.triangle){
+                follower.setStartingPose(new Pose(10.6,9.5,Math.toRadians(0)));
+                follower.startTeleopDrive();
                 follower.update();
             }
         }
@@ -52,10 +61,12 @@ public class teleop extends OpRobotSystemsFramework {
         public void run() {
             waitForStart();
             while (opModeIsActive()) {
-//                turret.update((gamepad2.right_trigger>0.2),gamepad2.left_stick_x);
-                turret_x.setPower(controllerDriver_1.internal_touchpad.getX()+gamepad2.left_stick_x);
 
-                turret_y.setPosition((controllerDriver_1.internal_touchpad.getY()+gamepad2.left_stick_y)/3);
+//                turret.update((gamepad2.right_trigger>0.2),gamepad2.left_stick_x);
+                turret_x.setPower(controllerDriver_1.internal_touchpad.getX()+controllerDriver_2.internal_touchpad.getX());
+                if(!gamepad1.ps) {
+                    turret_y.setPosition((controllerDriver_1.internal_touchpad.getY() + gamepad2.left_stick_y) / 3);
+                }
                 if(gamepad1.back||gamepad2.back) {
                     spindexerModule.force_front = false;
                 }
