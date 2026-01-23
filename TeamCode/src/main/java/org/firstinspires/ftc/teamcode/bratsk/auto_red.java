@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.generic_classes.OpRobotSystemsFramework;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret.turet;
 @Autonomous
-class auto_red extends OpRobotSystemsFramework {
+public class auto_red extends OpRobotSystemsFramework {
     public static double DISTANCE = 40;
     private boolean forward = true;
 
@@ -44,6 +44,7 @@ class auto_red extends OpRobotSystemsFramework {
         follower.followPath(new Path(new BezierLine(new Pose(24,0), new Pose(72,48))));
    
         while(follower.isBusy()){
+            follower.update();
             tickAll();
         }
         shoot_M();
