@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.generic_classes.OpRobotSystemsFramework;
 import org.firstinspires.ftc.teamcode.pedro.Follower;
@@ -11,7 +12,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret.spindexer;
 import org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret.turet;
 import org.firstinspires.ftc.teamcode.teamcode.control.actual.$Main_Control;
-
+@TeleOp
 public class teleop extends OpRobotSystemsFramework {
     public static Follower follower;
     Drive_train driveTrain = new Drive_train();

@@ -227,7 +227,7 @@ public class spindexer {
             Front_intake.setPower(intake_speed);
             Back_intake.setPower(intake_speed);
             if(checkColor()) {
-                if (color_time.seconds() > 0.3) {
+                if (color_time.seconds() > 0.1) {
                     if((color_last!=checkColor())&&checkColor()) {
                         if (input_count < 3) {
                             input_count += 1;
