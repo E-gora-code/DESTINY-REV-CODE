@@ -25,8 +25,8 @@ public class teleop extends OpRobotSystemsFramework {
         initAllSystems();
         follower = Constants.createFollower(hardwareMap);
         turret = new turet(hardwareMap,5);
-        driveTrain.run();
-        barsho.run();
+        driveTrain.start();
+        barsho.start();
         waitForStart();
 
         while(opModeIsActive()){
@@ -56,6 +56,7 @@ public class teleop extends OpRobotSystemsFramework {
 
                 spindexerModule.front_intaking = gamepad1.right_bumper;
                 spindexerModule.front_shoot = gamepad1.right_trigger>0.2;
+                spindexerModule.enabled = true;
             }
     }
   }
