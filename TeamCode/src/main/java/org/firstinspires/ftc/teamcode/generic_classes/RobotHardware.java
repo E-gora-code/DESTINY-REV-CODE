@@ -364,9 +364,9 @@ public class RobotHardware{
             return output;
         }
         public List<String> getMotorsMissingNames(){
-            List<String> output = new ArrayList<>();
-            for (Map.Entry<String, InternalServo> servo_entry : servos.entrySet()) {
-                InternalServo servo_component = servo_entry.getValue();
+                    List<String> output = new ArrayList<>();
+                    for (Map.Entry<String, InternalServo> servo_entry : servos.entrySet()) {
+                        InternalServo servo_component = servo_entry.getValue();
                 if(servo_component.AttachedComponent==null) {
                     output.add("NO Servo: " + servo_entry.getKey() + " -!> " + servo_component.AttachedComponentName);
                 }
@@ -725,6 +725,51 @@ public class RobotHardware{
             color_sensors.put(NameKeys.colorNameKeys.cv1,new InternalColor("cv1"));
         }
 
+        public List<String> getSensorsConfigNames(){
+            List<String> output = new ArrayList<>();
+            for (Map.Entry<String, Sensors.InternalChannel> sensor_entry : channels.entrySet()) {
+                Sensors.InternalChannel sensors_component = sensor_entry.getValue();
+                output.add("Channel: "+sensor_entry.getKey()+" --> "+sensors_component.AttachedComponentName);
+            }
+            for (Map.Entry<String, Sensors.InternalColor> sensor_entry : color_sensors.entrySet()) {
+                Sensors.InternalColor sensors_component = sensor_entry.getValue();
+                output.add("ColorS: "+sensor_entry.getKey()+" --> "+sensors_component.AttachedComponentName);
+            }
+            return output;
+        }
+        public List<String> getMotorsMissingNames(){
+            List<String> output = new ArrayList<>();
+            for (Map.Entry<String, Sensors.InternalChannel> sensor_entry : channels.entrySet()) {
+                Sensors.InternalChannel sensors_component = sensor_entry.getValue();
+                if(sensors_component.AttachedComponent==null) {
+                    output.add("NO Channel: " + sensor_entry.getKey() + " -!> " + sensors_component.AttachedComponentName);
+                }
+            }
+            for (Map.Entry<String, Sensors.InternalColor> sensor_entry : color_sensors.entrySet()) {
+                Sensors.InternalColor sensors_component = sensor_entry.getValue();
+                if(sensors_component.AttachedComponent==null) {
+                    output.add("NO ColorS: " + sensor_entry.getKey() + " -!> " + sensors_component.AttachedComponentName);
+                }
+            }
+            return output;
+        }
+        public List<String> getMotorsCorrectNames(){
+            List<String> output = new ArrayList<>();
+            for (Map.Entry<String, Sensors.InternalChannel> sensor_entry : channels.entrySet()) {
+                Sensors.InternalChannel sensors_component = sensor_entry.getValue();
+                if(sensors_component.AttachedComponent!=null) {
+                    output.add("Channel ok: " + sensor_entry.getKey() + " -+> " + sensors_component.AttachedComponentName);
+                }
+            }
+            for (Map.Entry<String, Sensors.InternalColor> sensor_entry : color_sensors.entrySet()) {
+                Sensors.InternalColor sensors_component = sensor_entry.getValue();
+                if(sensors_component.AttachedComponent!=null) {
+                    output.add("ColorS ok: " + sensor_entry.getKey() + " -+> " + sensors_component.AttachedComponentName);
+                }
+            }
+            return output;
+        }
+
 
         public boolean is_inited(){
             return is_components_inited;
@@ -802,16 +847,20 @@ public class RobotHardware{
             public boolean state = false;
             public boolean is_reverse = false;
             public final DigitalChannel AttachedComponent;
+            public final String AttachedComponentName;
             public InternalChannel(String attachedComponentName){
                 this.AttachedComponent = getChannelFunction(attachedComponentName);
+                this.AttachedComponentName = attachedComponentName;
             }
             public InternalChannel(String attachedComponentName,boolean is_reverse){
                 this.AttachedComponent = getChannelFunction(attachedComponentName);
+                this.AttachedComponentName = attachedComponentName;
                 this.is_reverse = is_reverse;
             }
         }
         private class InternalColor{
             public final ColorSensor AttachedComponent;
+            public final String AttachedComponentName;
             public double r = 0;
             public double g = 0;
             public double b = 0;
@@ -820,9 +869,11 @@ public class RobotHardware{
             public boolean led = true;
             public InternalColor(String attachedComponentName){
                 this.AttachedComponent = getColorFunction(attachedComponentName);
+                this.AttachedComponentName = attachedComponentName;
             }
             public InternalColor(String attachedComponentName,int trigger_value){
                 this.AttachedComponent = getColorFunction(attachedComponentName);
+                this.AttachedComponentName = attachedComponentName;
                 this.trigger_value = trigger_value;
             }
 
