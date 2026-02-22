@@ -25,8 +25,7 @@ public class configInstructions extends OpModeFramework {
             for (String line : configMiss) {
                 printTelemetry("-! ",line);
             }
-            dash.update();
-            telemetry.update();
+            UpdatePrint();
         }
     }
 }

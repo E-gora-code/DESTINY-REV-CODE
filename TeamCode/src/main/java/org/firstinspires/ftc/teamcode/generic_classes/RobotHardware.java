@@ -603,11 +603,23 @@ public class RobotHardware{
                 this.power_multiplier = power_mult;
             }
         }
+        public class BasicCRServo extends BasicServo {
+            public BasicCRServo(Motors parentClass, String Key) {
+                super(parentClass, Key);
+            }
+            public void setPower(double power){
+                attached_servo.position = reversePosCheck((power/2)+0.5);
+                attached_servo.is_powered = true;
+            }
+            public double getPower(){
+                return reversePosCheck((attached_servo.position-0.5)*2);
+            }
+        }
 
         public class BasicServo{
             public final String component_Key;
             public final Motors parentClass;
-            private final InternalServo attached_servo;
+            public final InternalServo attached_servo;
             public BasicServo(Motors parentClass, String Key){
                 this.component_Key = Key;
                 this.parentClass = parentClass;
@@ -616,7 +628,7 @@ public class RobotHardware{
                     throw new IllegalArgumentException(String.format("RobotHardware.Servo(%s): Key error, no object found!!!",component_Key));
                 }
             }
-            private double reversePosCheck(double pos){
+            public double reversePosCheck(double pos){
                 if (attached_servo.is_reverse) {
                     return (1 - pos);
                 }
@@ -640,13 +652,7 @@ public class RobotHardware{
             public double getEncoderVoltage(){
                 return reversePosCheck(attached_servo.encoderVoltage);
             }
-            public void setPower(double power){
-                attached_servo.position = reversePosCheck((power/2)+0.5);
-                attached_servo.is_powered = true;
-            }
-            public double getPower(){
-                return reversePosCheck((attached_servo.position-0.5)*2);
-            }
+
         }
 
 
