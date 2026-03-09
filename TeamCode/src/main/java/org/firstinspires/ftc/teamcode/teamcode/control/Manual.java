@@ -56,18 +56,18 @@ public class Manual extends OpRobotSystemsFramework {
 //             varing
             extr_pos = FL.getCurrentPosition();
             extl_pos = FR.getCurrentPosition();
-            printTelemetry("Spin_vol", spindexer.getEncoderVoltage());
-            printTelemetry("Spin_pos", spindexer.getEncoderPosition());
+//            printTelemetry("Spin_vol", spindexer.getEncoderVoltage());
+//            printTelemetry("Spin_pos", spindexer.getEncoderPosition());
 //            telemetry.addData("spindexer", spindexer.getEncoderPosition());
 //            telemetry.addData("spindexer_pos", spindexer.getSentPosition());
 //            telemetry.addData("front_ejector_pos", front_ejector.getSentPosition());
 //            telemetry.addData("back_ejector_pos", back_ejector.getSentPosition());
 //            telemetry.addData("front_wall_pos", front_wall.getSentPosition());
 //            telemetry.addData("back_wall_pos", back_wall.getSentPosition());
-            telemetry.addData("alt", independent_drive);
-            telemetry.addData("PS5", gamepad2.touchpad_finger_1);
-            telemetry.addData("PSx", controllerDriver_2.internal_touchpad.getX());
-            telemetry.addData("PSy", controllerDriver_2.internal_touchpad.getY());
+            telemetry.addData("Independent Drive:", independent_drive);
+//            telemetry.addData("PS5", gamepad2.touchpad_finger_1);
+//            telemetry.addData("PSx", controllerDriver_2.internal_touchpad.getX());
+//            telemetry.addData("PSy", controllerDriver_2.internal_touchpad.getY());
             telemetry.addData("Angle X", gyro.Angle().firstAngle);
             telemetry.addData("Angle Y", gyro.Angle().secondAngle);
             telemetry.addData("Angle Z", gyro.Angle().thirdAngle);
@@ -75,12 +75,18 @@ public class Manual extends OpRobotSystemsFramework {
 
             telemetry.addData("ch0", ch0.getState());
             telemetry.addData("ch1", ch1.getState());
+            telemetry.addData("cv0", "-------------------");
             telemetry.addData("cv0", cv0.value());
-            telemetry.addData("cv1", cv1.value());
             telemetry.addData("cv0r", cv0.red());
             telemetry.addData("cv0g", cv0.green());
             telemetry.addData("cv0b", cv0.blue());
-            telemetry.addData("cv0COL", spindexerModule.checkColor());
+            telemetry.addData("cv1", "-------------------");
+            telemetry.addData("cv1", cv1.value());
+            telemetry.addData("cv1r", cv1.red());
+            telemetry.addData("cv1g", cv1.green());
+            telemetry.addData("cv1b", cv1.blue());
+
+//            telemetry.addData("cv0COL", spindexerModule.checkColor());
             telemetry.addData("pose", spindexerModule.input_count);
 //            telemetry.addData("extR", extr_pos);
 //            telemetry.addData("extL", extl_pos);
