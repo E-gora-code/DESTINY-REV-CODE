@@ -119,6 +119,14 @@ public class Manual extends OpRobotSystemsFramework {
 //                gamepad2.rumble(3000);
 //
 //            }
+            if(!gamepad2.a) {
+                shooter_left.setPower(-gamepad2.left_trigger);
+                shooter_right.setPower(+gamepad2.left_trigger);
+            }else {
+                shooter_left.setPower(+gamepad2.left_trigger);
+                shooter_right.setPower(-gamepad2.left_trigger);
+            }
+
             double barabim_power = gamepad2.right_stick_x*(Math.max(0.2,gamepad2.right_trigger));
             barabim1.setPower(barabim_power);
             barabim2.setPower(barabim_power);
