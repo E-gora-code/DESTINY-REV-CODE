@@ -17,13 +17,10 @@ public class Manual extends OpRobotSystemsFramework {
 
     double extr_pos, extl_pos;
     double Multiply = 0.6;
-    boolean b_press = false;
-    boolean grab_toggle = false;
 
     boolean independent_drive = false;
     boolean independent_drive_press = false;
 
-    double turred_y_pos = 0;
 
 
     Telemetry dash = FtcDashboard.getInstance().getTelemetry();
@@ -99,16 +96,16 @@ public class Manual extends OpRobotSystemsFramework {
 //            dash.addData("y", BL.getCurrentPosition());
             dash.update();
 
-            spindexerModule.enabled = gamepad2.dpad_down;
-
-
-            spindexerModule.front_intaking = gamepad2.dpad_down||gamepad1.left_bumper;
-            spindexerModule.front_shoot = gamepad2.dpad_left||gamepad1.right_bumper;
-            spindexerModule.spin = gamepad2.right_stick_y;
-            if(Math.abs(controllerDriver_2.internal_touchpad.getY())<0.1) {
-                turret_x.setPower(controllerDriver_2.internal_touchpad.getX() + gamepad2.left_stick_y);
-            }
-            turret_y.setPosition(controllerDriver_2.internal_touchpad.getY()/3);
+//            spindexerModule.enabled = gamepad2.dpad_down;
+//
+//
+//            spindexerModule.front_intaking = gamepad2.dpad_down||gamepad1.left_bumper;
+//            spindexerModule.front_shoot = gamepad2.dpad_left||gamepad1.right_bumper;
+//            spindexerModule.spin = gamepad2.right_stick_y;
+//            if(Math.abs(controllerDriver_2.internal_touchpad.getY())<0.1) {
+//                turret_x.setPower(controllerDriver_2.internal_touchpad.getX() + gamepad2.left_stick_y);
+//            }
+//            turret_y.setPosition(controllerDriver_2.internal_touchpad.getY()/3);
 
 
 //            if (gamepad1.left_bumper || gamepad2.left_bumper) {
@@ -116,6 +113,9 @@ public class Manual extends OpRobotSystemsFramework {
 //                gamepad2.rumble(3000);
 //
 //            }
+            double barabim_power = gamepad2.right_stick_x*(Math.max(0.2,gamepad2.right_trigger));
+            barabim1.setPower(barabim_power);
+            barabim2.setPower(barabim_power);
 
 
             if(gamepad1.dpad_up){

@@ -301,6 +301,8 @@ public class RobotHardware{
                 public final static String turret_x = "turret_x";
                 public final static String turret_y = "turret_y";
                 public final static String brake_pad = "brake_pad";
+                public final static String barabim1 = "barabim1";
+                public final static String barabim2 = "barabim2";
 
             }
             public class SparkMiniNameKeys{
@@ -325,6 +327,11 @@ public class RobotHardware{
             servos.put(NameKeys.servoNameKeys.turret_x,new InternalServo("servoX"));
             servos.put(NameKeys.servoNameKeys.turret_y,new InternalServo("servoY"));
             servos.put(NameKeys.servoNameKeys.brake_pad,new InternalServo("BRK"));
+
+            servos.put(NameKeys.servoNameKeys.barabim1,new InternalServo("barabim1"));
+            servos.put(NameKeys.servoNameKeys.barabim2,new InternalServo("barabim2"));
+
+
 
             motorsDC.put(NameKeys.motorDCNameKeys.front_intake,new InternalMotorDC("Fin"));
             motorsDC.put(NameKeys.motorDCNameKeys.back_intake,new InternalMotorDC("Bin"));

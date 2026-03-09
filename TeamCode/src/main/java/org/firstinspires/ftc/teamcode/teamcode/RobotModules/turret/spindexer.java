@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.generic_classes.RobotHardware;
 
 public class spindexer {
     private RobotHardware.Motors.BasicServo front_ejector,back_ejector,back_wall,front_wall;
-    public RobotHardware.Motors.BasicServo spindexer;
+    public RobotHardware.Motors.BasicCRServo spindexer;
     private RobotHardware.Motors.DCMotor Front_intake,Back_intake, Shooter1, Shooter2;
     private RobotHardware.Sensors.BasicColorSensor sensor_ball;
     private boolean enabled_motors = false;

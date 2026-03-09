@@ -16,7 +16,7 @@ public abstract class OpModeFramework extends LinearOpMode {
     protected RobotHardware.DriveBase.motor_classes.BackLeft BL;
     protected RobotHardware.DriveBase.motor_classes.BackRight BR;
     protected RobotHardware.Motors.BasicServo front_ejector,back_ejector,front_wall,back_wall,turret_y,brake_pad;
-    protected RobotHardware.Motors.BasicCRServo spindexer,turret_x;
+    protected RobotHardware.Motors.BasicCRServo spindexer,turret_x, barabim1, barabim2;
     protected RobotHardware.Motors.DCMotor extr, extl,factory_ext;
 
     protected RobotHardware.Motors.DCMotor front_intake, back_intake,shooter_left,shooter_right;
@@ -55,6 +55,14 @@ public abstract class OpModeFramework extends LinearOpMode {
 
         spindexer = motors.new BasicCRServo(motors, RobotHardware.Motors.NameKeys.servoNameKeys.spindexer);
         turret_x = motors.new BasicCRServo(motors, RobotHardware.Motors.NameKeys.servoNameKeys.turret_x);
+
+
+        barabim1 = motors.new BasicCRServo(motors, RobotHardware.Motors.NameKeys.servoNameKeys.barabim1);
+        barabim2 = motors.new BasicCRServo(motors, RobotHardware.Motors.NameKeys.servoNameKeys.barabim2);
+
+
+
+
         front_ejector = motors.new BasicServo(motors, RobotHardware.Motors.NameKeys.servoNameKeys.front_ejector);
         back_ejector = motors.new BasicServo(motors, RobotHardware.Motors.NameKeys.servoNameKeys.back_ejector);
         front_wall = motors.new BasicServo(motors, RobotHardware.Motors.NameKeys.servoNameKeys.front_wall);
