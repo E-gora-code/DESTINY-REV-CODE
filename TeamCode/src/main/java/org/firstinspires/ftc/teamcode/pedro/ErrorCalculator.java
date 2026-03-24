@@ -31,7 +31,7 @@ public class ErrorCalculator {
 
     private final LinkedHashMap<Long, CachedErrors> errorCache = new LinkedHashMap<Long, CachedErrors>(32, 0.75f, true) {
         @Override
-        protected boolean removeEldestEntry(Map.Entry<Long, CachedErrors> eldest) {
+        protected boolean removeEldestEntry(Entry<Long, CachedErrors> eldest) {
             return size() > 20;  // LRU кэш на 20 записей
         }
     };

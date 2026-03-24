@@ -26,26 +26,26 @@ public class VectorCalculator {
 
     private final LinkedHashMap<Long, Vector> translationalCache = new LinkedHashMap<Long, Vector>(16, 0.75f, true) {
         @Override
-        protected boolean removeEldestEntry(Map.Entry<Long, Vector> eldest) {
+        protected boolean removeEldestEntry(Entry<Long, Vector> eldest) {
             return size() > 10;
         }
     };
     private final LinkedHashMap<Long, Vector[]> teleopCache =
             new LinkedHashMap<Long, Vector[]>(32, 0.75f, true) {
-                protected boolean removeEldestEntry(Map.Entry<Long, Vector[]> eldest) {
+                protected boolean removeEldestEntry(Entry<Long, Vector[]> eldest) {
                     return size() > 20;
                 }
             };
     private final LinkedHashMap<Long, Vector> driveVectorCache = new LinkedHashMap<Long, Vector>(16, 0.75f, true) {
         @Override
-        protected boolean removeEldestEntry(Map.Entry<Long, Vector> eldest) {
+        protected boolean removeEldestEntry(Entry<Long, Vector> eldest) {
             return size() > 10;
         }
     };
 
     private final LinkedHashMap<Long, Vector> headingVectorCache = new LinkedHashMap<Long, Vector>(16, 0.75f, true) {
         @Override
-        protected boolean removeEldestEntry(Map.Entry<Long, Vector> eldest) {
+        protected boolean removeEldestEntry(Entry<Long, Vector> eldest) {
             return size() > 10;
         }
     };

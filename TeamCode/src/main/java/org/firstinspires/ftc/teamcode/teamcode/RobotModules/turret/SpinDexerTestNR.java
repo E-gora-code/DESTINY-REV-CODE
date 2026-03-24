@@ -33,7 +33,7 @@ public class SpinDexerTestNR extends OpModeFramework {
 
         waitForStart();
         turret.reset();
-        follower.setStartingPose(new Pose(144,144,Math.toRadians(0)));
+        follower.setStartingPose(new Pose(132,132,Math.toRadians(0)));
         follower.update();
         follower.startTeleopDrive();
         follower.update();
@@ -68,7 +68,7 @@ public class SpinDexerTestNR extends OpModeFramework {
             dash.addData("rpmR", turret.get_current_turret_pose(false));
             dash.addData("rpmErr", turret.rightpowe());
             dash.addData("targetRpm", turret.getTargetRpm());
-            dash.addData("angletogoal",Math.toDegrees(follower.angletogoalred()));
+            dash.addData("angletogoal",Math.toDegrees(Math.PI/2-follower.angletogoalred()));
             dash.addData("distanse", follower.distansetogoalred());
             dash.addData("x",follower.getPose().getX());
             dash.addData("y",follower.getPose().getY());

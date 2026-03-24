@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -53,8 +54,8 @@ public class turet {
         shooterR = hw.get(DcMotorEx.class, "shooterRight");
         shooterPos = hw.get(AnalogInput.class, "SP_PS");
         shooter_zero = hw.digitalChannel.get("0");
-        shooterR.setDirection(DcMotorEx.Direction.REVERSE);
-        shooterR.setDirection(DcMotorEx.Direction.REVERSE);
+        shooterR.setDirection(DcMotorEx.Direction.FORWARD);
+        shooterL.setDirection(DcMotorEx.Direction.REVERSE);
         shooterL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         shooterR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         shooterL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -80,13 +81,13 @@ public class turet {
         shooterROutPid.setCoefficients(new PIDFCoefficients(config.shooterKp, config.shooterKi, 0, 0));
         ShooterResult sh = calculateShot(distance,angleToGoal,robotVelocityX,robotVelocityY);
         double speed = sh.velocity;
-        double angle = Math.toDegrees(-angleToGoal-turn);
+        double angle = Math.toDegrees(-Math.PI/4+angleToGoal-turn);
         double ofset =Math.toDegrees(sh.turretOffset);
         yawPid.updateError(-angle*0.023644+get_current_turret_pose(false));
 
         targetRpm =speed*1.21-60;
         double currRpmR = shooterR.getVelocity() * 60.0 / 560;
-        shooterROutPid.updateError(targetRpm+currRpmR);
+        shooterROutPid.updateError(targetRpm-currRpmR);
         double powerright =  targetRpm/260;
         if (Math.abs(targetRpm+currRpmR)>5){
             powerright =  shooterROutPid.run()+targetRpm/260;
@@ -96,8 +97,13 @@ public class turet {
         voltage = voltageSensor.getVoltage();
         shooterL.setPower(powerright*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
         shooterR.setPower(powerright*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
+        if (Math.abs(yawPid.getError())<4){
+            yaw.setPower(yawPid.run());
+        }
+        else{
+            yaw.setPower(Math.signum(yawPid.run()));
+        }
 
-        yaw.setPower(yawPid.run());
     }
 
     public ShooterResult calculateShot(double distance, double angleToGoal, double robotVelocityX, double robotVelocityY) {
@@ -156,7 +162,7 @@ public class turet {
         return Math.max(lo, Math.min(hi, v));
     }
 
-    public double rightpowe(){return targetRpm+shooterR.getVelocity() * 60.0 / 560;}
+    public double rightpowe(){return targetRpm-shooterL.getVelocity() * 60.0 / 560;}
     public double getTargetRpm(){return targetRpm;}
     public double getFiltTx() {return tx;}
     public double getFiltTy() {return filtTy;}

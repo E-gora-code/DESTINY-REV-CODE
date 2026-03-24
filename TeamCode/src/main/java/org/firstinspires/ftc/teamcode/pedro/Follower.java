@@ -1098,15 +1098,16 @@ public class Follower  {
 
 
     double lx, ly; boolean c;
-    public boolean smalltrianglepos() { return t(48,0,72,24,96,0); }
-    public boolean bigtrianglepos() { return t(0,144,72,72,144,144); }
-    boolean t(double a,double b,double c,double d,double e,double f) {
-        Pose p = getPose(); double x = p.getX(), y = p.getY();
-        if (x == lx && y == ly) return this.c;
-        double d1 = (x-c)*(b-d)-(a-c)*(y-d);
-        double d2 = (x-e)*(d-f)-(c-e)*(y-f);
-        double d3 = (x-a)*(f-b)-(e-a)*(y-b);
-        boolean r = (d1<0)==(d2<0)&&(d2<0)==(d3<0);
-        lx = x; ly = y; this.c = r; return r;
+    public double angletogoalred(){
+        return Math.atan2(getPose().getY(),144-getPose().getX());
+    }
+    public double distansetogoalred(){
+        return Math.pow(Math.pow((144-getPose().getX()),2) + Math.pow(getPose().getY(),2),0.5);
+    }
+    public double angletogoalblue(){
+        return Math.atan2(getPose().getY(),getPose().getX());
+    }
+    public double distansetogoalblue(){
+        return Math.pow(Math.pow((getPose().getX()),2) + Math.pow(getPose().getY(),2),0.5);
     }
 }
