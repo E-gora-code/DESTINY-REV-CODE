@@ -160,17 +160,13 @@ class LocalizationTest extends OpMode {
      */
     @Override
     public void loop() {
-        follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, false);
+        telemetryM.debug("x",follower.getPose().getX());
+        telemetryM.debug("y",follower.getPose().getY());
+        telemetryM.debug("y",follower.getPose().getHeading());
+        telemetryM.update(telemetry);
+        follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
         follower.update();
 
-        telemetryM.debug("x:" + follower.getPose().getX());
-        telemetryM.debug("y:" + follower.getPose().getY());
-        telemetryM.debug("heading:" + follower.getPose().getHeading());
-        telemetryM.debug("total heading:" + follower.getTotalHeading());
-        telemetryM.debug("in smalle triangle?"+(follower.bigtrianglepos()||follower.smalltrianglepos()));
-        telemetryM.update(telemetry);
-
-        draw();
     }
 }
 

@@ -1,75 +1,46 @@
 package org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.generic_classes.GamepadDriver;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.generic_classes.OpModeFramework;
 
-@TeleOp(name = "Spindexer Test", group = "Test")
-public class spindexer_test extends OpModeFramework {
-    private DataPackageInitSpindexer InitPackage;
-    private spindexer spindexerModule;
-    private boolean lastA = false;
-    private boolean lastB = false;
-    private boolean shooting = false;
-    private boolean ready = false;
-    double to_pos = 0;
+@TeleOp(name = "sp")
+public class spindexer_test extends OpMode {
+    private spindexer spindexe;
+    protected Telemetry dash = FtcDashboard.getInstance().getTelemetry();
+
+
+
 
     @Override
-    public void runOpMode() {
-        selfInit();
-        initAllSystems();
-        InitPackage = new DataPackageInitSpindexer(hardwareMap);
-        InitPackage.spindexer = spindexer;
-        InitPackage.Front_wall = front_wall;
-        InitPackage.Back_wall = back_wall;
-        InitPackage.Front_ejector = front_ejector;
-        InitPackage.Back_ejector = back_ejector;
-        InitPackage.Front_intake = front_intake;
-        InitPackage.Back_intake = back_intake;
-        InitPackage.Shooter1 = shooter_right;
-        InitPackage.Shooter2 = shooter_left;
-        spindexerModule = new spindexer(InitPackage,hardwareMap);
-        telemetry.addData("Position", "%.2f revs", spindexerModule.getSpindexerPosition());
-        telemetry.update();
+    public void init() {
+        spindexe = new spindexer(hardwareMap);
 
-        waitForStart();
+    }
 
-        while (opModeIsActive()) {
+    @Override
+    public void loop() {
 
-            if (gamepad1.a && !lastA) {
-                shooting = !shooting;
-            }
-            if (gamepad1.b && !lastB) {
-                ready = !ready;
-            }
-            lastA = gamepad1.a;
-            lastB = gamepad1.b;
-
-
-            double spindexerPower = 0;
-
-            spindexerPower = gamepad1.right_trigger;
-//
-//           spindexerModule.front_intaking = gamepad2.dpad_down;
-//           spindexerModule.front_shoot = gamepad2.dpad_left;
-           spindexerModule.spin = gamepad2.right_stick_y;
-                to_pos = (gamepad2.right_trigger);
-                spindexerModule.rotate_to(to_pos,0.1);
-//           spindexerModule.update();
-           turret_x.setPower(controllerDriver_2.internal_touchpad.getX()+gamepad2.left_stick_y);
-           shooter_left.setPower(gamepad2.left_trigger);
-           shooter_right.setPower(-gamepad2.left_trigger);
-
-            telemetry.addData("Shooting", shooting ? "YES" : "NO");
-            telemetry.addData("Ready", ready ? "YES" : "NO");
-            telemetry.addData("Spindexer Power", "%.2f", spindexerPower);
-            telemetry.addData("Spindexer PositionT",  to_pos);
-            telemetry.addData("Spindexer PositionT",  to_pos-spindexer.getEncoderPosition());
-            telemetry.addData("Position Degrees",
-                    (spindexerModule.getSpindexerPosition()) * 360);
-            telemetry.update();
-            tickAll();
+        double pos = 1;
+        if (gamepad1.a){
+            pos = 2;
         }
+        if (gamepad1.b){
+            pos = 3;
+        }
+        pos = config.pos;
+        dash.addData("1",spindexe.v());
+        dash.addData("red",spindexe.color_red());
+        dash.addData("blue",spindexe.color_blue());
+        dash.addData("green",pos);
+        dash.update();
+        spindexe.update(true,false,false,"N",false, (float) pos);
+
     }
 }

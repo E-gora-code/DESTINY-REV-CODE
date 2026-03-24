@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.customconsts;
 import org.firstinspires.ftc.teamcode.pedro.Follower;
 import org.firstinspires.ftc.teamcode.pedro.FollowerBuilder;
 
-// Убедитесь, что этот класс существует в вашем проекте
+
 
 
 public class Constants {
@@ -50,12 +50,12 @@ public class Constants {
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
 
-            .forwardPodY(6.19)
-            .strafePodX(6.7)
+            .forwardPodY(5.51)
+            .strafePodX(-1.96)
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
-            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED)
+            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
 
     public static PathConstraints pathConstraints = new PathConstraints(

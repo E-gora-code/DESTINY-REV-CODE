@@ -12,20 +12,25 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @TeleOp
 public class LimelightTurret extends LinearOpMode {
 
     private Limelight3A limelight;
     private CRServo servoYaw;
-    private Servo servoPitch;
+
     private DcMotorEx shooterLeft, shooterRight;
     private IMU imu;
 
     private final double CENTER_PITCH = 0.5;
     private final double PITCH_RANGE_DEG = 180.0;
 
-    private double filteredTx = 0, filteredTy = 0;
+    private double filteredDistance = 0;
+    private double filteredTx = 0; // Keep tx for yaw control
+    private double filteredTy = 0; // Add ty filtering
     private final double FILTER_A = 0.35;
 
     private long lastTime = 0;
@@ -61,7 +66,7 @@ public class LimelightTurret extends LinearOpMode {
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         servoYaw = hardwareMap.get(CRServo.class, "servoX");
-        servoPitch = hardwareMap.get(Servo.class, "servoY");
+
         shooterLeft = hardwareMap.get(DcMotorEx.class, "shooterLeft");
         shooterRight = hardwareMap.get(DcMotorEx.class, "shooterRight");
         imu = hardwareMap.get(IMU.class, "imu");
@@ -80,12 +85,13 @@ public class LimelightTurret extends LinearOpMode {
 
 
 
-        servoPitch.setPosition(CENTER_PITCH);
+
 
         limelight.pipelineSwitch(5);
         limelight.start();
 
         waitForStart();
+        limelight.updateRobotOrientation(0);
 
         while (opModeIsActive()) {
 
@@ -96,31 +102,82 @@ public class LimelightTurret extends LinearOpMode {
             LLResult result = limelight.getLatestResult();
 
             double tx = 0, ty = 0;
-            double distanceM = Double.NaN;
+            double distanceCm = 0;
+            double xCm = 110, yCm = 110, zCm = 110;
+            double roll = 0, pitch = 0, yaw = 0;
+            double targetRoll = 0, targetPitch = 0, targetYaw = 0;
             boolean hasTarget = false;
 
             if (result != null && result.isValid()) {
                 hasTarget = true;
-                tx = result.getTx();
-                ty = result.getTy();
-                Pose3D pose = result.getBotpose_MT2();
-                if (pose == null) pose = result.getBotpose();
-                if (pose != null) {
-                    double x = pose.getPosition().x;
-                    double y = pose.getPosition().y;
-                    distanceM = Math.sqrt(x * x + y * y);
+
+                // Get horizontal and vertical angles (in degrees)
+                tx = result.getTx();  // Horizontal offset in degrees
+                ty = result.getTy();  // Vertical offset in degrees
+
+                // Get 3D position if available (from botpose)
+                Pose3D botpose = result.getBotpose();
+                Pose3D botposeMT2 = result.getBotpose();
+
+
+
+                if (botposeMT2 != null) {
+
+                    Position pos = botposeMT2.getPosition();
+                    YawPitchRollAngles orient = botposeMT2.getOrientation();
+                    xCm = pos.x * 100;
+                    yCm = pos.y * 100;
+                    zCm = pos.z * 100;
+
+                    // Get orientation in degrees
+                    yaw = Math.toDegrees(orient.getYaw());
+                    pitch = Math.toDegrees(orient.getPitch());
+                    roll = Math.toDegrees(orient.getRoll());
+
+                    distanceCm = Math.sqrt(xCm * xCm + yCm * yCm);
+
                 }
+
+                // Get target pose in camera space
+                
             }
 
+            // Apply filters
             filteredTx = FILTER_A * tx + (1 - FILTER_A) * filteredTx;
             filteredTy = FILTER_A * ty + (1 - FILTER_A) * filteredTy;
-            dash.addData("tx",filteredTx);
+            filteredDistance = FILTER_A * distanceCm + (1 - FILTER_A) * filteredDistance;
+
+            // Dashboard output
+            dash.addData("=== TARGET INFO ===", "");
+            dash.addData("Has Target", hasTarget);
+            dash.addData("TX (deg)", String.format("%.2f", tx));
+            dash.addData("TY (deg)", String.format("%.2f", ty));
+            dash.addData("Filtered TX (deg)", String.format("%.2f", filteredTx));
+            dash.addData("Filtered TY (deg)", String.format("%.2f", filteredTy));
+
+            dash.addData("=== POSITION (cm) ===", "");
+            dash.addData("X (forward)", String.format("%.1f", xCm));
+            dash.addData("Y (right)", String.format("%.1f", yCm));
+            dash.addData("Z (up)", String.format("%.1f", zCm));
+            dash.addData("Distance XY", String.format("%.1f", distanceCm));
+            dash.addData("Filtered Distance", String.format("%.1f", filteredDistance));
+
+            dash.addData("=== ROBOT ORIENTATION (deg) ===", "");
+            dash.addData("Roll", String.format("%.1f", roll));
+            dash.addData("Pitch", String.format("%.1f", pitch));
+            dash.addData("Yaw", String.format("%.1f", yaw));
+
+            dash.addData("=== TARGET ORIENTATION (deg) ===", "");
+            dash.addData("Target Roll", String.format("%.1f", targetRoll));
+            dash.addData("Target Pitch", String.format("%.1f", targetPitch));
+            dash.addData("Target Yaw", String.format("%.1f", targetYaw));
+
             dash.update();
 
             double yawPower = 0.0;
 
             if (hasTarget) {
-
+                // Use tx for yaw control (horizontal offset in degrees)
                 double yawError = filteredTx;
                 double deadzone = 0.5;
                 if (Math.abs(yawError) < deadzone) {
@@ -134,40 +191,20 @@ public class LimelightTurret extends LinearOpMode {
             }
 
             servoYaw.setPower(yawPower);
-            double pitchPos = servoPitch.getPosition();
-            double currPitchDeg = (pitchPos - CENTER_PITCH) * PITCH_RANGE_DEG;
-
-            double pitchTargetDeg = currPitchDeg;
-
-            if (hasTarget && !Double.isNaN(distanceM)) {
-                double h = TARGET_HEIGHT_M - CAMERA_HEIGHT_M;
-                double term = (GRAVITY * distanceM) / (shooterVelocityMps * shooterVelocityMps);
-                if (Math.abs(term) <= 1.0) {
-                    double base = Math.toDegrees(0.5 * Math.asin(term));
-                    double corr = Math.toDegrees(Math.atan2(h, distanceM));
-                    pitchTargetDeg = base + corr;
-                }
-            }
-
-            double pitchError = pitchTargetDeg - currPitchDeg;
-            double pitchOut = pitchPID.update(pitchError, dt);
-
-            double newPitchDeg = currPitchDeg + pitchOut;
-            if (newPitchDeg > 60) newPitchDeg = 60;
-            if (newPitchDeg < -10) newPitchDeg = -10;
-
-            double newPos = CENTER_PITCH + newPitchDeg / PITCH_RANGE_DEG;
-            newPos = clamp(newPos, 0.0, 1.0);
-            servoPitch.setPosition(newPos);
 
 
-            boolean shoot = (gamepad1.a);
+
+
+
+
+            boolean shoot = true;
 
             double desiredRpm;
-            if (shoot && hasTarget && !Double.isNaN(distanceM)) {
-                desiredRpm = 260 + distanceM * 180;
+            if (shoot && hasTarget && filteredDistance > 0) {
+                // Adjust RPM based on distance (in cm)
+                desiredRpm = 260 + (filteredDistance / 100.0) * 180;
             } else if (shoot) {
-                desiredRpm = config.shootersp;
+                desiredRpm = 260; // Default value
             } else {
                 desiredRpm = 0;
             }
@@ -176,7 +213,7 @@ public class LimelightTurret extends LinearOpMode {
             shooterTargetRpm = desiredRpm;
 
 
-            double vel = shooterLeft.getVelocity();
+            double vel = shooterRight.getVelocity();
 
             double currentRpm = vel * 60.0 / TICKS_PER_REV;
             double err = shooterTargetRpm - currentRpm;
@@ -186,9 +223,9 @@ public class LimelightTurret extends LinearOpMode {
             shooterPrevError = err;
 
             double power = shooterKf * shooterTargetRpm
-                    + config.shooterKp * err
-                    + config.shooterKi * shooterIntegral
-                    + config.shooterKd * der;
+                    + shooterKp * err
+                    + shooterKi * shooterIntegral
+                    + shooterKd * der;
 
 
             if (shooterTargetRpm <= 0) power = 0;
@@ -198,19 +235,22 @@ public class LimelightTurret extends LinearOpMode {
             shooterLeft.setPower(power);
             shooterRight.setPower(power);
 
-            telemetry.addData("HasTag", hasTarget);
-            telemetry.addData("tx", tx);
-            telemetry.addData("FilteredTx", filteredTx);
-            telemetry.addData("YawPower", yawPower);
-            telemetry.addData("YawPID Error", hasTarget ? filteredTx : 0);
-            telemetry.addData("PitchPos", servoPitch.getPosition());
-            telemetry.addData("RPM", currentRpm);
-            telemetry.addData("cno", power);
-            dash.addData("cno", power);
-            dash.addData("RPM", currentRpm);
-            dash.addData("0",shooterTargetRpm);
-            dash.update();
-            telemetry.update();
+            // Telemetry output
+            telemetry.addData("=== TARGET INFO ===", "");
+            telemetry.addData("Has Target", hasTarget);
+            telemetry.addData("TX (deg)", String.format("%.2f", tx));
+            telemetry.addData("TY (deg)", String.format("%.2f", ty));
+
+            telemetry.addData("=== POSITION (cm) ===", "");
+            telemetry.addData("X (forward)", String.format("%.1f", xCm));
+            telemetry.addData("Y (right)", String.format("%.1f", yCm));
+            telemetry.addData("Z (up)", String.format("%.1f", zCm));
+            telemetry.addData("Distance", String.format("%.1f cm", distanceCm));
+            telemetry.addData("Filtered Distance", String.format("%.1f cm", filteredDistance));
+
+            telemetry.addData("=== ANGLES (deg) ===", "");
+
+
         }
 
         limelight.stop();
