@@ -60,7 +60,7 @@ public class auto extends OpMode {
     public void loop() {
         follower.update();
         draw();
-        turret.update(follower.distansetogoalred(),-follower.angletogoalred(),follower.getVelocity().getXComponent(),-follower.getVelocity().getYComponent(),follower.getPose().getHeading(),gamepad2.right_stick_x);
+        turret.update(follower.distansetogoalred(),-follower.angletogoalred(),follower.getVelocity().getXComponent(),-follower.getVelocity().getYComponent(),follower.getPose().getHeading(),0,0);
 
 
 

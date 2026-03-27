@@ -19,17 +19,17 @@ public class OpRobotSystemsFramework extends OpModeFramework{
         InitPackage.Shooter1 = shooter_right;
         InitPackage.Shooter2 = shooter_left;
         InitPackage.colorSensor = cv0;
-        spindexerModule = new spindexer(InitPackage,hardwareMap);
+//        spindexerModule = new spindexer(InitPackage,hardwareMap);
     }
 
     @Override
     public void initAllSystems(){
-        initSpindexer();
+//        initSpindexer();
         super.initAllSystems();
     }
     @Override
     public void tickAll(){
-        spindexerModule.update_3ball();
+//        spindexerModule.update_3ball();
         super.tickAll();
     }
 

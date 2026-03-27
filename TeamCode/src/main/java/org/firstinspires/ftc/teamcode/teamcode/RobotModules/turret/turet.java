@@ -42,6 +42,7 @@ public class turet {
     public ElapsedTime turn_last_override = new ElapsedTime();
     public ElapsedTime power_last_override = new ElapsedTime();
     public double seconds_hold_override = 6.7;
+    boolean ower_inited = false;
 
     private static final double GRAVITY = 386.4;
     private static final double LAUNCH_ANGLE = Math.toRadians(65);
@@ -93,32 +94,41 @@ public class turet {
 
         yawPid.updateError(-angle*0.0195+get_current_turret_pose(false));
         if (Math.abs(override_power)>0.3){
-            targetRpm = 260 *override_power;
+            ower_inited = true;
+            power_last_override.reset();
+            shooterL.setPower(-override_power);
+            shooterR.setPower(-override_power);
+            turn_last_override.reset();
+        }
+        else if((power_last_override.seconds()<(seconds_hold_override/2))&&ower_inited){
+
+            shooterL.setPower(0);
+            shooterR.setPower(0);
         }
         else {
             targetRpm = speed * 1.19 - 60;
+            double currRpmR = -shooterR.getVelocity() * 60.0 / 560;
+            shooterROutPid.updateError(targetRpm - currRpmR);
+            double powerright = targetRpm / 260;
+            if (Math.abs(targetRpm + currRpmR) > 5) {
+                powerright = shooterROutPid.run() + targetRpm / 260;
+            }
+            powerright = clamp(powerright, 0.0, 1.0);
+            if (targetRpm <= 0) powerright = 0;
+            voltage = voltageSensor.getVoltage();
+            shooterL.setPower(powerright * (nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
+            shooterR.setPower(powerright * (nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
         }
-        double currRpmR = -shooterR.getVelocity() * 60.0 / 560;
-        shooterROutPid.updateError(targetRpm-currRpmR);
-        double powerright =  targetRpm/260;
-        if (Math.abs(targetRpm+currRpmR)>5){
-            powerright =  shooterROutPid.run()+targetRpm/260;
-        }
-        powerright = clamp(powerright, 0.0, 1.0);
-        if (targetRpm <= 0) powerright = 0;
-        voltage = voltageSensor.getVoltage();
-        shooterL.setPower(powerright*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
-        shooterR.setPower(powerright*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
 
 
 
 
-
-        if (Math.abs(override_turn)>0.1){
+        if (Math.abs(override_turn)>(0.1+(override_power*0.3))){
+            ower_inited = true;
             yaw.setPower(override_turn);
             turn_last_override.reset();
          }
-        else if(turn_last_override.seconds()<seconds_hold_override){
+        else if((turn_last_override.seconds()<seconds_hold_override)&&ower_inited){
             yaw.setPower(0);
         }
         else if (Math.abs(get_current_turret_pose(false)) >=178*0.023644){

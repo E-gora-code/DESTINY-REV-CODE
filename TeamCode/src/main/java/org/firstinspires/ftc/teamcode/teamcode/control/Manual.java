@@ -87,7 +87,7 @@ public class Manual extends OpRobotSystemsFramework {
             telemetry.addData("cv1b", cv1.blue());
 
 //            telemetry.addData("cv0COL", spindexerModule.checkColor());
-            telemetry.addData("pose", spindexerModule.input_count);
+//            telemetry.addData("pose", spindexerModule.input_count);
 //            telemetry.addData("extR", extr_pos);
 //            telemetry.addData("extL", extl_pos);
 //            telemetry.addData("BL", BL.getCurrentPosition());
