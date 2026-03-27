@@ -9,6 +9,7 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.generic_classes.GamepadDriver;
 import org.firstinspires.ftc.teamcode.generic_classes.OpModeFramework;
 import org.firstinspires.ftc.teamcode.pedro.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -21,11 +22,11 @@ public class spindexertestNB extends OpModeFramework {
     public double angle= 0,lastangle = 0 ;
 
     protected Telemetry dash = FtcDashboard.getInstance().getTelemetry();
-
+    public GamepadDriver gmDriver_1;
     @Override
     public void runOpMode() {
-        selfInit();
-        initAllSystems();
+        gmDriver_1 = new GamepadDriver(gamepad1);
+
         spx = new spindexer(hardwareMap);
         turret = new turet(hardwareMap, 5);
         follower = Constants.createFollower(hardwareMap);
@@ -38,7 +39,7 @@ public class spindexertestNB extends OpModeFramework {
         follower.startTeleopDrive();
         follower.update();
         while (opModeIsActive()) {
-            tickAll();
+            gmDriver_1.class_tick();
             boolean intaking = gamepad1.right_bumper;
             boolean spining  = gamepad1.left_bumper;
             boolean shooting = gamepad1.a;
@@ -94,7 +95,7 @@ public class spindexertestNB extends OpModeFramework {
         turret.stop();
     }
     public void turret_update(){
-        turret.update(follower.distansetogoalblue(), follower.angletogoalblue(), follower.getVelocity().getXComponent(),-follower.getVelocity().getYComponent(),0,gamepad2.right_stick_x+controllerDriver_1.internal_touchpad.touchpad1_X, gamepad2.right_stick_y+controllerDriver_1.internal_touchpad.touchpad1_Y);
+        turret.update(follower.distansetogoalblue(), follower.angletogoalblue(), follower.getVelocity().getXComponent(),-follower.getVelocity().getYComponent(),0,gamepad2.right_stick_x+gmDriver_1.internal_touchpad.touchpad1_X, gamepad2.right_stick_y+gmDriver_1.internal_touchpad.touchpad1_Y);
     }
 
 }
