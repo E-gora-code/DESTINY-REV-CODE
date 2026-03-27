@@ -43,7 +43,7 @@ public class spindexertestNB extends OpModeFramework {
             boolean shooting = gamepad1.a;
             if (gamepad2.a){
                 follower.setPose(new Pose(144,144,Math.toRadians(180)));
-                turret.update(follower.distansetogoalblue(), follower.angletogoalblue(), follower.getVelocity().getXComponent(),-follower.getVelocity().getYComponent(),0,gamepad2.right_stick_x);
+                turret_update();
             }
             angle = Math.signum(follower.getPose().getHeading())*(Math.toRadians(180) - Math.abs(follower.getPose().getHeading()));
             if (Math.abs(lastangle - angle)>2){
@@ -59,7 +59,7 @@ public class spindexertestNB extends OpModeFramework {
             boolean shoot = gamepad1.right_trigger>0.1;
             double turn = gamepad2.left_stick_x;
 
-            turret.update(follower.distansetogoalblue(),follower.angletogoalblue(),-follower.getVelocity().getXComponent(),-follower.getVelocity().getYComponent(),-angle,gamepad2.right_stick_x);
+            turret_update();
 
             dash.addData("spx_pos", spx.v());
             dash.addData("spx_colG", spx.color_green());
@@ -92,4 +92,8 @@ public class spindexertestNB extends OpModeFramework {
 
         turret.stop();
     }
+    public void turret_update(){
+        turret.update(follower.distansetogoalblue(), follower.angletogoalblue(), follower.getVelocity().getXComponent(),-follower.getVelocity().getYComponent(),0,gamepad2.right_stick_x, gamepad2.right_stick_y);
+    }
+
 }

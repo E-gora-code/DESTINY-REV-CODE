@@ -40,7 +40,7 @@ public class SpinDexerTestNR extends OpModeFramework {
             boolean shooting = gamepad1.a;
             if (gamepad2.a){
                 follower.setPose(new Pose(8.18,144-7.7,Math.toRadians(0)));
-                turret.update(follower.distansetogoalred(),0,follower.getVelocity().getXComponent(),-follower.getVelocity().getYComponent(),follower.getPose().getHeading(),gamepad2.right_stick_x);
+                turret_update();
 
             }
             angle = follower.getPose().getHeading();
@@ -52,7 +52,7 @@ public class SpinDexerTestNR extends OpModeFramework {
             boolean shoot = gamepad1.right_trigger>0.1;
             double turn = gamepad2.left_stick_x;
 
-            turret.update(follower.distansetogoalred()-5.5118,-follower.angletogoalred(),follower.getVelocity().getXComponent(),-follower.getVelocity().getYComponent(),angle,gamepad2.right_stick_x);
+            turret_update();
 
             dash.addData("spx_pos", spx.v());
             dash.addData("spx_colG", spx.color_green());
@@ -78,5 +78,8 @@ public class SpinDexerTestNR extends OpModeFramework {
         }
 
         turret.stop();
+    }
+    public void turret_update(){
+        turret.update(follower.distansetogoalred()-5.5118,-follower.angletogoalred(),follower.getVelocity().getXComponent(),-follower.getVelocity().getYComponent(),angle,gamepad2.right_stick_x,gamepad2.right_stick_y);
     }
 }

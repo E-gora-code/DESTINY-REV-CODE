@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.pedropathing.control.PIDFController;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class turet {
     private Limelight3A limelight;
@@ -37,6 +38,10 @@ public class turet {
     private double power= 1,tanTheta;
     private double velocity = 100;
     double yDist = 0;
+
+    public ElapsedTime turn_last_override = new ElapsedTime();
+    public ElapsedTime power_last_override = new ElapsedTime();
+    public double seconds_hold_override = 6.7;
 
     private static final double GRAVITY = 386.4;
     private static final double LAUNCH_ANGLE = Math.toRadians(65);
@@ -70,9 +75,11 @@ public class turet {
 
     public void reset() {
         limelight.start();
+        turn_last_override.reset();
+        power_last_override.reset();
     }
 
-    public void update(double distance, double angleToGoal, double robotVelocityX, double robotVelocityY,double  turn,double power) {
+    public void update(double distance, double angleToGoal, double robotVelocityX, double robotVelocityY,double  turn,double override_turn,double override_power) {
 
 
 
@@ -85,8 +92,12 @@ public class turet {
         double angle = Math.toDegrees(-angleToGoal-turn+ofset*1.94);
 
         yawPid.updateError(-angle*0.0195+get_current_turret_pose(false));
-
-        targetRpm =speed*1.19-60;
+        if (Math.abs(override_power)>0.3){
+            targetRpm = 260 *override_power;
+        }
+        else {
+            targetRpm = speed * 1.19 - 60;
+        }
         double currRpmR = -shooterR.getVelocity() * 60.0 / 560;
         shooterROutPid.updateError(targetRpm-currRpmR);
         double powerright =  targetRpm/260;
@@ -98,9 +109,18 @@ public class turet {
         voltage = voltageSensor.getVoltage();
         shooterL.setPower(powerright*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
         shooterR.setPower(powerright*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
-        if (Math.abs(power)>0.1){
-            yaw.setPower(power);
+
+
+
+
+
+        if (Math.abs(override_turn)>0.1){
+            yaw.setPower(override_turn);
+            turn_last_override.reset();
          }
+        else if(turn_last_override.seconds()<seconds_hold_override){
+            yaw.setPower(0);
+        }
         else if (Math.abs(get_current_turret_pose(false)) >=178*0.023644){
             if (Math.signum(yawPid.run())==Math.signum(get_current_turret_pose(false))){
                 yaw.setPower(clamp(yawPid.run(),-1,1));
