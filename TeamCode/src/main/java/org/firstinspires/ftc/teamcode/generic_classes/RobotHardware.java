@@ -118,11 +118,13 @@ public class RobotHardware{
             parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
             parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
             parameters.loggingEnabled = true;
+            try {
+                GyroIMU = hardware.get(BNO055IMU.class, "imu");
+                GyroIMU.initialize(parameters);
+                is_gyro_inited = true;
+            }catch (Exception e){}
 
-            GyroIMU = hardware.get(BNO055IMU.class, "imu");
-            GyroIMU.initialize(parameters);
 
-            is_gyro_inited = true;
             if(do_enable) {
                 is_gyro_enabled = do_enable;
             }

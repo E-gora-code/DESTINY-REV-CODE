@@ -25,7 +25,8 @@ public class SpinDexerTestNR extends OpModeFramework {
 
     @Override
     public void runOpMode() {
-
+        selfInit();
+        initAllSystems();
         spx = new spindexer(hardwareMap);
         turret = new turet(hardwareMap, 5);
         follower = Constants.createFollower(hardwareMap);
@@ -34,6 +35,7 @@ public class SpinDexerTestNR extends OpModeFramework {
         follower.update();
         waitForStart();
         while (opModeIsActive()) {
+            tickAll();
 
             boolean intaking = gamepad1.right_bumper;
             boolean spining  = gamepad1.left_bumper;
@@ -80,6 +82,6 @@ public class SpinDexerTestNR extends OpModeFramework {
         turret.stop();
     }
     public void turret_update(){
-        turret.update(follower.distansetogoalred()-5.5118,-follower.angletogoalred(),follower.getVelocity().getXComponent(),-follower.getVelocity().getYComponent(),angle,gamepad2.right_stick_x,gamepad2.right_stick_y);
+        turret.update(follower.distansetogoalred()-5.5118,-follower.angletogoalred(),follower.getVelocity().getXComponent(),-follower.getVelocity().getYComponent(),angle,gamepad2.right_stick_x+controllerDriver_1.internal_touchpad.touchpad1_X, gamepad2.right_stick_y+controllerDriver_1.internal_touchpad.touchpad1_Y);
     }
 }
