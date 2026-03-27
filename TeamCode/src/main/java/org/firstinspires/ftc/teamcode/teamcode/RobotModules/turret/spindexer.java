@@ -32,6 +32,10 @@ public class spindexer {
     public double position=1;
     ColorSensor colr,colrback;
     public ArrayList<String> ball = new ArrayList<>();
+    public ArrayList<String> patr1 = new ArrayList<>();
+
+    public ArrayList<String> patr2= new ArrayList<>();
+    public ArrayList<String> patr3 = new ArrayList<>();
     boolean spinflag = true,actflag;
     public void setServoSpeed(Servo servo, double speed){
         servo.setPosition(speed/2+0.5);
@@ -60,20 +64,34 @@ public class spindexer {
 
 
         spindex.setCoefficients(new PIDFCoefficients(0.7, 0.000, 0.7, 0));
+        patr1.add("N");
+        patr1.add("N");
+        patr1.add("N");
+        patr2.add("N");
+        patr2.add("N");
+        patr2.add("N");
+        patr3.add("N");
+        patr3.add("N");
+        patr3.add("N");
 
+        patr1.set(0,"G");
+        patr2.set(1,"G");
+        patr3.set(2,"G");
+        patr1.set(2,"P");
+        patr1.set(1,"P");
+        patr2.set(0,"P");
+        patr2.set(2,"P");
+        patr3.set(0,"P");
+        patr3.set(1,"P");
 
         ball.add("N");
         ball.add("N");
         ball.add("N");
     }
 
-    public void update(boolean confi, boolean frontintaking,boolean backintaking, String color,boolean shooting,float power) {
+    public void update(boolean confi, boolean frontintaking,boolean backintaking,boolean shooting,double patern) {
         spindex.setCoefficients(new PIDFCoefficients(config.spinKp, config.spinKi, config.spinKd, 0));
-        if (confi){
-            spin((double) power);
-            front_ejector.setPosition(config.pos_front_ejector);
-        }
-        else if (frontintaking) {
+        if (frontintaking) {
             if ((count("G")+count("P")==1)&&(position  == 4 - sumIndices(ball,"N"))){
                 position  = ((position+1) % 3)+1;
             }
@@ -118,8 +136,8 @@ public class spindexer {
 
 
             if ((chek_green_back()||chek_purple_back()) && spinflag){
-                if(chek_green())ball.set((int) ((position) % 3),"G") ;
-                if(chek_purple())ball.set((int)((position) % 3),"P") ;
+                if(chek_green_back())ball.set((int) ((position) % 3),"G") ;
+                if(chek_purple_back())ball.set((int)((position) % 3),"P") ;
                 position = ((position+1) % 3 + 1);
                 spinflag = false;
                 actflag = true;
@@ -130,11 +148,11 @@ public class spindexer {
             }
         }
         else if (shooting){
-            if (sumIndices(ball,"N")==3){
-                for (int i = 0; i < ball.size(); i++) {
-                    ball.set(i,"N");
-                }
+
+            for (int i = 0; i < ball.size(); i++) {
+                ball.set(i,"N");
             }
+
             position =1;
             spindexer.setPower(-1);
             spindexer2.setPower(-1);
@@ -145,6 +163,52 @@ public class spindexer {
             front_intake.setPower(1);
             back_intake.setPower(-1);
         }
+        else if (patern!=0){
+            ArrayList<String> patr= patr1;
+            if (patern == 1){
+                patr= patr1;
+            }
+            if (patern == 2){
+                patr= patr2;
+            }
+            if (patern == 3){
+                patr= patr3;
+            }
+            if (patr.get(0)==ball.get((int)(spindexerPos.getVoltage()-0.15))){
+                if (patr.get(1)==ball.get((int)(spindexerPos.getVoltage()+0.85)%3)) {
+                    for (int i = 0; i < ball.size(); i++) {
+                        ball.set(i,"N");
+                    }
+
+                    position =1;
+                    spindexer.setPower(-0.5);
+                    spindexer2.setPower(-0.5);
+                    back_ejector.setPosition(0.85);
+                    back_wall.setPosition(1);
+                    front_ejector.setPosition(0.6);
+                    front_wall.setPosition(1);
+                    front_intake.setPower(1);
+                    back_intake.setPower(-1);
+                }
+                else{
+                    position =1;
+                    spindexer.setPower(0.5);
+                    spindexer2.setPower(0.5);
+                    back_ejector.setPosition(0.6);
+                    back_wall.setPosition(1);
+                    front_ejector.setPosition(0.8);
+                    front_wall.setPosition(1);
+                    front_intake.setPower(-1);
+                    back_intake.setPower(1);
+                }
+            }
+            else{
+                spin(ball.indexOf(patr.get(0))+1);
+            }
+
+        }
+
+
 
         else {
             if((!(ball.contains("G")))&&(!(ball.contains("P")))){
@@ -193,7 +257,7 @@ public class spindexer {
 
          }
     public double v(){
-        return posi;
+        return position;
     }
 
     public double color_green() {
@@ -210,10 +274,10 @@ public class spindexer {
         return colrback.blue();
     }
     public boolean chek_green(){
-        return ((colr.red()+25)<(colr.green()))&&((colr.blue()+25)<(colr.green()));
+        return ((colr.red()+25)<(colr.green()))&&((colr.blue()+25)<(colr.green()))&&colr.green()+colr.blue()+colr.red()>110;
     }
     public boolean chek_purple(){
-        return ((colr.green()+15)<(colr.blue()))&&((colr.red()+15)<(colr.blue()));
+        return ((colr.red()+1)<(colr.blue()))&&colr.green()+colr.blue()+colr.red()>110;
     }
     public boolean chek_green_back(){
         return ((colrback.red()+25)<(colrback.green()))&&((colrback.blue()+25)<(colrback.green()));

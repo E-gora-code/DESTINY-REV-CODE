@@ -72,7 +72,7 @@ public class turet {
         limelight.start();
     }
 
-    public void update(double distance, double angleToGoal, double robotVelocityX, double robotVelocityY,double  turn) {
+    public void update(double distance, double angleToGoal, double robotVelocityX, double robotVelocityY,double  turn,double power) {
 
 
 
@@ -81,12 +81,13 @@ public class turet {
         shooterROutPid.setCoefficients(new PIDFCoefficients(config.shooterKp, config.shooterKi, 0, 0));
         ShooterResult sh = calculateShot(distance,angleToGoal,robotVelocityX,robotVelocityY);
         double speed = sh.velocity;
-        double angle = Math.toDegrees(-Math.PI/4+angleToGoal-turn);
-        double ofset =Math.toDegrees(sh.turretOffset);
-        yawPid.updateError(-angle*0.023644+get_current_turret_pose(false));
+        double ofset =sh.turretOffset;
+        double angle = Math.toDegrees(-angleToGoal-turn+ofset*1.94);
 
-        targetRpm =speed*1.21-60;
-        double currRpmR = shooterR.getVelocity() * 60.0 / 560;
+        yawPid.updateError(-angle*0.0195+get_current_turret_pose(false));
+
+        targetRpm =speed*1.19-60;
+        double currRpmR = -shooterR.getVelocity() * 60.0 / 560;
         shooterROutPid.updateError(targetRpm-currRpmR);
         double powerright =  targetRpm/260;
         if (Math.abs(targetRpm+currRpmR)>5){
@@ -97,12 +98,18 @@ public class turet {
         voltage = voltageSensor.getVoltage();
         shooterL.setPower(powerright*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
         shooterR.setPower(powerright*(nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
-        if (Math.abs(yawPid.getError())<4){
-            yaw.setPower(yawPid.run());
+        if (Math.abs(power)>0.1){
+            yaw.setPower(power);
+         }
+        else if (Math.abs(get_current_turret_pose(false)) >=178*0.023644){
+            if (Math.signum(yawPid.run())==Math.signum(get_current_turret_pose(false))){
+                yaw.setPower(clamp(yawPid.run(),-1,1));
+            }
         }
-        else{
-            yaw.setPower(Math.signum(yawPid.run()));
+        else {
+            yaw.setPower(clamp(yawPid.run(),-1,1));
         }
+
 
     }
 
@@ -114,7 +121,7 @@ public class turet {
         double radialVelocity = robotVelocityX * directionX + robotVelocityY * directionY;
         double tangentialVelocity = -robotVelocityX * directionY + robotVelocityY * directionX;
         double horizontalVelocity = distance / flightTime;
-        double compensatedHorizontalVelocity = horizontalVelocity + radialVelocity;
+        double compensatedHorizontalVelocity = horizontalVelocity + radialVelocity*1.2;
         double newHorizontalVelocity = Math.sqrt(compensatedHorizontalVelocity * compensatedHorizontalVelocity + tangentialVelocity * tangentialVelocity);
         double turretOffset = Math.atan2(tangentialVelocity, compensatedHorizontalVelocity);
         double newLaunchVelocity = newHorizontalVelocity / Math.cos(LAUNCH_ANGLE);
@@ -148,7 +155,7 @@ public class turet {
         if (lastVoltage > 3.0 && v < 0.3) revCount+=3;
         if (lastVoltage < 0.3 && v > 3.0) revCount-=3;
         lastVoltage = v;
-        if (sbros){
+        if (!shooter_zero.getState()){
             revCount = 0;
            shoter_zero = v;
            return 0;
@@ -162,7 +169,7 @@ public class turet {
         return Math.max(lo, Math.min(hi, v));
     }
 
-    public double rightpowe(){return targetRpm-shooterL.getVelocity() * 60.0 / 560;}
+    public double rightpowe(){return shooterR.getVelocity() * 60.0 / 560 ;}
     public double getTargetRpm(){return targetRpm;}
     public double getFiltTx() {return tx;}
     public double getFiltTy() {return filtTy;}

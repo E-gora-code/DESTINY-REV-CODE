@@ -40,7 +40,7 @@ public class spindexer_test extends OpMode {
         dash.addData("blue",spindexe.color_blue());
         dash.addData("green",pos);
         dash.update();
-        spindexe.update(true,false,false,"N",false, (float) pos);
+        ;
 
     }
 }
