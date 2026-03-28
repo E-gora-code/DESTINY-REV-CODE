@@ -558,8 +558,8 @@ public class RobotHardware{
             public boolean is_powered = false;
             private boolean is_continuous = false;
             public boolean is_reverse = false;
-            private Servo AttachedComponent_S;
-            private CRServo AttachedComponent_C;
+            private Servo AttachedComponent_S = null;
+            private CRServo AttachedComponent_C = null;
             private String AttachedComponentName;
             public AnalogInput AttachedEncoder;
             public String AttachedEncoderName = null;
@@ -569,10 +569,10 @@ public class RobotHardware{
             public double encoderLastVoltage = 0;
             private void try_fetch_servo(String attachedComponentName){
                 try {
-                    this.AttachedComponent_S = getServoFunction(attachedComponentName);
+                    AttachedComponent_S = hardware.servo.get(attachedComponentName);
                     is_continuous = false;
                 } catch (Exception e) {
-                    this.AttachedComponent_C = getCRServoFunction(attachedComponentName);
+                    AttachedComponent_C = getCRServoFunction(attachedComponentName);
                     is_continuous = true;
                 }
 

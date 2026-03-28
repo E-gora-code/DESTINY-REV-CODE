@@ -101,7 +101,7 @@ public class Manual extends OpRobotSystemsFramework {
 //            dash.addData("x", BR.getCurrentPosition());
 //            dash.addData("y", BL.getCurrentPosition());
             dash.update();
-
+            spindexer.setPower(gamepad1.left_trigger);
 //            spindexerModule.enabled = gamepad2.dpad_down;
 //
 //
