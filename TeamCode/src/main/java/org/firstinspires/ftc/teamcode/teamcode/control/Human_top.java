@@ -18,8 +18,6 @@ public class Human_top extends OpModeFramework {
     public void runOpMode() throws InterruptedException {
         selfInit();
         initAllSystems();
-        spindexe = new SpindexerModule(hardwareMap);
-        turret = new turet(hardwareMap, 5);
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(8.18,144-7.7,Math.toRadians(0)));
         follower.startTeleopDrive();
@@ -27,9 +25,26 @@ public class Human_top extends OpModeFramework {
         waitForStart();
         while (opModeIsActive()){
             tickAll();
-            follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -0.3*gamepad1.right_stick_x, false);
-            follower.update();
+                        follower.update();
+            if(gamepad1.left_bumper) {
 
+
+                shooter_left.setPower(0.3);
+                shooter_right.setPower(-0.3);
+            }else if(gamepad1.right_bumper){
+                turret_x.setPower(gamepad1.right_stick_x);
+                shooter_left.setPower(gamepad1.right_stick_y);
+                shooter_right.setPower(-gamepad1.right_stick_y);
+            }
+            double turna = gamepad1.right_stick_x;
+            if(gamepad1.right_bumper){
+                turna = 0;
+            }
+            follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -0.3*turna, false);
+
+
+            spindexer.setPower(gamepad1.left_trigger-gamepad1.right_trigger);
+            spindexer1.setPower(gamepad1.left_trigger-gamepad1.right_trigger);
 
 
         }

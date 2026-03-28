@@ -296,6 +296,7 @@ public class RobotHardware{
             // Class for easy renaming purposes
             public class servoNameKeys {
                 public final static String spindexer = "spndx";
+                public final static String spindexer1 = "spndx1";
                 public final static String front_ejector = "front_ejector";
                 public final static String back_ejector = "back_ejector";
                 public final static String front_wall = "front_wall";
@@ -322,6 +323,7 @@ public class RobotHardware{
         public Motors(){
             // Add motors HERE
             servos.put(NameKeys.servoNameKeys.spindexer,new InternalServo("SP", "SP_POS"));
+            servos.put(NameKeys.servoNameKeys.spindexer1,new InternalServo("SP2", "SP_POS"));
             servos.put(NameKeys.servoNameKeys.front_ejector,new InternalServo("Fej"));
             servos.put(NameKeys.servoNameKeys.back_ejector,new InternalServo("Bej"));
             servos.put(NameKeys.servoNameKeys.front_wall,new InternalServo("Fwall"));
