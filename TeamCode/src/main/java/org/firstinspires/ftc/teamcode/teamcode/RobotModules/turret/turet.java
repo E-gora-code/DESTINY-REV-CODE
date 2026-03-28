@@ -43,6 +43,7 @@ public class turet {
     public double seconds_hold_override = 6.7;
     boolean ower_inited = false;
     double motor_coof = 1;
+    boolean auto_aim = true;
 
     private static final double GRAVITY = 386.4;
     private static final double LAUNCH_ANGLE = Math.toRadians(65);
@@ -132,12 +133,16 @@ public class turet {
             yaw.setPower(0);
         }
         else if (Math.abs(get_current_turret_pose(false)) >=100*0.023644){
-            if (Math.signum(yawPid.run())==Math.signum(get_current_turret_pose(false))){
-                yaw.setPower(clamp(yawPid.run(),-1,1));
+            if(auto_aim) {
+                if (Math.signum(yawPid.run()) == Math.signum(get_current_turret_pose(false))) {
+                    yaw.setPower(clamp(yawPid.run(), -1, 1));
+                }
             }
         }
         else {
-            yaw.setPower(clamp(yawPid.run(),-1,1));
+            if(auto_aim) {
+                yaw.setPower(clamp(yawPid.run(), -1, 1));
+            }
         }
 
 
@@ -200,6 +205,9 @@ public class turet {
         }else {
             motor_coof = 0;
         }
+    }
+    public void setAutoAim(boolean state){
+        auto_aim = state;
     }
 
     private double clamp(double v, double lo, double hi) {

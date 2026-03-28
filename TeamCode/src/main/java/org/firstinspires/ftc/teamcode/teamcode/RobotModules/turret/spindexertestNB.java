@@ -4,18 +4,18 @@ package org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.generic_classes.GamepadDriver;
-import org.firstinspires.ftc.teamcode.generic_classes.OpModeFramework;
 import org.firstinspires.ftc.teamcode.pedro.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @TeleOp
-public class spindexertestNB extends OpModeFramework {
+public class spindexertestNB extends LinearOpMode {
     public static Follower follower;
-    private spindexer spx;
+    private SpindexerModule spx;
     private turet turret;
     public double angle= 0,lastangle = 0 ;
 
@@ -25,7 +25,7 @@ public class spindexertestNB extends OpModeFramework {
     public void runOpMode() {
         gmDriver_1 = new GamepadDriver(gamepad1);
 
-        spx = new spindexer(hardwareMap);
+        spx = new SpindexerModule(hardwareMap);
         turret = new turet(hardwareMap, 5);
         follower = Constants.createFollower(hardwareMap);
         follower.update();

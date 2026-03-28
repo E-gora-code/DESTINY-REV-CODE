@@ -376,7 +376,7 @@ public class RobotHardware{
                     List<String> output = new ArrayList<>();
                     for (Map.Entry<String, InternalServo> servo_entry : servos.entrySet()) {
                         InternalServo servo_component = servo_entry.getValue();
-                if(servo_component.AttachedComponent==null) {
+                if(servo_component.is_atached()) {
                     output.add("NO Servo: " + servo_entry.getKey() + " -!> " + servo_component.AttachedComponentName);
                 }
                 if(servo_component.AttachedEncoderName != null) {
@@ -400,7 +400,7 @@ public class RobotHardware{
             List<String> output = new ArrayList<>();
             for (Map.Entry<String, InternalServo> servo_entry : servos.entrySet()) {
                 InternalServo servo_component = servo_entry.getValue();
-                if(servo_component.AttachedComponent!=null) {
+                if(servo_component.is_atached()) {
                     output.add("Servo ok: " + servo_entry.getKey() + " -+> " + servo_component.AttachedComponentName);
                 }
                 if(servo_component.AttachedEncoderName != null) {
@@ -453,8 +453,8 @@ public class RobotHardware{
             if(is_servos_enabled) {
                 for (Map.Entry<String, InternalServo> servo_entry : servos.entrySet()) {
                     InternalServo servo_component = servo_entry.getValue();
-                    if ((servo_component.AttachedComponent != null)&&(servo_component.is_powered)) {
-                        servo_component.AttachedComponent.setPosition(servo_component.position);
+                    if ((servo_component.is_atached())&&(servo_component.is_powered)) {
+                        servo_component.setPosition(servo_component.position);
                     }
                 }
             }
@@ -508,6 +508,16 @@ public class RobotHardware{
             }
             return output;
         }
+        private CRServo getCRServoFunction(String name){
+            CRServo output;
+            try {
+                output = hardware.crservo.get(name);
+            }catch (Exception ex){
+                errorHandler.accept(ex,12);
+                output = null;
+            }
+            return output;
+        }
         private AnalogInput getEncoderFunction(String name){
             AnalogInput output;
             try {
@@ -546,42 +556,63 @@ public class RobotHardware{
         private class InternalServo{
             public double position = 0;
             public boolean is_powered = false;
-            public boolean is_continuous = false;
+            private boolean is_continuous = false;
             public boolean is_reverse = false;
-            public final Servo AttachedComponent;
-            public final String AttachedComponentName;
+            private Servo AttachedComponent_S;
+            private CRServo AttachedComponent_C;
+            private String AttachedComponentName;
             public AnalogInput AttachedEncoder;
             public String AttachedEncoderName = null;
             public int encoderRevolutionCount = 0;
             public double encoderPosition = 0;
             public double encoderVoltage = 0;
             public double encoderLastVoltage = 0;
-            public InternalServo(String attachedComponentName){
-                this.AttachedComponent = getServoFunction(attachedComponentName);
+            private void try_fetch_servo(String attachedComponentName){
+                try {
+                    this.AttachedComponent_S = getServoFunction(attachedComponentName);
+                    is_continuous = false;
+                } catch (Exception e) {
+                    this.AttachedComponent_C = getCRServoFunction(attachedComponentName);
+                    is_continuous = true;
+                }
+
                 this.AttachedComponentName = attachedComponentName;
             }
+            public boolean is_atached(){
+                if((AttachedComponent_S!=null)||(AttachedComponent_C!=null)){
+                    return true;
+                }
+                return  false;
+            }
+            public boolean is_continious(){
+                return is_continuous;
+            }
+            public void setPosition(double pos){
+                if (is_continuous){
+                    AttachedComponent_C.setPower((pos*2)-1);
+                }else {
+                    setPosition(pos);
+                }
+            }
+            public InternalServo(String attachedComponentName){
+                try_fetch_servo(attachedComponentName);
+            }
             public InternalServo(String attachedComponentName,boolean is_reverse){
-                this.AttachedComponent = getServoFunction(attachedComponentName);
-                this.AttachedComponentName = attachedComponentName;
+                try_fetch_servo(attachedComponentName);
                 this.is_reverse = is_reverse;
             }
             public InternalServo(String attachedComponentName,boolean is_continuous, boolean is_reverse){
-                this.AttachedComponent = getServoFunction(attachedComponentName);
-                this.AttachedComponentName = attachedComponentName;
-                this.is_continuous = is_continuous;
+                try_fetch_servo(attachedComponentName);
                 this.is_reverse = is_reverse;
             }
             public InternalServo(String attachedComponentName,String attachedEncoderName ,boolean is_continuous, boolean is_reverse){
-                this.AttachedComponent = getServoFunction(attachedComponentName);
-                this.AttachedComponentName = attachedComponentName;
-                this.is_continuous = is_continuous;
+                try_fetch_servo(attachedComponentName);
                 this.is_reverse = is_reverse;
                 this.AttachedEncoder = getEncoderFunction(attachedEncoderName);
                 this.AttachedEncoderName = attachedEncoderName;
             }
             public InternalServo(String attachedComponentName,String attachedEncoderName){
-                this.AttachedComponent = getServoFunction(attachedComponentName);
-                this.AttachedComponentName = attachedComponentName;
+                try_fetch_servo(attachedComponentName);
                 this.AttachedEncoder = getEncoderFunction(attachedEncoderName);
                 this.AttachedEncoderName = attachedEncoderName;
             }

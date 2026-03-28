@@ -13,7 +13,7 @@ import com.pedropathing.control.PIDFController;
 import java.util.ArrayList;
 import java.util.List;
 
-public class spindexer {
+public class SpindexerModule {
 
     private Servo front_ejector, back_ejector, front_wall, back_wall;
 
@@ -42,7 +42,7 @@ public class spindexer {
         servo.setPosition(speed/2+0.5);
     }
 
-    public spindexer(HardwareMap hw) {
+    public SpindexerModule(HardwareMap hw) {
         timer.startTime();
         spindexer = hw.get(CRServo.class, "SP");
         spindexer2 = hw.get(CRServo.class, "SP2");

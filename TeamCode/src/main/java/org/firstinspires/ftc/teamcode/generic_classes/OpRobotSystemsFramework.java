@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.generic_classes;
 
 import org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret.DataPackageInitSpindexer;
-import org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret.spindexer;
+import org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret.SpindexerModule;
 
 public class OpRobotSystemsFramework extends OpModeFramework{
 
     protected DataPackageInitSpindexer InitPackage;
-    protected org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret.spindexer spindexerModule;
+    protected SpindexerModule spindexerModule;
     protected void initSpindexer(){
         InitPackage = new DataPackageInitSpindexer(hardwareMap);
         InitPackage.spindexer = spindexer;
