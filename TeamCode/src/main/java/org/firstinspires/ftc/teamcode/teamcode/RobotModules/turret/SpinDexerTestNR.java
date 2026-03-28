@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret;
 
 
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
-
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;

@@ -40,6 +40,9 @@ public class spindexer_test extends OpMode {
         dash.addData("blue",spindexe.color_blue());
         dash.addData("green",pos);
         dash.update();
+        spindexe.update(true,gamepad1.right_bumper,false,gamepad1.right_trigger>0.1,pos);
+
+
         ;
 
     }

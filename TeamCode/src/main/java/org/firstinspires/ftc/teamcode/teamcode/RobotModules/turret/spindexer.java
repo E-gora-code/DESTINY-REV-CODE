@@ -22,6 +22,7 @@ public class spindexer {
     private CRServo spindexer,spindexer2;
     private AnalogInput spindexerPos;
     boolean colorflag = true;
+    boolean timer_flag =true;
     double posi = 0;
 
     private PIDFController
@@ -42,6 +43,7 @@ public class spindexer {
     }
 
     public spindexer(HardwareMap hw) {
+        timer.startTime();
         spindexer = hw.get(CRServo.class, "SP");
         spindexer2 = hw.get(CRServo.class, "SP2");
         front_ejector = hw.get(Servo.class, "Fej");
@@ -91,7 +93,10 @@ public class spindexer {
 
     public void update(boolean confi, boolean frontintaking,boolean backintaking,boolean shooting,double patern) {
         spindex.setCoefficients(new PIDFCoefficients(config.spinKp, config.spinKi, config.spinKd, 0));
-        if (frontintaking) {
+        if (confi){
+            spin(patern);
+        }
+        else if (frontintaking) {
             if ((count("G")+count("P")==1)&&(position  == 4 - sumIndices(ball,"N"))){
                 position  = ((position+1) % 3)+1;
             }
@@ -108,14 +113,19 @@ public class spindexer {
 
 
             if ((chek_green()||chek_purple()) && spinflag){
+                timer.reset();
                 if(chek_green())ball.set((int)((position +1) % 3),"G") ;
                 if(chek_purple())ball.set((int)((position +1) % 3),"P") ;
-                position = (position)%3+1;
                 spinflag = false;
                 actflag = true;
             }
+            else if ((chek_green()||chek_purple())&&timer.milliseconds()>100&&timer_flag){
+                position = (position)%3+1;
+                timer_flag = false;
+            }
             else if (!(chek_green()||chek_purple())){
                 spinflag = true;
+                timer_flag = true;
             }
         }
         else if (backintaking) {

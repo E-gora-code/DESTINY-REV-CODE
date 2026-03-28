@@ -1,17 +1,16 @@
 package org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret;
 
 import com.pedropathing.control.PIDFCoefficients;
+import com.pedropathing.control.PIDFController;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
-import com.pedropathing.control.PIDFController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class turet {
@@ -131,7 +130,7 @@ public class turet {
         else if((turn_last_override.seconds()<seconds_hold_override)&&ower_inited){
             yaw.setPower(0);
         }
-        else if (Math.abs(get_current_turret_pose(false)) >=178*0.023644){
+        else if (Math.abs(get_current_turret_pose(false)) >=100*0.023644){
             if (Math.signum(yawPid.run())==Math.signum(get_current_turret_pose(false))){
                 yaw.setPower(clamp(yawPid.run(),-1,1));
             }

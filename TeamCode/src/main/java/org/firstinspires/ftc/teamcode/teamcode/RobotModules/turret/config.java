@@ -14,14 +14,14 @@ public class config{
     public static double shooterKp = 0.03;
     public static double shooterKi = 0.0001;
     public static double shooterKd = 0.000;
-    public static double yawKp = 1.13;
-    public static double yawKi = 0.001;
-    public static double yawKd = 0.009;
-    public static double spinKp = 0.4;
+    public static double yawKp = 1;
+    public static double yawKi = 0.000;
+    public static double yawKd = 0.02;
+    public static double spinKp = 0.35;
     public static double spinKi = 0.0001;
-    public static double spinKd = 0.03;
+    public static double spinKd = 0.0001;
 
-    public static double rpm = 180,pos = 0.6;
+    public static double rpm = 180,pos = 2;
 
     public static double pos_front_ejector =0.5,pos_back_ejector =0.5,pos_back_wall =0.5,pos_front_wall =0.5, pos_spindexer =0.5;
 

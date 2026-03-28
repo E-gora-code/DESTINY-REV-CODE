@@ -135,7 +135,7 @@ public class Tuning extends SelectableOpMode {
 class LocalizationTest extends OpMode {
     @Override
     public void init() {
-        follower.setStartingPose(new Pose(10.6,9.5));
+        follower.setStartingPose(new Pose(87.622, 133.876,Math.toRadians(0)));
     }
 
     /** This initializes the PoseUpdater, the mecanum drive motors, and the Panels telemetry. */
@@ -970,7 +970,7 @@ class DriveTuner extends OpMode {
  * @version 1.0, 3/12/2024
  */
 class Line extends OpMode {
-    public static double DISTANCE = 40;
+    public static double DISTANCE = 10;
     private boolean forward = true;
 
     private Path forwards;
@@ -978,7 +978,7 @@ class Line extends OpMode {
 
     @Override
     public void init() {
-        follower.setStartingPose(new Pose(0,144,Math.toRadians(45)));
+        follower.setStartingPose(new Pose(0,144,Math.toRadians(0)));
     }
 
     /** This initializes the Follower and creates the forward and backward Paths. */

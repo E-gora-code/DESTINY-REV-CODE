@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedro;
 
+import com.google.common.hash.Hashing;
 import com.pedropathing.control.KalmanFilter;
 import com.pedropathing.control.KalmanFilterParameters;
 import com.pedropathing.follower.FollowerConstants;
@@ -9,11 +10,9 @@ import com.pedropathing.math.MathFunctions;
 import com.pedropathing.math.Vector;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
-import com.google.common.hash.Hashing;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 /** This is the ErrorCalculator.
  * It is in charge of taking the Poses and Velocity produced by the PoseTracker and determining and returning the errors.

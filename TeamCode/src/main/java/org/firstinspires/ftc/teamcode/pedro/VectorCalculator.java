@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedro;
 
+import com.google.common.hash.Hashing;
 import com.pedropathing.control.FilteredPIDFCoefficients;
 import com.pedropathing.control.FilteredPIDFController;
 import com.pedropathing.control.PIDFCoefficients;
@@ -10,11 +11,9 @@ import com.pedropathing.math.MathFunctions;
 import com.pedropathing.math.Vector;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
-import com.google.common.hash.Hashing;
-import java.util.LinkedHashMap;
 
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.LinkedHashMap;
 
 
 /** This is the VectorCalculator.
