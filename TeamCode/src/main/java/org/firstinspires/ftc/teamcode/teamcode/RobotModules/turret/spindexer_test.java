@@ -5,28 +5,32 @@ package org.firstinspires.ftc.teamcode.teamcode.RobotModules.turret;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.generic_classes.OpModeFramework;
+import org.firstinspires.ftc.teamcode.generic_classes.RobotHardware;
 
 @TeleOp(name = "sp")
 public class spindexer_test extends OpMode {
     private spindexer spindexe;
     protected Telemetry dash = FtcDashboard.getInstance().getTelemetry();
+    DcMotorEx front_intake;
 
 
 
 
     @Override
     public void init() {
+        front_intake = hardwareMap.get(DcMotorEx.class, "Fin");
         spindexe = new spindexer(hardwareMap);
 
     }
 
     @Override
     public void loop() {
-
+        front_intake.setPower(1);
         double pos = 1;
         if (gamepad1.a){
             pos = 2;

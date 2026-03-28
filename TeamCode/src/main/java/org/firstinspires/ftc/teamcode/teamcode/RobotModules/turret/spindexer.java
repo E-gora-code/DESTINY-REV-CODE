@@ -103,7 +103,7 @@ public class spindexer {
             else if  ((count("G")+count("P")==2)&& (position%1!=0)){
                 position  = (position + 1.5) % 3+1;
             }
-            spin(position);
+            spin(position+0.25);
             back_ejector.setPosition(0.85);
             back_wall.setPosition(1);
             front_ejector.setPosition(0.8);
@@ -112,16 +112,13 @@ public class spindexer {
             back_intake.setPower(-1);
 
 
-            if ((chek_green()||chek_purple()) && spinflag){
+            if ((chek_green()||chek_purple()) && spinflag&&Math.abs(spindexer.getPower())<0.1){
                 timer.reset();
                 if(chek_green())ball.set((int)((position +1) % 3),"G") ;
                 if(chek_purple())ball.set((int)((position +1) % 3),"P") ;
+                position = (position)%3+1;
                 spinflag = false;
                 actflag = true;
-            }
-            else if ((chek_green()||chek_purple())&&timer.milliseconds()>100&&timer_flag){
-                position = (position)%3+1;
-                timer_flag = false;
             }
             else if (!(chek_green()||chek_purple())){
                 spinflag = true;
@@ -145,7 +142,7 @@ public class spindexer {
             back_intake.setPower(-1);
 
 
-            if ((chek_green_back()||chek_purple_back()) && spinflag){
+            if ((chek_green_back()||chek_purple_back()) && spinflag&&Math.abs(spindexer.getPower())<0.1){
                 if(chek_green_back())ball.set((int) ((position) % 3),"G") ;
                 if(chek_purple_back())ball.set((int)((position) % 3),"P") ;
                 position = ((position+1) % 3 + 1);
@@ -246,7 +243,7 @@ public class spindexer {
     }
 
     public double spin(double pos) {
-        double targetpos = pos-0.85;
+        double targetpos = pos-0.08;
         double currentpos = spindexerPos.getVoltage();
         posi = pos;
         spindex.updateError(targetpos - currentpos);
@@ -267,7 +264,7 @@ public class spindexer {
 
          }
     public double v(){
-        return position;
+        return spindexerPos.getVoltage();
     }
 
     public double color_green() {

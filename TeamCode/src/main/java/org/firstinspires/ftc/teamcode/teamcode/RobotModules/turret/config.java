@@ -17,9 +17,9 @@ public class config{
     public static double yawKp = 1;
     public static double yawKi = 0.000;
     public static double yawKd = 0.02;
-    public static double spinKp = 0.35;
-    public static double spinKi = 0.0001;
-    public static double spinKd = 0.0001;
+    public static double spinKp = 0.4;
+    public static double spinKi = 0.000;
+    public static double spinKd = 0.01;
 
     public static double rpm = 180,pos = 2;
 
