@@ -94,6 +94,7 @@ public class spindexertestNB extends OpModeFramework {
     }
     public void turret_update(){
         turret.update(follower.distansetogoalblue(), follower.angletogoalblue(), follower.getVelocity().getXComponent(),-follower.getVelocity().getYComponent(),0,gamepad2.right_stick_x+gmDriver_1.internal_touchpad.touchpad1_X, gamepad2.right_stick_y+gmDriver_1.internal_touchpad.touchpad1_Y);
+        turret.setAutoMotorEnabled(!gamepad1.back);
     }
 
 }

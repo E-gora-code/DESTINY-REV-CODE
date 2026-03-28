@@ -81,5 +81,6 @@ public class SpinDexerTestNR extends OpModeFramework {
     }
     public void turret_update(){
         turret.update(follower.distansetogoalred()-5.5118,-follower.angletogoalred(),follower.getVelocity().getXComponent(),-follower.getVelocity().getYComponent(),angle,gamepad2.right_stick_x+gmDriver_1.internal_touchpad.touchpad1_X, gamepad2.right_stick_y+gmDriver_1.internal_touchpad.touchpad1_Y);
+        turret.setAutoMotorEnabled(!gamepad1.back);
     }
 }

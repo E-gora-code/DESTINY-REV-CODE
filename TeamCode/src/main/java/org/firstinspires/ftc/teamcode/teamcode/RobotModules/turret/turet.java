@@ -42,6 +42,7 @@ public class turet {
     public ElapsedTime power_last_override = new ElapsedTime();
     public double seconds_hold_override = 6.7;
     boolean ower_inited = false;
+    double motor_coof = 1;
 
     private static final double GRAVITY = 386.4;
     private static final double LAUNCH_ANGLE = Math.toRadians(65);
@@ -115,8 +116,8 @@ public class turet {
             powerright = clamp(powerright, 0.0, 1.0);
             if (targetRpm <= 0) powerright = 0;
             voltage = voltageSensor.getVoltage();
-            shooterL.setPower(powerright * (nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
-            shooterR.setPower(powerright * (nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)));
+            shooterL.setPower((powerright * (nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)))*motor_coof);
+            shooterR.setPower((powerright * (nominalVoltage - (nominalVoltage * staticFrictionCoefficient)) / (voltage - ((nominalVoltage * nominalVoltage / voltage) * staticFrictionCoefficient)))*motor_coof);
         }
 
 
@@ -191,6 +192,13 @@ public class turet {
         }
         else{
             return revCount + (v)-shoter_zero;
+        }
+    }
+    public void setAutoMotorEnabled(boolean state){
+        if (state==true){
+            motor_coof = 1;
+        }else {
+            motor_coof = 0;
         }
     }
 
